@@ -36,3 +36,18 @@ More details can be found in [installation segment anything](https://github.com/
 
 
 ## Demo
+
+- download segment-anything checkpoint
+```bash
+wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+```
+
+- download grounding dino checkpoint
+```bash
+wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+```
+
+- Run demo
+```bash
+bash run_demo.sh
+```
