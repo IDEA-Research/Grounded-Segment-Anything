@@ -1,6 +1,6 @@
 import argparse
 import os
-import sys
+import copy
 
 import numpy as np
 import torch
@@ -180,11 +180,12 @@ if __name__ == "__main__":
     boxes_filt, pred_phrases = get_grounding_output(
         model, image, text_prompt, box_threshold, text_threshold, cpu_only=args.cpu_only
     )
+    normalized_boxes = copy.deepcopy(boxes_filt)
 
     # visualize pred
     size = image_pil.size
     pred_dict = {
-        "boxes": boxes_filt,
+        "boxes": normalized_boxes,
         "size": [size[1], size[0]],  # H,W
         "labels": pred_phrases,
     }

@@ -29,21 +29,23 @@ python -m pip install -e GroundingDINO
 
 The following optional dependencies are necessary for mask post-processing, saving masks in COCO format, the example notebooks, and exporting the model in ONNX format. `jupyter` is also required to run the example notebooks.
 ```
-pip install opencv-python pycocotools matplotlib onnxruntime onnx
+pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
 ```
 
 More details can be found in [installation segment anything](https://github.com/facebookresearch/segment-anything#installation) and [installation GroundingDINO](https://github.com/IDEA-Research/GroundingDINO#install)
 
 
-## Demo
+## Run Demo
 
 - download segment-anything checkpoint
 ```bash
+cd Grounded-Segment-Anything
 wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
 ```
 
 - download grounding dino checkpoint
 ```bash
+cd Grounded-Segment-Anything
 wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 ```
 
