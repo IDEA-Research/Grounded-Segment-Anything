@@ -1,6 +1,7 @@
 # Grounded-Segment-Anything
-Marrying Grounding DINO with Segment Anything: Detect And Segment Anything !
+We plan to create a very interesting demo by combining [Grounding DINO](https://arxiv.org/abs/2303.05499) and [Segment Anything](https://ai.facebook.com/research/publications/segment-anything/)! Right now, this is just a simple small project. We will continue to improve it and create more interesting demos.
 
+![](./demo.jpg)
 
 ## Highlight
 - Detect and Segment everything with Language!
@@ -8,7 +9,8 @@ Marrying Grounding DINO with Segment Anything: Detect And Segment Anything !
 
 ## Catelog
 - [x] GroundingDINO + Segment-Anything Demo
-- [ ] Gradio Demo
+- [ ] Huggingface Demo
+- [ ] Colab demo
 
 ## Installation
 The code requires `python>=3.8`, as well as `pytorch>=1.7` and `torchvision>=0.8`. Please follow the instructions [here](https://pytorch.org/get-started/locally/) to install both PyTorch and TorchVision dependencies. Installing both PyTorch and TorchVision with CUDA support is strongly recommended.
@@ -16,7 +18,7 @@ The code requires `python>=3.8`, as well as `pytorch>=1.7` and `torchvision>=0.8
 Install Segment Anything:
 
 ```bash
-python -m pip install -e segment-anything
+python -m pip install -e segment_anything
 ```
 
 Install GroundingDINO:

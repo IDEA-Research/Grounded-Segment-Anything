@@ -6,12 +6,18 @@ import numpy as np
 import torch
 from PIL import Image, ImageDraw, ImageFont
 
+# Grounding DINO
 import GroundingDINO.groundingdino.datasets.transforms as T
 from GroundingDINO.groundingdino.models import build_model
 from GroundingDINO.groundingdino.util import box_ops
 from GroundingDINO.groundingdino.util.slconfig import SLConfig
 from GroundingDINO.groundingdino.util.utils import clean_state_dict, get_phrases_from_posmap
 
+# segment anything
+from segment_anything import build_sam, SamPredictor 
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 
 def plot_boxes_to_image(image_pil, tgt):
     H, W = tgt["size"]
@@ -37,7 +43,7 @@ def plot_boxes_to_image(image_pil, tgt):
         x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)
 
         draw.rectangle([x0, y0, x1, y1], outline=color, width=6)
-        # draw.text((x0, y0), str(label), fill=color)
+        draw.text((x0, y0), str(label), fill=color)
 
         font = ImageFont.load_default()
         if hasattr(font, "getbbox"):
@@ -126,6 +132,12 @@ def show_mask(mask, ax, random_color=False):
     ax.imshow(mask_image)
 
 
+def show_box(box, ax):
+    x0, y0 = box[0], box[1]
+    w, h = box[2] - box[0], box[3] - box[1]
+    ax.add_patch(plt.Rectangle((x0, y0), w, h, edgecolor='green', facecolor=(0,0,0,0), lw=2))  
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("Grounding DINO example", add_help=True)
@@ -177,57 +189,38 @@ if __name__ == "__main__":
         "labels": pred_phrases,
     }
 
-    from segment_anything import build_sam, SamPredictor 
-    import cv2
-    import numpy as np
-    import matplotlib.pyplot as plt
-    predictor = SamPredictor(build_sam(checkpoint="/comp_robot/rentianhe/new_code/segment-anything/sam_vit_h_4b8939.pth"))
+    predictor = SamPredictor(build_sam(checkpoint="./sam_vit_h_4b8939.pth"))
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     predictor.set_image(image)
-
-    # H, W = size[1], size[0]
-    # for box in boxes_filt:
-    #     # from 0..1 to 0..W, 0..H
-    #     box = box * torch.Tensor([W, H, W, H])
-    #     # from xywh to xyxy
-    #     box[:2] -= box[2:] / 2
-    #     box[2:] += box[:2]
-    #     box = box.cpu().numpy()
-    #     masks, _, _ = predictor.predict(
-    #         box = box
-    #     )
-    #     plt.figure(figsize=(10, 10))
-    #     plt.imshow(image)
-    #     for mask in masks:
-    #         show_mask(mask, plt.gca(), random_color=True)
-    #     # for box in input_box:
-    #     #     show_box(box, plt.gca())
-    #     plt.axis('off')
-    #     plt.savefig("./test.jpg")
-    #     import pdb; pdb.set_trace()
     
     H, W = size[1], size[0]
+
+
+    for i in range(boxes_filt.size(0)):
+        boxes_filt[i] = boxes_filt[i] * torch.Tensor([W, H, W, H])
+        boxes_filt[i][:2] -= boxes_filt[i][2:] / 2
+        boxes_filt[i][2:] += boxes_filt[i][:2]
+
+    boxes_filt = boxes_filt.cpu()
+
+    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
+
+    masks, _, _ = predictor.predict_torch(
+        point_coords = None,
+        point_labels = None,
+        boxes = transformed_boxes,
+        multimask_output = False,
+    )
+    plt.figure(figsize=(10, 10))
+    plt.imshow(image)
+    for mask in masks:
+        show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
     for box in boxes_filt:
-        # from 0..1 to 0..W, 0..H
-        box = box * torch.Tensor([W, H, W, H])
-        # from xywh to xyxy
-        box[:2] -= box[2:] / 2
-        box[2:] += box[:2]
-        box = box.cpu().numpy()
-        masks, _, _ = predictor.predict(
-            box = box
-        )
-        plt.figure(figsize=(10, 10))
-        plt.imshow(image)
-        for mask in masks:
-            show_mask(mask, plt.gca(), random_color=True)
-        # for box in input_box:
-        #     show_box(box, plt.gca())
-        plt.axis('off')
-        plt.savefig("./test.jpg")
-        import pdb; pdb.set_trace()
+        show_box(box.numpy(), plt.gca())
+    plt.axis('off')
+    plt.savefig("./grounded_segment_anything_output.jpg")
 
     # grounded results
-    # image_with_box = plot_boxes_to_image(image_pil, pred_dict)[0]
-    # image_with_box.save(os.path.join(output_dir, "pred.jpg"))
+    image_with_box = plot_boxes_to_image(image_pil, pred_dict)[0]
+    image_with_box.save(os.path.join("grounding_output_pred.jpg"))
