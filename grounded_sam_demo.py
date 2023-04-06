@@ -100,7 +100,7 @@ def show_box(box, ax, label):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser("Grounding DINO example", add_help=True)
+    parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
     parser.add_argument("--config", type=str, required=True, help="path to config file")
     parser.add_argument(
         "--grounded_checkpoint", type=str, required=True, help="path to checkpoint file"

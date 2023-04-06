@@ -3,6 +3,8 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 
 ![](./assets/grounded_sam.jpg)
 
+![](./assets/grounded_sam2.png)
+
 ## Highlight
 - Detect and Segment everything with Language!
 
@@ -32,11 +34,36 @@ The following optional dependencies are necessary for mask post-processing, savi
 pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
 ```
 
-More details can be found in [installation segment anything](https://github.com/facebookresearch/segment-anything#installation) and [installation GroundingDINO](https://github.com/IDEA-Research/GroundingDINO#install)
+More details can be found in [install segment anything](https://github.com/facebookresearch/segment-anything#installation) and [install GroundingDINO](https://github.com/IDEA-Research/GroundingDINO#install)
 
 
-## Run Demo
-- download the checkpoint for segment-anything and grounding-dino:
+## Run GroundingDINO Demo
+- Download the checkpoint for groundingdino:
+```bash
+cd Grounded-Segment-Anything
+
+wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+```
+
+- Run demo
+```bash
+export CUDA_VISIBLE_DEVICES=0
+python grounding_dino_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --input_image assets/demo1.jpg \
+  --output_dir "outputs" \
+  --box_threshold 0.3 \
+  --text_threshold 0.25 \
+  --text_prompt "bear" \
+  --device "cuda"
+```
+- The model prediction visualization will be saved in `output_dir` as follow:
+
+![](./assets/grounding_dino_output_demo1.jpg)
+
+## Run Grounded-Segment-Anything Demo
+- Download the checkpoint for segment-anything and grounding-dino:
 ```bash
 cd Grounded-Segment-Anything
 
@@ -44,7 +71,7 @@ wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
 wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 ```
 
-- Run demo
+- Run Demo
 ```bash
 export CUDA_VISIBLE_DEVICES=0
 python grounded_sam_demo.py \
