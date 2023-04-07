@@ -16,8 +16,9 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 
 
 ## Catelog
+- [x] GroundingDINO Demo
 - [x] GroundingDINO + Segment-Anything Demo
-- [ ] GroundingDINO + Segment-Anything + Diffusion Demo
+- [x] GroundingDINO + Segment-Anything + Diffusion Demo
 - [ ] Huggingface Demo
 - [ ] Colab demo
 
