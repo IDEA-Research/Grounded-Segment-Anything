@@ -2,8 +2,8 @@
 We plan to create a very interesting demo by combining [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) and [Segment Anything](https://github.com/facebookresearch/segment-anything)! Right now, this is just a simple small project. We will continue to improve it and create more interesting demos.
 
 **Why this project?**
-- [Segment Anything](https://github.com/facebookresearch/segment-anything) is an stronger segmentation model. But it need prompts (like boxes/points) to generate masks. 
-- [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a stronger zero-shot detector which enable to generate high quality boxes and labels with free-form text. 
+- [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it need prompts (like boxes/points) to generate masks. 
+- [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which enable to generate high quality boxes and labels with free-form text. 
 - The combination of the two models enable to **detect and segment everything** with text inputs!
 
 
@@ -12,6 +12,15 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 
 **Grounded-SAM + Stable-Diffusion Inpainting**
 ![](./assets/grounded_sam_inpainting_demo.png)
+
+
+**Imagine space**
+
+Some possible avenues for future work ...
+- Automatic image generation to construct new datasets.
+- Stronger foundation models with segmentation pre-training.
+- Colleboration with (Chat-)GPT.
+- A whole pipeline for automatically label image (with box and mask) and generate new image.
 
 **More Examples**
 ![](./assets/grounded_sam_demo3_demo4.png)
