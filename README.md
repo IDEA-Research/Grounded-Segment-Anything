@@ -7,9 +7,11 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 - The combination of the two models enable to **detect and segment everything** with text inputs!
 
 
-![](./assets/grounded_sam.jpg)
-
+**Grounded-SAM**
 ![](./assets/grounded_sam2.png)
+
+**Grounded-SAM + Stable-Diffusion Inpainting**
+![](./assets/grounded_sam_inpainting_demo.png)
 
 ## Highlight
 - Detect and Segment everything with Language!
@@ -97,6 +99,24 @@ python grounded_sam_demo.py \
 - The model prediction visualization will be saved in `output_dir` as follow:
 
 ![](./assets/grounded_sam_output_demo1.jpg)
+
+## Run Grounded-Segment-Anything + Inpainting Demo
+
+```bash
+CUDA_VISIBLE_DEVICES=0
+python grounded_sam_inpainting_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --input_image assets/inpaint_demo.jpg \
+  --output_dir "outputs" \
+  --box_threshold 0.3 \
+  --text_threshold 0.25 \
+  --det_prompt "bench" \
+  --inpaint_prompt "A sofa, high quality, detailed" \
+  --device "cuda"
+```
+
 
 ## Acknowledgements
 - [segment-anything](https://github.com/facebookresearch/segment-anything)
