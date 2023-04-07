@@ -1,3 +1,5 @@
+import gradio as gr
+
 import argparse
 import os
 import copy
@@ -26,6 +28,19 @@ import requests
 import torch
 from io import BytesIO
 from diffusers import StableDiffusionInpaintPipeline
+from huggingface_hub import hf_hub_download
+
+def load_model_hf(model_config_path, repo_id, filename, device='cpu'):
+    args = SLConfig.fromfile(model_config_path) 
+    model = build_model(args)
+    args.device = device
+
+    cache_file = hf_hub_download(repo_id=repo_id, filename=filename)
+    checkpoint = torch.load(cache_file, map_location='cpu')
+    log = model.load_state_dict(clean_state_dict(checkpoint['model']), strict=False)
+    print("Model loaded from {} \n => {}".format(cache_file, log))
+    _ = model.eval()
+    return model    
 
 def plot_boxes_to_image(image_pil, tgt):
     H, W = tgt["size"]
@@ -68,8 +83,9 @@ def plot_boxes_to_image(image_pil, tgt):
     return image_pil, mask
 
 def load_image(image_path):
-    # load image
-    image_pil = Image.open(image_path).convert("RGB")  # load image
+    # # load image
+    # image_pil = Image.open(image_path).convert("RGB")  # load image
+    image_pil = image_path
 
     transform = T.Compose(
         [
@@ -145,50 +161,22 @@ def show_box(box, ax, label):
     ax.text(x0, y0, label)
 
 
-if __name__ == "__main__":
+config_file = 'GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py'
+ckpt_repo_id = "ShilongLiu/GroundingDINO"
+ckpt_filenmae = "groundingdino_swint_ogc.pth"
+sam_checkpoint='/home/ecs-user/download/sam_vit_h_4b8939.pth' 
+output_dir="outputs"
+device="cuda"
 
-    parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
-    parser.add_argument("--config", type=str, required=True, help="path to config file")
-    parser.add_argument(
-        "--grounded_checkpoint", type=str, required=True, help="path to checkpoint file"
-    )
-    parser.add_argument(
-        "--sam_checkpoint", type=str, required=False, help="path to checkpoint file"
-    )
-    parser.add_argument("--task_type", type=str, required=True, help="select task")
-    parser.add_argument("--input_image", type=str, required=True, help="path to image file")
-    parser.add_argument("--text_prompt", type=str, required=True, help="text prompt")
-    parser.add_argument("--inpaint_prompt", type=str, required=False, help="inpaint prompt")
-    parser.add_argument(
-        "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
-    )
-
-    parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
-    parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
-    parser.add_argument("--device", type=str, default="cpu", help="running on cpu only!, default=False")
-    args = parser.parse_args()
-
-    # cfg
-    config_file = args.config  # change the path of the model config file
-    grounded_checkpoint = args.grounded_checkpoint  # change the path of the model
-    sam_checkpoint = args.sam_checkpoint
-    task_type = args.task_type
-    image_path = args.input_image
-    text_prompt = args.text_prompt
-    inpaint_prompt = args.inpaint_prompt
-    output_dir = args.output_dir
-    box_threshold = args.box_threshold
-    text_threshold = args.box_threshold
-    device = args.device
-
+def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold):
     assert text_prompt, 'text_prompt is not found!'
 
     # make dir
     os.makedirs(output_dir, exist_ok=True)
     # load image
-    image_pil, image = load_image(image_path)
+    image_pil, image = load_image(image_path.convert("RGB"))
     # load model
-    model = load_model(config_file, grounded_checkpoint, device=device)
+    model = load_model_hf(config_file, ckpt_repo_id, ckpt_filenmae)
 
     # visualize raw image
     image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
@@ -203,8 +191,7 @@ if __name__ == "__main__":
     if task_type == 'seg' or task_type == 'inpainting':
         # initialize SAM
         predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint))
-        image = cv2.imread(image_path)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = np.array(image_path)
         predictor.set_image(image)
 
         H, W = size[1], size[0]
@@ -226,7 +213,6 @@ if __name__ == "__main__":
         # masks: [1, 1, 512, 512]
 
     if task_type == 'det':
-        assert grounded_checkpoint, 'grounded_checkpoint is not found!'
         pred_dict = {
             "boxes": boxes_filt,
             "size": [size[1], size[0]],  # H,W
@@ -234,7 +220,10 @@ if __name__ == "__main__":
         }
         # import ipdb; ipdb.set_trace()
         image_with_box = plot_boxes_to_image(image_pil, pred_dict)[0]
-        image_with_box.save(os.path.join(output_dir, "grounding_dino_output.jpg"))
+        image_path = os.path.join(output_dir, "grounding_dino_output.jpg")
+        image_with_box.save(image_path)
+        image_result = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
+        return image_result
     elif task_type == 'seg':
         assert sam_checkpoint, 'sam_checkpoint is not found!'
 
@@ -246,8 +235,10 @@ if __name__ == "__main__":
         for box, label in zip(boxes_filt, pred_phrases):
             show_box(box.numpy(), plt.gca(), label)
         plt.axis('off')
-        plt.savefig(os.path.join(output_dir, "grounded_sam_output.jpg"), bbox_inches="tight")
-
+        image_path = os.path.join(output_dir, "grounding_dino_output.jpg")
+        plt.savefig(image_path, bbox_inches="tight")
+        image_result = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
+        return image_result
     elif task_type == 'inpainting':
         assert inpaint_prompt, 'inpaint_prompt is not found!'
         # inpainting pipeline
@@ -260,19 +251,45 @@ if __name__ == "__main__":
         )
         pipe = pipe.to("cuda")
 
-        # prompt = "A sofa, high quality, detailed"
         image = pipe(prompt=inpaint_prompt, image=image_pil, mask_image=mask_pil).images[0]
-        image.save(os.path.join(output_dir, "grounded_sam_inpainting_output.jpg"))
-
-        # draw output image
-        # plt.figure(figsize=(10, 10))
-        # plt.imshow(image)
-        # for mask in masks:
-        #     show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
-        # for box, label in zip(boxes_filt, pred_phrases):
-        #     show_box(box.numpy(), plt.gca(), label)
-        # plt.axis('off')
-        # plt.savefig(os.path.join(output_dir, "grounded_sam_output.jpg"), bbox_inches="tight")
+        image_path = os.path.join(output_dir, "grounded_sam_inpainting_output.jpg")
+        image.save(image_path)
+        image_result = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
+        return image_result
     else:
         print("task_type:{} error!".format(task_type))
 
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser("Grounded SAM demo", add_help=True)
+    parser.add_argument("--debug", action="store_true", help="using debug mode")
+    parser.add_argument("--share", action="store_true", help="share the app")
+    args = parser.parse_args()
+
+    block = gr.Blocks().queue()
+    with block:
+        with gr.Row():
+            with gr.Column():
+                input_image = gr.Image(source='upload', type="pil")
+                text_prompt = gr.Textbox(label="Detection Prompt")
+                task_type = gr.Textbox(label="task type: det/seg/inpainting")
+                inpaint_prompt = gr.Textbox(label="Inpaint Prompt")
+                run_button = gr.Button(label="Run")
+                with gr.Accordion("Advanced options", open=False):
+                    box_threshold = gr.Slider(
+                        label="Box Threshold", minimum=0.0, maximum=1.0, value=0.3, step=0.001
+                    )
+                    text_threshold = gr.Slider(
+                        label="Text Threshold", minimum=0.0, maximum=1.0, value=0.25, step=0.001
+                    )
+
+            with gr.Column():
+                gallery = gr.outputs.Image(
+                    type="pil",
+                ).style(full_width=True, full_height=True)
+
+        run_button.click(fn=run_grounded_sam, inputs=[
+                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold], outputs=[gallery])
+
+
+    block.launch(server_name='0.0.0.0', server_port=7589, debug=args.debug, share=args.share)

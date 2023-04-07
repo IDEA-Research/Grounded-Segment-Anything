@@ -13,15 +13,17 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 **Grounded-SAM + Stable-Diffusion Inpainting**
 ![](./assets/grounded_sam_inpainting_demo.png)
 
+
 **Imagine space**
 
 Some possible avenues for future work ...
 - Automatic image generation to construct new datasets.
 - Stronger foundation models with segmentation pre-training.
 - Colleboration with (Chat-)GPT.
+- A whole pipeline for automatically label image (with box and mask) and generate new image.
 
-## Highlight
-- Detect and Segment everything with Language!
+**More Examples**
+![](./assets/grounded_sam_demo3_demo4.png)
 
 
 ## Catelog
@@ -122,6 +124,12 @@ python grounded_sam_inpainting_demo.py \
   --det_prompt "bench" \
   --inpaint_prompt "A sofa, high quality, detailed" \
   --device "cuda"
+```
+
+## Run Grounded-Segment-Anything + Inpainting Gradio APP
+
+```bash
+python gradio_app.py
 ```
 
 
