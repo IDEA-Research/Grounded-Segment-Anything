@@ -13,8 +13,8 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 **Grounded-SAM + Stable-Diffusion Inpainting**
 ![](./assets/grounded_sam_inpainting_demo.png)
 
-## Highlight
-- Detect and Segment everything with Language!
+**More Examples**
+![](./assets/grounded_sam_demo3_demo4.png)
 
 
 ## Catelog
