@@ -1,5 +1,11 @@
 # Grounded-Segment-Anything
-We plan to create a very interesting demo by combining [Grounding DINO](https://arxiv.org/abs/2303.05499) and [Segment Anything](https://ai.facebook.com/research/publications/segment-anything/)! Right now, this is just a simple small project. We will continue to improve it and create more interesting demos.
+We plan to create a very interesting demo by combining [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) and [Segment Anything](https://github.com/facebookresearch/segment-anything)! Right now, this is just a simple small project. We will continue to improve it and create more interesting demos.
+
+**Why this project?**
+- [Segment Anything](https://github.com/facebookresearch/segment-anything) is an stronger segmentation model. But it need prompts (like boxes/points) to generate masks. 
+- [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a stronger zero-shot detector which enable to generate high quality boxes and labels with free-form text. 
+- The combination of the two models enable to detect and segment everything with text inputs!
+
 
 ![](./assets/grounded_sam.jpg)
 
