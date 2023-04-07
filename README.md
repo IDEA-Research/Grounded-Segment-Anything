@@ -4,7 +4,7 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 **Why this project?**
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is an stronger segmentation model. But it need prompts (like boxes/points) to generate masks. 
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a stronger zero-shot detector which enable to generate high quality boxes and labels with free-form text. 
-- The combination of the two models enable to detect and segment everything with text inputs!
+- The combination of the two models enable to **detect and segment everything** with text inputs!
 
 
 ![](./assets/grounded_sam.jpg)
@@ -17,6 +17,7 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 
 ## Catelog
 - [x] GroundingDINO + Segment-Anything Demo
+- [ ] GroundingDINO + Segment-Anything + Diffusion Demo
 - [ ] Huggingface Demo
 - [ ] Colab demo
 
