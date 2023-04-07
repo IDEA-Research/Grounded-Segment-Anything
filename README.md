@@ -126,6 +126,12 @@ python grounded_sam_inpainting_demo.py \
   --device "cuda"
 ```
 
+## Run Grounded-Segment-Anything + Inpainting Gradio APP
+
+```bash
+python gradio_app.py
+```
+
 
 ## Acknowledgements
 - [segment-anything](https://github.com/facebookresearch/segment-anything)
