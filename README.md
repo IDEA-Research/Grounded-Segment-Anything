@@ -26,6 +26,13 @@ Some possible avenues for future work ...
 **More Examples**
 ![](./assets/grounded_sam_demo3_demo4.png)
 
+## What's New 
+
+- :new: Checkout our related human-face-edit branch [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). We'll keep updating this branch with more interesting features. Here are some examples:
+
+![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/231-hair-edit.png)
+
+
 
 ## Catelog
 - [x] GroundingDINO Demo
@@ -140,13 +147,6 @@ python grounded_sam_inpainting_demo.py \
 ```bash
 python gradio_app.py
 ```
-
-## What's more 
-
-- :new: Checkout our related human-face-edit branch [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). We'll keep updating this branch with more interesting features.
-
-![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/231-hair-edit.png)
-
 
 ## Acknowledgements
 - [segment-anything](https://github.com/facebookresearch/segment-anything)
