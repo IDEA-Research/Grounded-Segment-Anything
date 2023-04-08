@@ -1,3 +1,4 @@
+![](./assets/Grounded-SAM_logo.png)
 # Grounded-Segment-Anything
 We plan to create a very interesting demo by combining [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) and [Segment Anything](https://github.com/facebookresearch/segment-anything)! Right now, this is just a simple small project. We will continue to improve it and create more interesting demos.
 
