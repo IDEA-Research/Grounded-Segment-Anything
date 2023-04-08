@@ -7,6 +7,7 @@ In this branch, we plan to use [Segment Anything](https://github.com/facebookres
 
 
 **SAM + hair-edit**
+![](./assets/231-hair-edit.png)
 ![](./assets/zuck-hair-edit.png)
 
 
