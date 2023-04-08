@@ -48,6 +48,14 @@ Install GroundingDINO:
 python -m pip install -e GroundingDINO
 ```
 
+
+Install diffusers:
+
+```bash
+pip install --upgrade diffusers[torch]
+```
+
+
 The following optional dependencies are necessary for mask post-processing, saving masks in COCO format, the example notebooks, and exporting the model in ONNX format. `jupyter` is also required to run the example notebooks.
 ```
 pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
