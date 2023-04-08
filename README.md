@@ -140,6 +140,12 @@ python grounded_sam_inpainting_demo.py \
 python gradio_app.py
 ```
 
+## What's more 
+
+- :new: Checkout our related human-face-edit branch [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). We'll keep updating this branch with more interesting features.
+
+![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/231-hair-edit.png)
+
 
 ## Acknowledgements
 - [segment-anything](https://github.com/facebookresearch/segment-anything)
