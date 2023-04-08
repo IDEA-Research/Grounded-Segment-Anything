@@ -1,3 +1,4 @@
+![](./assets/Grounded-SAM_logo.png)
 # Grounded-Segment-Anything
 We plan to create a very interesting demo by combining [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) and [Segment Anything](https://github.com/facebookresearch/segment-anything)! Right now, this is just a simple small project. We will continue to improve it and create more interesting demos.
 
@@ -25,15 +26,25 @@ Some possible avenues for future work ...
 **More Examples**
 ![](./assets/grounded_sam_demo3_demo4.png)
 
+## :fire: What's New 
 
-## Catelog
+- :new: Checkout our related human-face-edit branch [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). We'll keep updating this branch with more interesting features. Here are some examples:
+
+![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/231-hair-edit.png)
+
+
+
+## :bookmark_tabs: Catelog
 - [x] GroundingDINO Demo
 - [x] GroundingDINO + Segment-Anything Demo
 - [x] GroundingDINO + Segment-Anything + Diffusion Demo
 - [ ] Huggingface Demo
 - [ ] Colab demo
 
-## Installation
+## :open_book: Notebook Demo
+See our [notebook file](grounded_sam.ipynb) as an example.
+
+## :hammer_and_wrench: Installation
 The code requires `python>=3.8`, as well as `pytorch>=1.7` and `torchvision>=0.8`. Please follow the instructions [here](https://pytorch.org/get-started/locally/) to install both PyTorch and TorchVision dependencies. Installing both PyTorch and TorchVision with CUDA support is strongly recommended.
 
 Install Segment Anything:
@@ -64,7 +75,7 @@ pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
 More details can be found in [install segment anything](https://github.com/facebookresearch/segment-anything#installation) and [install GroundingDINO](https://github.com/IDEA-Research/GroundingDINO#install)
 
 
-## Run GroundingDINO Demo
+## :runner: Run GroundingDINO Demo
 - Download the checkpoint for groundingdino:
 ```bash
 cd Grounded-Segment-Anything
@@ -89,7 +100,7 @@ python grounding_dino_demo.py \
 
 ![](./assets/grounding_dino_output_demo1.jpg)
 
-## Run Grounded-Segment-Anything Demo
+## :running_man: Run Grounded-Segment-Anything Demo
 - Download the checkpoint for segment-anything and grounding-dino:
 ```bash
 cd Grounded-Segment-Anything
@@ -117,7 +128,7 @@ python grounded_sam_demo.py \
 
 ![](./assets/grounded_sam_output_demo1.jpg)
 
-## Run Grounded-Segment-Anything + Inpainting Demo
+## :skier: Run Grounded-Segment-Anything + Inpainting Demo
 
 ```bash
 CUDA_VISIBLE_DEVICES=0
@@ -134,14 +145,13 @@ python grounded_sam_inpainting_demo.py \
   --device "cuda"
 ```
 
-## Run Grounded-Segment-Anything + Inpainting Gradio APP
+## :golfing: Run Grounded-Segment-Anything + Inpainting Gradio APP
 
 ```bash
 python gradio_app.py
 ```
 
-
-## Acknowledgements
+## :cupid: Acknowledgements
 - [segment-anything](https://github.com/facebookresearch/segment-anything)
 - [GroundingDINO](https://github.com/IDEA-Research/GroundingDINO)
 
