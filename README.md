@@ -22,13 +22,13 @@ Using BLIP to generate caption, extract tags and using Grounded-SAM for box and 
 
 ![](./assets/automatic_label_output_demo3.jpg)
 
-**Imagine space**
+**Imagine Space**
 
 Some possible avenues for future work ...
 - Automatic image generation to construct new datasets.
 - Stronger foundation models with segmentation pre-training.
-- Colleboration with (Chat-)GPT.
-- A whole pipeline for automatically label image (with box and mask) and generate new image.
+- Collaboration with (Chat-)GPT.
+- A whole pipeline to automatically label image (with box and mask) and generate new image.
 
 **More Examples**
 ![](./assets/grounded_sam_demo3_demo4.png)
@@ -163,8 +163,8 @@ python gradio_app.py
 
 ## :robot: Run Grounded-Segment-Anything + BLIP Demo
 It is easy to generate pseudo labels automatically as follows:
-1. Use BLIP (or others caption models) to generate a caption.
-2. Extract tags from the caption. We use ChatGPT to handle potential complicated sentence. 
+1. Use BLIP (or other caption models) to generate a caption.
+2. Extract tags from the caption. We use ChatGPT to handle the potential complicated sentences. 
 3. Use Grounded-Segment-Anything to generate the boxes and masks.
 
 - Run Demo
@@ -183,7 +183,7 @@ python automatic_label_demo.py \
   --device "cuda"
 ```
 
-- The pseudo labels and model prediction visualization will be saved in `output_dir` as follow:
+- The pseudo labels and model prediction visualization will be saved in `output_dir` as follows:
 
 ![](./assets/automatic_label_output_demo3.jpg)
 
