@@ -46,7 +46,7 @@ Some possible avenues for future work ...
 - [x] GroundingDINO + Segment-Anything Demo
 - [x] GroundingDINO + Segment-Anything + Stable-Diffusion Demo
 - [x] BLIP + GroundingDINO + Segment-Anything + Stable-Diffusion Demo
-- [ ] Huggingface Demo
+- [ ] Hugging Face Demo
 - [ ] Colab demo
 
 ## :open_book: Notebook Demo
