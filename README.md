@@ -23,7 +23,7 @@ In this branch, we plan to use [Segment Anything](https://github.com/facebookres
 <center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="./assets/interactive-mark.gif">
+    src="./assets/interactive-mark.gif" width="400" height="400">
     <br>
     <div style="color:orange; border-bottom: 1px solid #d9d9d9;
     display: inline-block;
