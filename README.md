@@ -128,6 +128,7 @@ python grounded_sam_demo.py \
 
 ![](./assets/grounded_sam_output_demo1.jpg)
 
+
 ## :skier: Run Grounded-Segment-Anything + Inpainting Demo
 
 ```bash
@@ -150,6 +151,34 @@ python grounded_sam_inpainting_demo.py \
 ```bash
 python gradio_app.py
 ```
+
+
+## :robot: Run Grounded-Segment-Anything + BLIP Demo
+It is easy to generate psudo labels automatically as follows:
+(1) Use BLIP (or others caption models) to generate a caption.
+(2) Extract tags from the caption. We use ChatGPT to handle potential complicated sentence. 
+(3) Use Grounded-Segment-Anything to generate the boxes and masks.
+
+- Run Demo
+```bash
+export CUDA_VISIBLE_DEVICES=0
+python automatic_label_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --input_image assets/demo3.jpg \
+  --output_dir "outputs" \
+  --openai_key your_openai_key \
+  --box_threshold 0.25 \
+  --text_threshold 0.2 \
+  --iou_threshold 0.5 \
+  --device "cuda"
+```
+
+- The psudo labels and model prediction visualization will be saved in `output_dir` as follow:
+
+![](./assets/automatic_label_output_demo3.jpg)
+
 
 ## :cupid: Acknowledgements
 - [segment-anything](https://github.com/facebookresearch/segment-anything)
