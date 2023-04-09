@@ -15,6 +15,9 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 ![](./assets/grounded_sam_inpainting_demo.png)
 
 **BLIP + Grounded-SAM: Automatic Label System!**
+
+Using BLIP to generate caption, extract tags and using Grounded-SAM for box and mask generating. Here's the demo output:
+
 ![](./assets/automatic_label_output_demo3.jpg)
 
 **Imagine space**
