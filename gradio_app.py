@@ -163,8 +163,8 @@ def show_box(box, ax, label):
 
 config_file = 'GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py'
 ckpt_repo_id = "ShilongLiu/GroundingDINO"
-ckpt_filenmae = "checkpoints/groundingdino_swint_ogc.pth"
-sam_checkpoint='checkpoints/sam_vit_h_4b8939.pth' 
+ckpt_filenmae = "groundingdino_swint_ogc.pth"
+sam_checkpoint='sam_vit_h_4b8939.pth' 
 output_dir="outputs"
 device="cuda"
 

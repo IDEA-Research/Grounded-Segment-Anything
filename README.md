@@ -86,7 +86,7 @@ More details can be found in [install segment anything](https://github.com/faceb
 ## :runner: Run GroundingDINO Demo
 - Download the checkpoint for groundingdino:
 ```bash
-cd Grounded-Segment-Anything/checkpoints
+cd Grounded-Segment-Anything
 
 wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 ```
@@ -111,7 +111,7 @@ python grounding_dino_demo.py \
 ## :running_man: Run Grounded-Segment-Anything Demo
 - Download the checkpoint for segment-anything and grounding-dino:
 ```bash
-cd Grounded-Segment-Anything/checkpoints
+cd Grounded-Segment-Anything
 
 wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
 wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
@@ -122,8 +122,8 @@ wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alp
 export CUDA_VISIBLE_DEVICES=0
 python grounded_sam_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
-  --grounded_checkpoint checkpoints/groundingdino_swint_ogc.pth \
-  --sam_checkpoint checkpoints/sam_vit_h_4b8939.pth \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
   --input_image assets/demo1.jpg \
   --output_dir "outputs" \
   --box_threshold 0.3 \
@@ -143,8 +143,8 @@ python grounded_sam_demo.py \
 CUDA_VISIBLE_DEVICES=0
 python grounded_sam_inpainting_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
-  --grounded_checkpoint checkpoints/groundingdino_swint_ogc.pth \
-  --sam_checkpoint checkpoints/sam_vit_h_4b8939.pth \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
   --input_image assets/inpaint_demo.jpg \
   --output_dir "outputs" \
   --box_threshold 0.3 \
@@ -172,8 +172,8 @@ It is easy to generate pseudo labels automatically as follows:
 export CUDA_VISIBLE_DEVICES=0
 python automatic_label_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
-  --grounded_checkpoint checkpoints/groundingdino_swint_ogc.pth \
-  --sam_checkpoint checkpoints/sam_vit_h_4b8939.pth \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
   --input_image assets/demo3.jpg \
   --output_dir "outputs" \
   --openai_key your_openai_key \
