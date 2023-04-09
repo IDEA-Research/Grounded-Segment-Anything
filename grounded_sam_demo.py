@@ -99,7 +99,7 @@ def show_box(box, ax, label):
     ax.text(x0, y0, label)
 
 
-def save_mask_data(output_dir, mask_list, box_list, label_list):
+def save_mask_data(output_dir, mask_list, box_list, label_list, text_prompt):
     value = 0  # 0 for background
 
     mask_img = torch.zeros(mask_list.shape[-2:])
@@ -108,7 +108,7 @@ def save_mask_data(output_dir, mask_list, box_list, label_list):
     plt.figure(figsize=(10, 10))
     plt.imshow(mask_img.numpy())
     plt.axis('off')
-    plt.savefig(os.path.join(output_dir, 'mask.jpg'), bbox_inches="tight", dpi=300, pad_inches=0.0)
+    plt.savefig(os.path.join(output_dir, f'mask_{text_prompt}.jpg'), bbox_inches="tight", dpi=300, pad_inches=0.0)
 
     json_data = [{
         'value': value,
@@ -209,11 +209,13 @@ if __name__ == "__main__":
         for box, label in zip(boxes_filt, pred_phrases):
             show_box(box.numpy(), plt.gca(), label)
 
+        save_mask_data(output_dir, masks, boxes_filt, pred_phrases, text_prompt)
+
     plt.axis('off')
     plt.savefig(
         os.path.join(output_dir, "grounded_sam_output.jpg"), 
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
 
-    save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
+    
 
