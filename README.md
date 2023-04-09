@@ -155,9 +155,9 @@ python gradio_app.py
 
 ## :robot: Run Grounded-Segment-Anything + BLIP Demo
 It is easy to generate pseudo labels automatically as follows:
-(1) Use BLIP (or others caption models) to generate a caption.
-(2) Extract tags from the caption. We use ChatGPT to handle potential complicated sentence. 
-(3) Use Grounded-Segment-Anything to generate the boxes and masks.
+1. Use BLIP (or others caption models) to generate a caption.
+2. Extract tags from the caption. We use ChatGPT to handle potential complicated sentence. 
+3. Use Grounded-Segment-Anything to generate the boxes and masks.
 
 - Run Demo
 ```bash
