@@ -5,8 +5,34 @@ In this branch, we plan to use [Segment Anything](https://github.com/facebookres
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it need prompts (like boxes/points) to generate masks. 
 - Current Diffusion-based inpainting models support regional editing, we hope to utilize the segmentation model to generate detailed masks for inpainting.
 
+## 🔥 What's New
+
+**🆕 SAM + fashion-edit** [[Demo Notebook]](./fashion_edit.ipynb)
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./assets/interactive-fashion-edit.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">interactively mark part of interests, manipulation enpowered with inpainting model</div>
+</center>
+<br>
+
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./assets/interactive-mark.gif">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">Simple notebook interactive annotation playground:<br> Left click to mark positive points[green dot] , right click for negative points[red dot] </div>
+</center>
 
 **SAM + hair-edit**
+
 ![](./assets/231-hair-edit.png)
 ![](./assets/zuck-hair-edit.png)
 
@@ -48,7 +74,7 @@ Install FaceParsing Module:
 
 We use [face-parsing.Pytorch](https://github.com/zllrunning/face-parsing.PyTorch) for preliminaril face parsing to detect the hair region. We already contain original code in this repo. You can download the [pre-trained model](https://drive.google.com/open?id=154JgKpzCPW82qINcVieuPH3fZ2e0P812) and save it in `face_parsing_PyTorch/res/cp`.
 
-## Run GroundingDINO Demo
+## Run Demo
 - Download the checkpoint for SAM:
 
 ```bash
@@ -56,8 +82,9 @@ We use [face-parsing.Pytorch](https://github.com/zllrunning/face-parsing.PyTorch
 wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
 ```
 
-- Run demo
-[Jupyter Notebook](sam_hair.ipynb)
+- Run demo<br>
+[Hair edit - Jupyter Notebook](sam_hair.ipynb) <br>
+[Fashion edit - Jupyter Notebook](fashion_edit.ipynb) <br>
 
 
 ## Acknowledgements
