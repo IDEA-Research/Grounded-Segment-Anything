@@ -14,9 +14,7 @@ Interactively mark part of interests, manipulation enpowered with inpainting mod
 
 Simple notebook interactive annotation playground: Left click to mark positive points[green dot] , right click for negative points[red dot]
 
-<center class="half">
-    <img src="./assets/interactive-fashion-edit.png" width="600" height="325"/><img src="./assets/interactive-mark.gif" width="300" height="300"/>
-</center>
+<div align=center><img src="./assets/interactive-fashion-edit.png" width="500" height="265"/><img src="./assets/interactive-mark.gif" width="250" height="250"/></div>
 
 **SAM + hair-edit**
 
