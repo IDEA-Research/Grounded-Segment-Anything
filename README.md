@@ -154,7 +154,7 @@ python gradio_app.py
 
 
 ## :robot: Run Grounded-Segment-Anything + BLIP Demo
-It is easy to generate psudo labels automatically as follows:
+It is easy to generate pseudo labels automatically as follows:
 (1) Use BLIP (or others caption models) to generate a caption.
 (2) Extract tags from the caption. We use ChatGPT to handle potential complicated sentence. 
 (3) Use Grounded-Segment-Anything to generate the boxes and masks.
@@ -175,7 +175,7 @@ python automatic_label_demo.py \
   --device "cuda"
 ```
 
-- The psudo labels and model prediction visualization will be saved in `output_dir` as follow:
+- The pseudo labels and model prediction visualization will be saved in `output_dir` as follow:
 
 ![](./assets/automatic_label_output_demo3.jpg)
 
