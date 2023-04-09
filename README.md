@@ -96,7 +96,7 @@ wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alp
 export CUDA_VISIBLE_DEVICES=0
 python grounding_dino_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
-  --grounded_checkpoint checkpoints/groundingdino_swint_ogc.pth \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
   --input_image assets/demo1.jpg \
   --output_dir "outputs" \
   --box_threshold 0.3 \
