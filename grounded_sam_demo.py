@@ -181,6 +181,7 @@ if __name__ == "__main__":
     # initialize image plot
     plt.figure(figsize=(10, 10))
     plt.imshow(image)
+    all_masks = []
     for text_prompt in text_prompts:
         # run grounding dino model
         boxes_filt, pred_phrases = get_grounding_output(
@@ -202,6 +203,7 @@ if __name__ == "__main__":
             boxes = transformed_boxes,
             multimask_output = False,
         )
+        all_masks.append(masks)
 
         # draw output image
         for mask in masks:
@@ -209,7 +211,7 @@ if __name__ == "__main__":
         for box, label in zip(boxes_filt, pred_phrases):
             show_box(box.numpy(), plt.gca(), label)
 
-        save_mask_data(output_dir, masks, boxes_filt, pred_phrases, text_prompt)
+
 
     plt.axis('off')
     plt.savefig(
@@ -217,5 +219,6 @@ if __name__ == "__main__":
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
 
-    
+    for masks, text_prompt in zip(all_masks, text_prompts):
+        save_mask_data(output_dir, masks, boxes_filt, pred_phrases, text_prompt)
 
