@@ -56,7 +56,7 @@ def generate_tags(caption, max_tokens=100, model="gpt-3.5-turbo"):
         {
             'role': 'system',
             'content': 'Extrat the unique nouns in the caption. Remove all the adjectives. ' + \
-                       'List the nouns in singular form. Splite them by ",". ' + \
+                       'List the nouns in singular form. Split them by ",". ' + \
                        f'Caption: {caption}.'
         }
     ]

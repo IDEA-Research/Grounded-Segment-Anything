@@ -14,6 +14,8 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 **Grounded-SAM + Stable-Diffusion Inpainting**
 ![](./assets/grounded_sam_inpainting_demo.png)
 
+**BLIP + Grounded-SAM: Automatic Label System!**
+![](./assets/automatic_label_output_demo3.jpg)
 
 **Imagine space**
 
@@ -37,7 +39,8 @@ Some possible avenues for future work ...
 ## :bookmark_tabs: Catelog
 - [x] GroundingDINO Demo
 - [x] GroundingDINO + Segment-Anything Demo
-- [x] GroundingDINO + Segment-Anything + Diffusion Demo
+- [x] GroundingDINO + Segment-Anything + Stable-Diffusion Demo
+- [x] BLIP + GroundingDINO + Segment-Anything + Stable-Diffusion Demo
 - [ ] Huggingface Demo
 - [ ] Colab demo
 
