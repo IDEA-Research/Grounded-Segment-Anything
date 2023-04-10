@@ -52,6 +52,7 @@ Some possible avenues for future work ...
 - [Zero-Shot Anomaly Detection](https://github.com/caoyunkang/GroundedSAM-zero-shot-anomaly-detection) by Yunkang Cao
 - [EditAnything: ControlNet + StableDiffusion based on the SAM segmentation mask](https://github.com/sail-sg/EditAnything) by Shanghua Gao and Pan Zhou
 - [IEA: Image Editing Anything](https://github.com/feizc/IEA) by Zhengcong Fei
+- [SAM-MMRorate: Combining Rotated Object Detector and SAM](https://github.com/Li-Qingyun/sam-mmrotate) by Qingyun Li and Xue Yang
 
 
 ## :bookmark_tabs: Catelog
