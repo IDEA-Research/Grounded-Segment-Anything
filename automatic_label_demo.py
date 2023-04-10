@@ -56,7 +56,7 @@ def generate_tags(caption, max_tokens=100, model="gpt-3.5-turbo"):
         {
             'role': 'system',
             'content': 'Extrat the unique nouns in the caption. Remove all the adjectives. ' + \
-                       'List the nouns in singular form. Splite them by ",". ' + \
+                       'List the nouns in singular form. Split them by ",". ' + \
                        f'Caption: {caption}.'
         }
     ]
@@ -111,6 +111,7 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold,de
         scores.append(logit.max().item())
 
     return boxes_filt, torch.Tensor(scores), pred_phrases
+
 
 def show_mask(mask, ax, random_color=False):
     if random_color:
