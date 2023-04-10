@@ -36,7 +36,7 @@ Some possible avenues for future work ...
 ![](./assets/grounded_sam_demo3_demo4.png)
 
 
-** :star: Tips**
+**Tips**
 - If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest seperating each name with `.` . An example: `cat . dog . chair .`
 
 ## :fire: What's New 
