@@ -35,6 +35,10 @@ Some possible avenues for future work ...
 **More Examples**
 ![](./assets/grounded_sam_demo3_demo4.png)
 
+
+** :star: Tips**
+- If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest seperating each name with `.` . An example: `cat . dog . chair .`
+
 ## :fire: What's New 
 - 🆕 Release the interactive fashion-edit playground in [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). Run in the notebook, just click for annotating points for further segmentation. Enjoy it! 
 
