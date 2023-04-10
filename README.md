@@ -2,43 +2,69 @@
 # Grounded-Segment-Anything
 We plan to create a very interesting demo by combining [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) and [Segment Anything](https://github.com/facebookresearch/segment-anything)! Right now, this is just a simple small project. We will continue to improve it and create more interesting demos.
 
+We are very willing to **help everyone share and promote new projects** based on Segment-Anything, we highlight some excellent projects here: [Highlight Extension Projects](#bulb-highlight-extension-projects). You can submit a new issue (with `project` tag) or a new pull request to add new projects' links.
+
 **Why this project?**
-- [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it need prompts (like boxes/points) to generate masks. 
-- [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which enable to generate high quality boxes and labels with free-form text. 
+- [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it needs prompts (like boxes/points) to generate masks. 
+- [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
 - The combination of the two models enable to **detect and segment everything** with text inputs!
+- The combination of `BLIP + GroundingDINO + SAM` for automatic labeling!
+- The combination of `GroundingDINO + SAM + Stable-diffusion` for data-factory, generating new data!
 
 
 **Grounded-SAM**
 ![](./assets/grounded_sam2.png)
 
-**Grounded-SAM + Stable-Diffusion Inpainting**
+**Grounded-SAM + Stable-Diffusion Inpainting: Data-Factory, Generating New Data!**
 ![](./assets/grounded_sam_inpainting_demo.png)
 
+**BLIP + Grounded-SAM: Automatic Label System!**
 
-**Imagine space**
+Using BLIP to generate caption, extract tags and using Grounded-SAM for box and mask generating. Here's the demo output:
+
+![](./assets/automatic_label_output_demo3.jpg)
+
+**Imagine Space**
 
 Some possible avenues for future work ...
 - Automatic image generation to construct new datasets.
 - Stronger foundation models with segmentation pre-training.
-- Colleboration with (Chat-)GPT.
-- A whole pipeline for automatically label image (with box and mask) and generate new image.
+- Collaboration with (Chat-)GPT.
+- A whole pipeline to automatically label image (with box and mask) and generate new image.
 
 **More Examples**
 ![](./assets/grounded_sam_demo3_demo4.png)
 
+
+**Tips**
+- If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest seperating each name with `.` . An example: `cat . dog . chair .`
+
 ## :fire: What's New 
+- 🆕 Release the interactive fashion-edit playground in [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). Run in the notebook, just click for annotating points for further segmentation. Enjoy it! 
+
+
+  <img src="https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/interactive-fashion-edit.png" width="500" height="260"/><img src="https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/interactive-mark.gif" width="250" height="250"/>
+
+
 
 - :new: Checkout our related human-face-edit branch [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). We'll keep updating this branch with more interesting features. Here are some examples:
 
-![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/231-hair-edit.png)
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/231-hair-edit.png)
 
+
+## :bulb: Highlight Extension Projects
+- [Zero-Shot Anomaly Detection](https://github.com/caoyunkang/GroundedSAM-zero-shot-anomaly-detection) by Yunkang Cao
+- [EditAnything: ControlNet + StableDiffusion based on the SAM segmentation mask](https://github.com/sail-sg/EditAnything) by Shanghua Gao and Pan Zhou
+- [IEA: Image Editing Anything](https://github.com/feizc/IEA) by Zhengcong Fei
+- [SAM-MMRorate: Combining Rotated Object Detector and SAM](https://github.com/Li-Qingyun/sam-mmrotate) by Qingyun Li and Xue Yang
 
 
 ## :bookmark_tabs: Catelog
 - [x] GroundingDINO Demo
 - [x] GroundingDINO + Segment-Anything Demo
-- [x] GroundingDINO + Segment-Anything + Diffusion Demo
-- [ ] Huggingface Demo
+- [x] GroundingDINO + Segment-Anything + Stable-Diffusion Demo
+- [x] BLIP + GroundingDINO + Segment-Anything + Stable-Diffusion Demo
+- [ ] Hugging Face Demo
 - [ ] Colab demo
 
 ## :open_book: Notebook Demo
@@ -152,11 +178,15 @@ python grounded_sam_inpainting_demo.py \
 python gradio_app.py
 ```
 
+- The gradio_app visualization as follow:
+
+![](./assets/gradio_demo.png)
+
 
 ## :robot: Run Grounded-Segment-Anything + BLIP Demo
 It is easy to generate pseudo labels automatically as follows:
-1. Use BLIP (or others caption models) to generate a caption.
-2. Extract tags from the caption. We use ChatGPT to handle potential complicated sentence. 
+1. Use BLIP (or other caption models) to generate a caption.
+2. Extract tags from the caption. We use ChatGPT to handle the potential complicated sentences. 
 3. Use Grounded-Segment-Anything to generate the boxes and masks.
 
 - Run Demo
@@ -175,7 +205,7 @@ python automatic_label_demo.py \
   --device "cuda"
 ```
 
-- The pseudo labels and model prediction visualization will be saved in `output_dir` as follow:
+- The pseudo labels and model prediction visualization will be saved in `output_dir` as follows:
 
 ![](./assets/automatic_label_output_demo3.jpg)
 
