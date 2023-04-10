@@ -172,7 +172,7 @@ if __name__ == "__main__":
     image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
 
     # support multiple text prompts
-    text_prompts = text_prompt.split(", ")
+    text_prompts = [prompt.split() for prompt in text_prompt.split(".")]
     # initialize SAM
     predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint))
     image = cv2.imread(image_path)
