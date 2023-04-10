@@ -67,6 +67,30 @@ def generate_tags(caption, max_tokens=100, model="gpt-3.5-turbo"):
     return tags
 
 
+def check_caption(caption, pred_phrases, max_tokens=100, model="gpt-3.5-turbo"):
+    object_list = [obj.split('(')[0] for obj in pred_phrases]
+    object_num = []
+    for obj in set(object_list):
+        object_num.append(f'{object_list.count(obj)} {obj}')
+    object_num = ', '.join(object_num)
+    print(f"Correct object number: {object_num}")
+
+    prompt = [
+        {
+            'role': 'system',
+            'content': 'Revise the number in the caption if it is wrong. ' + \
+                       f'Caption: {caption}. ' + \
+                       f'True object number: {object_num}. ' + \
+                       'Only give the revised caption: '
+        }
+    ]
+    response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
+    reply = response['choices'][0]['message']['content']
+    # sometimes return with "Caption: xxx, xxx, xxx"
+    caption = reply.split(':')[-1].strip()
+    return caption
+
+
 def load_model(model_config_path, model_checkpoint_path, device):
     args = SLConfig.fromfile(model_config_path)
     args.device = device
@@ -249,6 +273,8 @@ if __name__ == "__main__":
     boxes_filt = boxes_filt[nms_idx]
     pred_phrases = [pred_phrases[idx] for idx in nms_idx]
     print(f"After NMS: {boxes_filt.shape[0]} boxes")
+    caption = check_caption(caption, pred_phrases)
+    print(f"Revise caption with number: {caption}")
 
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
 
