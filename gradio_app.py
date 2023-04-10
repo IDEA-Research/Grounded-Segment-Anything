@@ -164,7 +164,7 @@ def show_box(box, ax, label):
 config_file = 'GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py'
 ckpt_repo_id = "ShilongLiu/GroundingDINO"
 ckpt_filenmae = "groundingdino_swint_ogc.pth"
-sam_checkpoint='/home/ecs-user/download/sam_vit_h_4b8939.pth' 
+sam_checkpoint='sam_vit_h_4b8939.pth' 
 output_dir="outputs"
 device="cuda"
 
@@ -264,6 +264,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser("Grounded SAM demo", add_help=True)
     parser.add_argument("--debug", action="store_true", help="using debug mode")
     parser.add_argument("--share", action="store_true", help="share the app")
+    parser.add_argument('--port', type=int, default=7589, help='port to run the server')
     args = parser.parse_args()
 
     block = gr.Blocks().queue()
@@ -292,4 +293,4 @@ if __name__ == "__main__":
                         input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold], outputs=[gallery])
 
 
-    block.launch(server_name='0.0.0.0', server_port=7589, debug=args.debug, share=args.share)
+    block.launch(server_name='0.0.0.0', server_port=args.port, debug=args.debug, share=args.share)
