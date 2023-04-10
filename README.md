@@ -57,6 +57,8 @@ Some possible avenues for future work ...
 - [EditAnything: ControlNet + StableDiffusion based on the SAM segmentation mask](https://github.com/sail-sg/EditAnything) by Shanghua Gao and Pan Zhou
 - [IEA: Image Editing Anything](https://github.com/feizc/IEA) by Zhengcong Fei
 - [SAM-MMRorate: Combining Rotated Object Detector and SAM](https://github.com/Li-Qingyun/sam-mmrotate) by Qingyun Li and Xue Yang
+- [Awesome-Anything](https://github.com/VainF/Awesome-Anything) by Gongfan Fang
+- [Prompt-Segment-Anything](https://github.com/RockeyCoss/Prompt-Segment-Anything) by Rockey
 
 
 ## :bookmark_tabs: Catelog
