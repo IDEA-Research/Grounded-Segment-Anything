@@ -166,6 +166,10 @@ python grounded_sam_inpainting_demo.py \
 python gradio_app.py
 ```
 
+- The gradio_app visualization as follow:
+
+![](./assets/gradio_demo.png)
+
 
 ## :robot: Run Grounded-Segment-Anything + BLIP Demo
 It is easy to generate pseudo labels automatically as follows:
