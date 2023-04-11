@@ -130,3 +130,4 @@ dmypy.json
 
 # checkpoint
 *.pth
+outputs/

@@ -231,13 +231,15 @@ pip install -U openai-whisper
 ```
 See the [whisper official page](https://github.com/openai/whisper#setup) if you have other questions for the installation.
 
-**Download Demo Audio**
+**Run Voice-to-Label Demo**
+
+Optional: Download the demo audio file
 
 ```bash
 wget https://huggingface.co/ShilongLiu/GroundingDINO/resolve/main/demo_audio.mp3
 ```
 
-**Run Demo**
+
 ```bash
 export CUDA_VISIBLE_DEVICES=0
 python grounded_sam_whisper_demo.py \
@@ -253,6 +255,27 @@ python grounded_sam_whisper_demo.py \
 ```
 
 ![](./assets/grounded_sam_whisper_output.jpg)
+
+**Run Voice-to-inpaint Demo**
+
+Specify the object you want to inpaint [stored in `args.det_speech_file`] and the text you want to inpaint with [stored in `args.inpaint_speech_file`].
+
+```bash
+export CUDA_VISIBLE_DEVICES=0
+python grounded_sam_whisper_inpainting_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --input_image assets/inpaint_demo.jpg \
+  --output_dir "outputs" \
+  --box_threshold 0.3 \
+  --text_threshold 0.25 \
+  --det_speech_file "assets/acoustics/det_voice.mp3" \
+  --inpaint_speech_file "assets/acoustics/inpaint_voice.mp3" \
+  --device "cuda"
+```
+
+![](assets/acoustics/gsam_whisper_inpainting_demo.png)
 
 
 ## :cupid: Acknowledgements
