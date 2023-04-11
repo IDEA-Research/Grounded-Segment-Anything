@@ -147,8 +147,7 @@ def filter_prompts_with_chatgpt(caption, max_tokens=100, model="gpt-3.5-turbo"):
     response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
     reply = response['choices'][0]['message']['content']
     try:
-        det_prompt, inpaint_prompt = reply.split('\n')[0].split(':')[-1].strip(), \
-            reply.split('\n')[1].split(':')[-1].strip()
+        det_prompt, inpaint_prompt = reply.split('\n')[0].split(':')[-1].strip(), reply.split('\n')[1].split(':')[-1].strip()
     except:
         warn(f"Failed to extract tags from caption") # use caption as det_prompt, inpaint_prompt
         det_prompt, inpaint_prompt = caption, caption
@@ -179,6 +178,7 @@ if __name__ == "__main__":
     parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
     parser.add_argument("--device", type=str, default="cpu", help="running on cpu only!, default=False")
+    parser.add_argument("--prompt_extra", type=str, default=" high resolution, real scene", help="extra prompt for inpaint")
     args = parser.parse_args()
 
     # cfg
@@ -211,6 +211,7 @@ if __name__ == "__main__":
             openai.proxy = {"http": args.openai_proxy, "https": args.openai_proxy}
         speech_text, _ = speech_recognition(args.prompt_speech_file, whisper_model)
         det_prompt, inpaint_prompt = filter_prompts_with_chatgpt(speech_text)
+        inpaint_prompt += args.prompt_extra
         print(f"det_prompt: {det_prompt}, inpaint_prompt: {inpaint_prompt}")
     else:
         det_prompt, det_speech_language = speech_recognition(args.det_speech_file, whisper_model)
