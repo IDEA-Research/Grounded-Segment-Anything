@@ -51,12 +51,12 @@ def generate_caption(raw_image):
     return caption
 
 
-def generate_tags(caption, max_tokens=100, model="gpt-3.5-turbo"):
+def generate_tags(caption, split=',', max_tokens=100, model="gpt-3.5-turbo"):
     prompt = [
         {
             'role': 'system',
             'content': 'Extract the unique nouns in the caption. Remove all the adjectives. ' + \
-                       'List the nouns in singular form. Split them by ".". ' + \
+                       f'List the nouns in singular form. Split them by "{split} ". ' + \
                        f'Caption: {caption}.'
         }
     ]
@@ -197,6 +197,7 @@ if __name__ == "__main__":
         "--sam_checkpoint", type=str, required=True, help="path to checkpoint file"
     )
     parser.add_argument("--input_image", type=str, required=True, help="path to image file")
+    parser.add_argument("--split", default=",", type=str, help="split for text prompt")
     parser.add_argument("--openai_key", type=str, required=True, help="key for chatgpt")
     parser.add_argument("--openai_proxy", default=None, type=str, help="proxy for chatgpt")
     parser.add_argument(
@@ -215,6 +216,7 @@ if __name__ == "__main__":
     grounded_checkpoint = args.grounded_checkpoint  # change the path of the model
     sam_checkpoint = args.sam_checkpoint
     image_path = args.input_image
+    split = args.split
     openai_key = args.openai_key
     openai_proxy = args.openai_proxy
     output_dir = args.output_dir
@@ -244,7 +246,9 @@ if __name__ == "__main__":
     processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
     blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
     caption = generate_caption(image_pil)
-    text_prompt = generate_tags(caption)
+    # Currently ", " is better for detecting single tags
+    # while ". " is a little worse in some case
+    text_prompt = generate_tags(caption, split=split)
     print(f"Caption: {caption}")
     print(f"Tags: {text_prompt}")
 
