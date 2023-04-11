@@ -183,14 +183,14 @@ sam_checkpoint='sam_vit_h_4b8939.pth'
 output_dir="outputs"
 device="cuda"
 
-def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold):
+def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode):
 
     # make dir
     os.makedirs(output_dir, exist_ok=True)
     # load image
     image_pil, image = load_image(image_path.convert("RGB"))
-    if task_type == 'inpainting':
-        image_pil = image_pil.resize((512, 512))
+    # if task_type == 'inpainting':
+    #     image_pil = image_pil.resize((512, 512))
     # load model
     # model = load_model_hf(config_file, ckpt_repo_id, ckpt_filenmae)
     model = load_model(config_file, ckpt_filenmae, device=device)
@@ -218,8 +218,8 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
     if task_type == 'seg' or task_type == 'inpainting' or task_type == 'automatic':
         # initialize SAM
         predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint))
-        if task_type == 'inpainting':
-            image_path = image_path.resize((512, 512))
+        # if task_type == 'inpainting':
+        #     image_path = image_path.resize((512, 512))
         image = np.array(image_path)
         predictor.set_image(image)
 
@@ -250,9 +250,6 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         )
 
         # masks: [1, 1, 512, 512]
-        if task_type == 'inpainting':
-            masks = torch.sum(masks, dim=0).unsqueeze(0)
-            masks = torch.where(masks > 0, True, False)
 
     if task_type == 'det':
         pred_dict = {
@@ -286,7 +283,11 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
     elif task_type == 'inpainting':
         assert inpaint_prompt, 'inpaint_prompt is not found!'
         # inpainting pipeline
-        mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
+        if inpaint_mode == 'merge':
+            masks = torch.sum(masks, dim=0).unsqueeze(0)
+            masks = torch.where(masks > 0, True, False)
+        else:
+            mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
         mask_pil = Image.fromarray(mask)
         
         pipe = StableDiffusionInpaintPipeline.from_pretrained(
@@ -334,6 +335,7 @@ if __name__ == "__main__":
                     iou_threshold = gr.Slider(
                         label="IOU Threshold", minimum=0.0, maximum=1.0, value=0.5, step=0.001
                     )
+                    inpaint_mode = gr.Dropdown(["merge", "first"], value="merge", label="inpaint_mode")
 
             with gr.Column():
                 gallery = gr.outputs.Image(
@@ -341,7 +343,7 @@ if __name__ == "__main__":
                 ).style(full_width=True, full_height=True)
 
         run_button.click(fn=run_grounded_sam, inputs=[
-                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold], outputs=[gallery])
+                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode], outputs=[gallery])
 
 
     block.launch(server_name='0.0.0.0', server_port=args.port, debug=args.debug, share=args.share)
