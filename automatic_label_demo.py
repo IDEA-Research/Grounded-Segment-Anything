@@ -43,9 +43,12 @@ def load_image(image_path):
     return image_pil, image
 
 
-def generate_caption(raw_image):
+def generate_caption(raw_image, device):
     # unconditional image captioning
-    inputs = processor(raw_image, return_tensors="pt")
+    if device == "cuda":
+        inputs = processor(raw_image, return_tensors="pt").to("cuda", torch.float16)
+    else:
+        inputs = processor(raw_image, return_tensors="pt")
     out = blip_model.generate(**inputs)
     caption = processor.decode(out[0], skip_special_tokens=True)
     return caption
@@ -244,8 +247,11 @@ if __name__ == "__main__":
     # https://huggingface.co/spaces/xinyu1205/Tag2Text
     # but there are some bugs...
     processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-    blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
-    caption = generate_caption(image_pil)
+    if device == "cuda":
+        blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
+    else:
+        blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
+    caption = generate_caption(image_pil, device=device)
     # Currently ", " is better for detecting single tags
     # while ". " is a little worse in some case
     text_prompt = generate_tags(caption, split=split)
