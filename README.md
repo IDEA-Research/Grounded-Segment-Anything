@@ -68,6 +68,7 @@ Some possible avenues for future work ...
 - [Segment Anything and Name It: combining Segment-Anything with GLIP & Visual ChatGPT & VLPart](https://github.com/Cheems-Seminar/segment-anything-and-name-it) by Shoufa Chen and Peize Sun
 - [Narapi-SAM: Integration of Segment Anything into Narapi (A nice viewer for SAM)](https://github.com/MIC-DKFZ/napari-sam) by MIC-DKFZ
 - [Grounded Segment Anything Colab](https://github.com/camenduru/grounded-segment-anything-colab) by camenduru
+- [https://github.com/Cheems-Seminar/segment-anything-and-name-it](https://github.com/Cheems-Seminar/segment-anything-and-name-it) by Shoufa Chen and Peize Sun
 
 
 ## :bookmark_tabs: Catelog
