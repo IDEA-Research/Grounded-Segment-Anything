@@ -189,11 +189,9 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
     os.makedirs(output_dir, exist_ok=True)
     # load image
     image_pil, image = load_image(image_path.convert("RGB"))
-    # if task_type == 'inpainting':
-    #     image_pil = image_pil.resize((512, 512))
     # load model
-    # model = load_model_hf(config_file, ckpt_repo_id, ckpt_filenmae)
-    model = load_model(config_file, ckpt_filenmae, device=device)
+    model = load_model_hf(config_file, ckpt_repo_id, ckpt_filenmae)
+    # model = load_model(config_file, ckpt_filenmae, device=device)
 
     # visualize raw image
     image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
@@ -218,8 +216,6 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
     if task_type == 'seg' or task_type == 'inpainting' or task_type == 'automatic':
         # initialize SAM
         predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint))
-        # if task_type == 'inpainting':
-        #     image_path = image_path.resize((512, 512))
         image = np.array(image_path)
         predictor.set_image(image)
 
