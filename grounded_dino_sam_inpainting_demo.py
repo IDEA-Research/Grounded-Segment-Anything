@@ -260,8 +260,11 @@ if __name__ == "__main__":
         )
         pipe = pipe.to("cuda")
 
+        image_pil = image_pil.resize((512, 512))
+        mask_pil = mask_pil.resize((512, 512))
         # prompt = "A sofa, high quality, detailed"
         image = pipe(prompt=inpaint_prompt, image=image_pil, mask_image=mask_pil).images[0]
+        image = image.resize(size)
         image.save(os.path.join(output_dir, "grounded_sam_inpainting_output.jpg"))
 
         # draw output image
