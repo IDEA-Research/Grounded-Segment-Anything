@@ -1,6 +1,6 @@
 import argparse
 import os
-import copy
+from warnings import warn
 
 import numpy as np
 import torch
@@ -29,6 +29,9 @@ from diffusers import StableDiffusionInpaintPipeline
 
 # whisper
 import whisper
+
+# ChatGPT
+import openai
 
 
 def load_image(image_path):
@@ -131,6 +134,27 @@ def speech_recognition(speech_file, model):
     return speech_text, speech_language
 
 
+def filter_prompts_with_chatgpt(caption, max_tokens=100, model="gpt-3.5-turbo"):
+    prompt = [
+        {
+            'role': 'system',
+            'content': f"Extract the main object to be replaced and marked it as 'main_object', " + \
+                       f"Extract the remaining part as 'other prompt' " + \
+                       f"Return (main_object, other prompt)" + \
+                       f'Given caption: {caption}.'
+        }
+    ]
+    response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
+    reply = response['choices'][0]['message']['content']
+    try:
+        det_prompt, inpaint_prompt = reply.split('\n')[0].split(':')[-1].strip(), \
+            reply.split('\n')[1].split(':')[-1].strip()
+    except:
+        warn(f"Failed to extract tags from caption") # use caption as det_prompt, inpaint_prompt
+        det_prompt, inpaint_prompt = caption, caption
+    return det_prompt, inpaint_prompt
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
@@ -145,8 +169,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
     )
-    parser.add_argument("--det_speech_file", type=str, required=True, help="grounding speech file")
-    parser.add_argument("--inpaint_speech_file", type=str, required=True, help="inpaint speech file")
+    parser.add_argument("--det_speech_file", type=str, help="grounding speech file")
+    parser.add_argument("--inpaint_speech_file", type=str, help="inpaint speech file")
+    parser.add_argument("--prompt_speech_file", type=str, help="prompt speech file, no need to provide det_speech_file")
+    parser.add_argument("--enable_chatgpt", action="store_true", help="enable chatgpt")
+    parser.add_argument("--openai_key", type=str, help="key for chatgpt")
+    parser.add_argument("--openai_proxy", default=None, type=str, help="proxy for chatgpt")
     parser.add_argument("--whisper_model", type=str, default="small", help="whisper model version: tiny, base, small, medium, large")
     parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
@@ -176,10 +204,19 @@ if __name__ == "__main__":
     
     # recognize speech
     whisper_model = whisper.load_model(args.whisper_model)
-    det_prompt, det_speech_language = speech_recognition(args.det_speech_file, whisper_model)
-    inpaint_prompt, inpaint_speech_language = speech_recognition(args.inpaint_speech_file, whisper_model)
-    print(f"det_prompt: {det_prompt}, using language: {det_speech_language}")
-    print(f"inpaint_prompt: {inpaint_prompt}, using language: {inpaint_speech_language}")
+    
+    if args.enable_chatgpt:
+        openai.api_key = args.openai_key
+        if args.openai_proxy:
+            openai.proxy = {"http": args.openai_proxy, "https": args.openai_proxy}
+        speech_text, _ = speech_recognition(args.prompt_speech_file, whisper_model)
+        det_prompt, inpaint_prompt = filter_prompts_with_chatgpt(speech_text)
+        print(f"det_prompt: {det_prompt}, inpaint_prompt: {inpaint_prompt}")
+    else:
+        det_prompt, det_speech_language = speech_recognition(args.det_speech_file, whisper_model)
+        inpaint_prompt, inpaint_speech_language = speech_recognition(args.inpaint_speech_file, whisper_model)
+        print(f"det_prompt: {det_prompt}, using language: {det_speech_language}")
+        print(f"inpaint_prompt: {inpaint_prompt}, using language: {inpaint_speech_language}")
     
     # run grounding dino model
     boxes_filt, pred_phrases = get_grounding_output(
