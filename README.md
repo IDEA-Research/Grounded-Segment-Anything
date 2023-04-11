@@ -6,13 +6,13 @@ We are very willing to **help everyone share and promote new projects** based on
 
 **Why this project?**
 
-The **core idea** behind this project is to **combine the strengths of different models in order to build a very powerful pipeline for solving complex problems**. And it's worth mentioning that this is a workflow for combining strong expert models, where **all parts can be used separately or in combination, and can be replaced with any similar but different models (like replacing GroundingDINO with GLIP or other detectors / replacing Stable-Diffusion with ControlNet / Combining with ChatGPT)**.
+The **core idea** behind this project is to **combine the strengths of different models in order to build a very powerful pipeline for solving complex problems**. And it's worth mentioning that this is a workflow for combining strong expert models, where **all parts can be used separately or in combination, and can be replaced with any similar but different models (like replacing Grounding DINO with GLIP or other detectors / replacing Stable-Diffusion with ControlNet / Combining with ChatGPT)**.
 
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it needs prompts (like boxes/points) to generate masks. 
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
-- The combination of `GroundingDINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
-- The combination of `BLIP + GroundingDINO + SAM` for **automatic labeling system**!
-- The combination of `GroundingDINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
+- The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
+- The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
+- The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
 
 
 **Grounded-SAM**
@@ -68,10 +68,10 @@ Some possible avenues for future work ...
 
 
 ## :bookmark_tabs: Catelog
-- [x] GroundingDINO Demo
-- [x] GroundingDINO + Segment-Anything Demo
-- [x] GroundingDINO + Segment-Anything + Stable-Diffusion Demo
-- [x] BLIP + GroundingDINO + Segment-Anything + Stable-Diffusion Demo
+- [x] Grounding DINO Demo
+- [x] Grounding DINO + Segment Anything Demo
+- [x] Grounding DINO + Segment Anything + Stable-Diffusion Demo
+- [x] BLIP + Grounding DINO + Segment Anything + Stable-Diffusion Demo
 - [ ] Hugging Face Demo
 - [ ] Colab demo
 
@@ -87,7 +87,7 @@ Install Segment Anything:
 python -m pip install -e segment_anything
 ```
 
-Install GroundingDINO:
+Install Grounding DINO:
 
 ```bash
 python -m pip install -e GroundingDINO
@@ -109,8 +109,8 @@ pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
 More details can be found in [install segment anything](https://github.com/facebookresearch/segment-anything#installation) and [install GroundingDINO](https://github.com/IDEA-Research/GroundingDINO#install)
 
 
-## :runner: Run GroundingDINO Demo
-- Download the checkpoint for groundingdino:
+## :runner: Run Grounding DINO Demo
+- Download the checkpoint for Grounding Dino:
 ```bash
 cd Grounded-Segment-Anything
 
@@ -135,7 +135,7 @@ python grounding_dino_demo.py \
 ![](./assets/grounding_dino_output_demo1.jpg)
 
 ## :running_man: Run Grounded-Segment-Anything Demo
-- Download the checkpoint for segment-anything and grounding-dino:
+- Download the checkpoint for Segment Anything and Grounding Dino:
 ```bash
 cd Grounded-Segment-Anything
 
@@ -219,8 +219,8 @@ python automatic_label_demo.py \
 
 
 ## :cupid: Acknowledgements
-- [segment-anything](https://github.com/facebookresearch/segment-anything)
-- [GroundingDINO](https://github.com/IDEA-Research/GroundingDINO)
+- [Segment Anything](https://github.com/facebookresearch/segment-anything)
+- [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO)
 
 ## Citation
 If you find this project helpful for your research, please consider citing the following BibTeX entry.
