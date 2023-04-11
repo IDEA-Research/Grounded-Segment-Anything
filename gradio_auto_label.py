@@ -109,7 +109,6 @@ def load_model(model_config_path, model_checkpoint_path, device):
     model = build_model(args)
     checkpoint = torch.load(model_checkpoint_path, map_location="cpu")
     load_res = model.load_state_dict(clean_state_dict(checkpoint["model"]), strict=False)
-    print(load_res)
     _ = model.eval()
     return model
 
@@ -141,8 +140,6 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold, w
     # build pred
     pred_phrases = []
     for logit, box in zip(logits_filt, boxes_filt):
-        print('=======', type(logit), logit)
-        print('+++++++', type(text_threshold), text_threshold)
         pred_phrase = get_phrases_from_posmap(logit > text_threshold, tokenized, tokenlizer)
         if with_logits:
             pred_phrases.append(pred_phrase + f"({str(logit.max().item())[:4]})")
@@ -236,7 +233,6 @@ def generate_tags(caption, split=',', max_tokens=100, model="gpt-3.5-turbo", ope
 
 def run_grounded_sam(image_path, openai_key, box_threshold, text_threshold):
     assert openai_key, 'Openai key is not found!'
-    print('.........', type(text_threshold), text_threshold)
 
     # make dir
     os.makedirs(output_dir, exist_ok=True)
@@ -253,9 +249,6 @@ def run_grounded_sam(image_path, openai_key, box_threshold, text_threshold):
     # while ". " is a little worse in some case
     split = ','
     tags = generate_tags(caption, split=split, openai_key=openai_key)
-    print(f"Caption: {caption}")
-    print(f"Tags: {tags}")
-
 
     # run grounding dino model
     boxes_filt, pred_phrases = get_grounding_output(
@@ -331,6 +324,8 @@ if __name__ == "__main__":
                     )
 
             with gr.Column():
+                image_caption = gr.Textbox(label="Image Caption")
+                identified_labels = gr.Textbox(label="Key objects extracted by ChatGPT")
                 gallery = gr.outputs.Image(
                     type="pil",
                 ).style(full_width=True, full_height=True)
@@ -339,8 +334,6 @@ if __name__ == "__main__":
                     type="pil",
                 ).style(full_width=True, full_height=True)
 
-                image_caption = gr.Textbox(label="Image Caption")
-                identified_labels = gr.Textbox(label="Key objects extracted by ChatGPT")
 
         run_button.click(fn=run_grounded_sam, inputs=[
                         input_image, openai_key, box_threshold, text_threshold], outputs=[gallery, mask_gallary, image_caption, identified_labels])
