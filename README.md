@@ -14,7 +14,7 @@ The **core idea** behind this project is to **combine the strengths of different
 - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
 - The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
 - The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
-
+- The combination of `Whisper + Grounding DINO + SAM` to **detect and segment anything with speech**!
 
 **Grounded-SAM**
 ![](./assets/grounded_sam2.png)
@@ -75,6 +75,7 @@ Some possible avenues for future work ...
 - [x] Grounding DINO + Segment Anything Demo
 - [x] Grounding DINO + Segment Anything + Stable-Diffusion Demo
 - [x] BLIP + Grounding DINO + Segment Anything + Stable-Diffusion Demo
+- [x] Whisper + Grounding DINO + Segment Anything + Stable-Diffusion Demo
 - [ ] Hugging Face Demo
 - [ ] Colab demo
 
@@ -219,6 +220,39 @@ python automatic_label_demo.py \
 - The pseudo labels and model prediction visualization will be saved in `output_dir` as follows:
 
 ![](./assets/automatic_label_output_demo3.jpg)
+
+
+## :open_mouth: Run Grounded-Segment-Anything + Whisper Demo
+Detect and segment anything with speech!
+
+**Install Whisper**
+```bash
+pip install -U openai-whisper
+```
+See the [whisper official page](https://github.com/openai/whisper#setup) if you have other questions for the installation.
+
+**Download Demo Audio**
+
+```bash
+wget https://huggingface.co/ShilongLiu/GroundingDINO/resolve/main/demo_audio.mp3
+```
+
+**Run Demo**
+```bash
+export CUDA_VISIBLE_DEVICES=0
+python grounded_sam_whisper_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --input_image assets/demo4.jpg \
+  --output_dir "outputs" \
+  --box_threshold 0.3 \
+  --text_threshold 0.25 \
+  --speech_file "demo_audio.mp3" \
+  --device "cuda"
+```
+
+![](./assets/grounded_sam_whisper_output.jpg)
 
 
 ## :cupid: Acknowledgements
