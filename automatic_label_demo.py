@@ -51,12 +51,12 @@ def generate_caption(raw_image):
     return caption
 
 
-def generate_tags(caption, max_tokens=100, model="gpt-3.5-turbo"):
+def generate_tags(caption, split=',', max_tokens=100, model="gpt-3.5-turbo"):
     prompt = [
         {
             'role': 'system',
-            'content': 'Extrat the unique nouns in the caption. Remove all the adjectives. ' + \
-                       'List the nouns in singular form. Split them by ",". ' + \
+            'content': 'Extract the unique nouns in the caption. Remove all the adjectives. ' + \
+                       f'List the nouns in singular form. Split them by "{split} ". ' + \
                        f'Caption: {caption}.'
         }
     ]
@@ -65,6 +65,30 @@ def generate_tags(caption, max_tokens=100, model="gpt-3.5-turbo"):
     # sometimes return with "noun: xxx, xxx, xxx"
     tags = reply.split(':')[-1].strip()
     return tags
+
+
+def check_caption(caption, pred_phrases, max_tokens=100, model="gpt-3.5-turbo"):
+    object_list = [obj.split('(')[0] for obj in pred_phrases]
+    object_num = []
+    for obj in set(object_list):
+        object_num.append(f'{object_list.count(obj)} {obj}')
+    object_num = ', '.join(object_num)
+    print(f"Correct object number: {object_num}")
+
+    prompt = [
+        {
+            'role': 'system',
+            'content': 'Revise the number in the caption if it is wrong. ' + \
+                       f'Caption: {caption}. ' + \
+                       f'True object number: {object_num}. ' + \
+                       'Only give the revised caption: '
+        }
+    ]
+    response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
+    reply = response['choices'][0]['message']['content']
+    # sometimes return with "Caption: xxx, xxx, xxx"
+    caption = reply.split(':')[-1].strip()
+    return caption
 
 
 def load_model(model_config_path, model_checkpoint_path, device):
@@ -111,6 +135,7 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold,de
         scores.append(logit.max().item())
 
     return boxes_filt, torch.Tensor(scores), pred_phrases
+
 
 def show_mask(mask, ax, random_color=False):
     if random_color:
@@ -172,6 +197,7 @@ if __name__ == "__main__":
         "--sam_checkpoint", type=str, required=True, help="path to checkpoint file"
     )
     parser.add_argument("--input_image", type=str, required=True, help="path to image file")
+    parser.add_argument("--split", default=",", type=str, help="split for text prompt")
     parser.add_argument("--openai_key", type=str, required=True, help="key for chatgpt")
     parser.add_argument("--openai_proxy", default=None, type=str, help="proxy for chatgpt")
     parser.add_argument(
@@ -190,6 +216,7 @@ if __name__ == "__main__":
     grounded_checkpoint = args.grounded_checkpoint  # change the path of the model
     sam_checkpoint = args.sam_checkpoint
     image_path = args.input_image
+    split = args.split
     openai_key = args.openai_key
     openai_proxy = args.openai_proxy
     output_dir = args.output_dir
@@ -219,7 +246,9 @@ if __name__ == "__main__":
     processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
     blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
     caption = generate_caption(image_pil)
-    text_prompt = generate_tags(caption)
+    # Currently ", " is better for detecting single tags
+    # while ". " is a little worse in some case
+    text_prompt = generate_tags(caption, split=split)
     print(f"Caption: {caption}")
     print(f"Tags: {text_prompt}")
 
@@ -248,6 +277,8 @@ if __name__ == "__main__":
     boxes_filt = boxes_filt[nms_idx]
     pred_phrases = [pred_phrases[idx] for idx in nms_idx]
     print(f"After NMS: {boxes_filt.shape[0]} boxes")
+    caption = check_caption(caption, pred_phrases)
+    print(f"Revise caption with number: {caption}")
 
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
 
