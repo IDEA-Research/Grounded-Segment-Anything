@@ -164,7 +164,7 @@ def show_box(box, ax, label):
 config_file = 'GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py'
 ckpt_repo_id = "ShilongLiu/GroundingDINO"
 ckpt_filenmae = "groundingdino_swint_ogc.pth"
-sam_checkpoint='/home/ecs-user/download/sam_vit_h_4b8939.pth' 
+sam_checkpoint='sam_vit_h_4b8939.pth' 
 output_dir="outputs"
 device="cuda"
 
@@ -244,14 +244,18 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         # inpainting pipeline
         mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
         mask_pil = Image.fromarray(mask)
-        image_pil = Image.fromarray(image)
         
         pipe = StableDiffusionInpaintPipeline.from_pretrained(
         "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16
         )
         pipe = pipe.to("cuda")
 
+        image_pil = image_pil.resize((512, 512))
+        mask_pil = mask_pil.resize((512, 512))
+
         image = pipe(prompt=inpaint_prompt, image=image_pil, mask_image=mask_pil).images[0]
+        image = image.resize(size)
+
         image_path = os.path.join(output_dir, "grounded_sam_inpainting_output.jpg")
         image.save(image_path)
         image_result = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
