@@ -6,6 +6,7 @@ import copy
 
 import numpy as np
 import torch
+import torchvision
 from PIL import Image, ImageDraw, ImageFont
 import openai
 # Grounding DINO
@@ -17,6 +18,7 @@ from GroundingDINO.groundingdino.util.utils import clean_state_dict, get_phrases
 from transformers import BlipProcessor, BlipForConditionalGeneration
 # segment anything
 from segment_anything import build_sam, SamPredictor 
+from segment_anything.utils.amg import remove_small_regions
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -139,14 +141,16 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold, w
     tokenized = tokenlizer(caption)
     # build pred
     pred_phrases = []
+    scores = []
     for logit, box in zip(logits_filt, boxes_filt):
         pred_phrase = get_phrases_from_posmap(logit > text_threshold, tokenized, tokenlizer)
         if with_logits:
             pred_phrases.append(pred_phrase + f"({str(logit.max().item())[:4]})")
         else:
             pred_phrases.append(pred_phrase)
+        scores.append(logit.max().item())
 
-    return boxes_filt, pred_phrases
+    return boxes_filt, torch.Tensor(scores), pred_phrases
 
 def show_mask(mask, ax, random_color=False):
     if random_color:
@@ -230,8 +234,30 @@ def generate_tags(caption, split=',', max_tokens=100, model="gpt-3.5-turbo", ope
     tags = reply.split(':')[-1].strip()
     return tags
 
+def check_caption(caption, pred_phrases, max_tokens=100, model="gpt-3.5-turbo"):
+    object_list = [obj.split('(')[0] for obj in pred_phrases]
+    object_num = []
+    for obj in set(object_list):
+        object_num.append(f'{object_list.count(obj)} {obj}')
+    object_num = ', '.join(object_num)
+    print(f"Correct object number: {object_num}")
 
-def run_grounded_sam(image_path, openai_key, box_threshold, text_threshold):
+    prompt = [
+        {
+            'role': 'system',
+            'content': 'Revise the number in the caption if it is wrong. ' + \
+                       f'Caption: {caption}. ' + \
+                       f'True object number: {object_num}. ' + \
+                       'Only give the revised caption: '
+        }
+    ]
+    response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
+    reply = response['choices'][0]['message']['content']
+    # sometimes return with "Caption: xxx, xxx, xxx"
+    caption = reply.split(':')[-1].strip()
+    return caption
+
+def run_grounded_sam(image_path, openai_key, box_threshold, text_threshold, iou_threshold, area_threshold):
     assert openai_key, 'Openai key is not found!'
 
     # make dir
@@ -251,7 +277,7 @@ def run_grounded_sam(image_path, openai_key, box_threshold, text_threshold):
     tags = generate_tags(caption, split=split, openai_key=openai_key)
 
     # run grounding dino model
-    boxes_filt, pred_phrases = get_grounding_output(
+    boxes_filt, scores, pred_phrases = get_grounding_output(
         model, image, tags, box_threshold, text_threshold, device=device
     )
 
@@ -269,6 +295,15 @@ def run_grounded_sam(image_path, openai_key, box_threshold, text_threshold):
         boxes_filt[i][2:] += boxes_filt[i][:2]
 
     boxes_filt = boxes_filt.cpu()
+    # use NMS to handle overlapped boxes
+    print(f"Before NMS: {boxes_filt.shape[0]} boxes")
+    nms_idx = torchvision.ops.nms(boxes_filt, scores, iou_threshold).numpy().tolist()
+    boxes_filt = boxes_filt[nms_idx]
+    pred_phrases = [pred_phrases[idx] for idx in nms_idx]
+    print(f"After NMS: {boxes_filt.shape[0]} boxes")
+    caption = check_caption(caption, pred_phrases)
+    print(f"Revise caption with number: {caption}")
+
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
 
     masks, _, _ = predictor.predict_torch(
@@ -277,9 +312,17 @@ def run_grounded_sam(image_path, openai_key, box_threshold, text_threshold):
         boxes = transformed_boxes,
         multimask_output = False,
     )
+    # area threshold: remove the mask when area < area_thresh (in pixels)
+    new_masks = []
+    for mask in masks:
+        # reshape to be used in remove_small_regions()
+        mask = mask.cpu().numpy().squeeze()
+        mask, _ = remove_small_regions(mask, area_threshold, mode="holes")
+        mask, _ = remove_small_regions(mask, area_threshold, mode="islands")
+        new_masks.append(torch.as_tensor(mask).unsqueeze(0))
 
-        # masks: [1, 1, 512, 512]
-
+    masks = torch.stack(new_masks, dim=0)
+    # masks: [1, 1, 512, 512]
     assert sam_checkpoint, 'sam_checkpoint is not found!'
 
     # draw output image
@@ -322,6 +365,12 @@ if __name__ == "__main__":
                     text_threshold = gr.Slider(
                         label="Text Threshold", minimum=0.0, maximum=1.0, value=0.25, step=0.001
                     )
+                    iou_threshold = gr.Slider(
+                        label="IoU Threshold", minimum=0.0, maximum=1.0, value=0.5, step=0.001
+                    )
+                    area_threshold = gr.Slider(
+                        label="Area Threshold", minimum=0.0, maximum=2500, value=100, step=10
+                    )
 
             with gr.Column():
                 image_caption = gr.Textbox(label="Image Caption")
@@ -336,7 +385,8 @@ if __name__ == "__main__":
 
 
         run_button.click(fn=run_grounded_sam, inputs=[
-                        input_image, openai_key, box_threshold, text_threshold], outputs=[gallery, mask_gallary, image_caption, identified_labels])
+                        input_image, openai_key, box_threshold, text_threshold, iou_threshold, area_threshold], 
+                        outputs=[gallery, mask_gallary, image_caption, identified_labels])
 
 
     block.launch(server_name='0.0.0.0', server_port=7589, debug=args.debug, share=args.share)
