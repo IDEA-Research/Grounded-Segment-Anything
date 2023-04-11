@@ -28,6 +28,11 @@ Using BLIP to generate caption, extract tags and using Grounded-SAM for box and 
 
 ![](./assets/automatic_label_output_demo3.jpg)
 
+
+**🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
+
+![](assets/acoustics/gsam_whisper_inpainting_demo.png)
+
 **Imagine Space**
 
 Some possible avenues for future work ...
@@ -258,9 +263,30 @@ python grounded_sam_whisper_demo.py \
 
 **Run Voice-to-inpaint Demo**
 
-Specify the object you want to inpaint [stored in `args.det_speech_file`] and the text you want to inpaint with [stored in `args.inpaint_speech_file`].
+You can enable chatgpt to help you automatically detect the object and inpainting order with `--enable_chatgpt`. 
+
+Or you can specify the object you want to inpaint [stored in `args.det_speech_file`] and the text you want to inpaint with [stored in `args.inpaint_speech_file`].
 
 ```bash
+# Example: enable chatgpt
+export CUDA_VISIBLE_DEVICES=0
+export OPENAI_KEY=your_openai_key
+python grounded_sam_whisper_inpainting_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --input_image assets/inpaint_demo.jpg \
+  --output_dir "outputs" \
+  --box_threshold 0.3 \
+  --text_threshold 0.25 \
+  --prompt_speech_file assets/acoustics/prompt_speech_file.mp3 \
+  --enable_chatgpt \
+  --openai_key $OPENAI_KEY \
+  --device "cuda"
+```
+
+```bash
+# Example: without chatgpt
 export CUDA_VISIBLE_DEVICES=0
 python grounded_sam_whisper_inpainting_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
@@ -275,7 +301,7 @@ python grounded_sam_whisper_inpainting_demo.py \
   --device "cuda"
 ```
 
-![](assets/acoustics/gsam_whisper_inpainting_demo.png)
+![](./assets/acoustics/gsam_whisper_inpainting_pipeline.png)
 
 
 ## :cupid: Acknowledgements
