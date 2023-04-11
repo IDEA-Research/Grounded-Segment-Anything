@@ -1,5 +1,5 @@
 import gradio as gr
-
+import json
 import argparse
 import os
 import copy
@@ -158,6 +158,38 @@ def show_mask(mask, ax, random_color=False):
     mask_image = mask.reshape(h, w, 1) * color.reshape(1, 1, -1)
     ax.imshow(mask_image)
 
+def save_mask_data(output_dir, mask_list, box_list, label_list):
+    value = 0  # 0 for background
+
+    mask_img = torch.zeros(mask_list.shape[-2:])
+    for idx, mask in enumerate(mask_list):
+        mask_img[mask.cpu().numpy()[0] == True] = value + idx + 1
+    plt.figure(figsize=(10, 10))
+    plt.imshow(mask_img.numpy())
+    plt.axis('off')
+    mask_img_path = os.path.join(output_dir, 'mask.jpg')
+    plt.savefig(mask_img_path, bbox_inches="tight", dpi=300, pad_inches=0.0)
+
+    json_data = [{
+        'value': value,
+        'label': 'background'
+    }]
+    for label, box in zip(label_list, box_list):
+        value += 1
+        name, logit = label.split('(')
+        logit = logit[:-1] # the last is ')'
+        json_data.append({
+            'value': value,
+            'label': name,
+            'logit': float(logit),
+            'box': box.numpy().tolist(),
+        })
+    
+    mask_json_path = os.path.join(output_dir, 'mask.json')
+    with open(mask_json_path, 'w') as f:
+        json.dump(json_data, f)
+
+    return mask_img_path, mask_json_path
 
 def show_box(box, ax, label):
     x0, y0 = box[0], box[1]
@@ -173,7 +205,7 @@ sam_checkpoint='sam_vit_h_4b8939.pth'
 output_dir="outputs"
 device="cpu"
 
-def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold):
+def run_grounded_sam(image_path, text_prompt, task_type, box_threshold, text_threshold):
     assert text_prompt, 'text_prompt is not found!'
 
     # make dir
@@ -228,7 +260,7 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         image_path = os.path.join(output_dir, "grounding_dino_output.jpg")
         image_with_box.save(image_path)
         image_result = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
-        return image_result
+        return image_result, None
     elif task_type == 'seg':
         assert sam_checkpoint, 'sam_checkpoint is not found!'
 
@@ -243,7 +275,12 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         image_path = os.path.join(output_dir, "grounding_dino_output.jpg")
         plt.savefig(image_path, bbox_inches="tight")
         image_result = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
-        return image_result
+        
+        mask_img_path, _ = save_mask_data('./outputs', masks, boxes_filt, pred_phrases)
+
+        mask_img = cv2.cvtColor(cv2.imread(mask_img_path), cv2.COLOR_BGR2RGB)
+
+        return image_result, mask_img
     else:
         print("task_type:{} error!".format(task_type))
 
@@ -261,7 +298,6 @@ if __name__ == "__main__":
                 input_image = gr.Image(source='upload', type="pil")
                 text_prompt = gr.Textbox(label="Detection Prompt")
                 task_type = gr.Textbox(label="task type: det/seg")
-                inpaint_prompt = gr.Textbox(label="Inpaint Prompt")
                 run_button = gr.Button(label="Run")
                 with gr.Accordion("Advanced options", open=False):
                     box_threshold = gr.Slider(
@@ -276,8 +312,12 @@ if __name__ == "__main__":
                     type="pil",
                 ).style(full_width=True, full_height=True)
 
+                mask_gallary = gr.outputs.Image(
+                    type="pil",
+                ).style(full_width=True, full_height=True)
+
         run_button.click(fn=run_grounded_sam, inputs=[
-                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold], outputs=[gallery])
+                        input_image, text_prompt, task_type, box_threshold, text_threshold], outputs=[gallery, mask_gallary])
 
 
     block.launch(server_name='0.0.0.0', server_port=7589, debug=args.debug, share=args.share)
