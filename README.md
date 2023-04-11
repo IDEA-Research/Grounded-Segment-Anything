@@ -16,6 +16,10 @@ The **core idea** behind this project is to **combine the strengths of different
 - The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
 - The combination of `Whisper + Grounding DINO + SAM` to **detect and segment anything with speech**!
 
+**🔥 🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
+
+![](assets/acoustics/gsam_whisper_inpainting_demo.png)
+
 **Grounded-SAM**
 ![](./assets/grounded_sam2.png)
 
@@ -28,10 +32,6 @@ Using BLIP to generate caption, extract tags and using Grounded-SAM for box and 
 
 ![](./assets/automatic_label_output_demo3.jpg)
 
-
-**🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
-
-![](assets/acoustics/gsam_whisper_inpainting_demo.png)
 
 **Imagine Space**
 
