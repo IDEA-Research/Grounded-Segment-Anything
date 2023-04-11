@@ -65,7 +65,7 @@ Some possible avenues for future work ...
 - [Prompt-Segment-Anything](https://github.com/RockeyCoss/Prompt-Segment-Anything) by Rockey
 - [**WebUi for Segment-Anything! Grounding-SAM is on the way!**](https://github.com/continue-revolution/sd-webui-segment-anything) by Chengsong Zhang
 - [Inpainting Anything: Inpaint Anything with SAM + Inpainting models](https://github.com/geekyutao/Inpaint-Anything) by Tao Yu
-- [Segment Anything and Name It: combining Segment-Anything with GLIP & Visual ChatGPT & VLPart](https://github.com/Cheems-Seminar/segment-anything-and-name-it) by Shoufa Chen and Peize Sun
+- [Segment Anything and Name It: combining Segment-Anything with GLIP & Visual ChatGPT & VLPart](https://github.com/Cheems-Seminar/segment-anything-and-name-it) by Peize Sun and Shoufa Chen
 - [Narapi-SAM: Integration of Segment Anything into Narapi (A nice viewer for SAM)](https://github.com/MIC-DKFZ/napari-sam) by MIC-DKFZ
 - [Grounded Segment Anything Colab](https://github.com/camenduru/grounded-segment-anything-colab) by camenduru
 
