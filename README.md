@@ -7,9 +7,9 @@ We are very willing to **help everyone share and promote new projects** based on
 **Why this project?**
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it needs prompts (like boxes/points) to generate masks. 
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
-- The combination of the two models enable to **detect and segment everything** with text inputs!
-- The combination of `BLIP + GroundingDINO + SAM` for automatic labeling!
-- The combination of `GroundingDINO + SAM + Stable-diffusion` for data-factory, generating new data!
+- The combination of `GroundingDINO + SAM` enable to **detect and segment everything** with text inputs!
+- The combination of `BLIP + GroundingDINO + SAM` for **automatic labeling system**!
+- The combination of `GroundingDINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
 
 
 **Grounded-SAM**
@@ -59,6 +59,8 @@ Some possible avenues for future work ...
 - [SAM-MMRorate: Combining Rotated Object Detector and SAM](https://github.com/Li-Qingyun/sam-mmrotate) by Qingyun Li and Xue Yang
 - [Awesome-Anything](https://github.com/VainF/Awesome-Anything) by Gongfan Fang
 - [Prompt-Segment-Anything](https://github.com/RockeyCoss/Prompt-Segment-Anything) by Rockey
+- [**WebUi for Segment-Anything! Grounding-SAM is on the way!**](https://github.com/continue-revolution/sd-webui-segment-anything) by Chengsong Zhang
+- [Inpainting Anything: Inpaint Anything with SAM + Inpainting models](https://github.com/geekyutao/Inpaint-Anything) by Tao Yu
 
 
 ## :bookmark_tabs: Catelog
