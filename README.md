@@ -5,9 +5,11 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 We are very willing to **help everyone share and promote new projects** based on Segment-Anything, we highlight some excellent projects here: [Highlight Extension Projects](#bulb-highlight-extension-projects). You can submit a new issue (with `project` tag) or a new pull request to add new projects' links.
 
 **Why this project?**
+The **core idea** behind this project is to **combine the strengths of different models in order to build a very powerful pipeline for solving complex problems**. And it's worth mentioning that this is a workflow for combining strong expert models, where **all parts can be used separately or in combination, and can be replaced with any similar but different models (like replacing GroundingDINO with GLIP or other detectors)**.
+
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it needs prompts (like boxes/points) to generate masks. 
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
-- The combination of `GroundingDINO + SAM` enable to **detect and segment everything** with text inputs!
+- The combination of `GroundingDINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
 - The combination of `BLIP + GroundingDINO + SAM` for **automatic labeling system**!
 - The combination of `GroundingDINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
 
