@@ -31,6 +31,7 @@ from diffusers import StableDiffusionInpaintPipeline
 def load_image(image_path):
     # load image
     image_pil = Image.open(image_path).convert("RGB")  # load image
+    image_pil = image_pil.resize((512, 512))
 
     transform = T.Compose(
         [
@@ -159,6 +160,7 @@ if __name__ == "__main__":
     predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint))
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image = cv2.resize(image, (512, 512))
     predictor.set_image(image)
 
     size = image_pil.size
@@ -179,6 +181,8 @@ if __name__ == "__main__":
     )
 
     # masks: [1, 1, 512, 512]
+    masks = torch.sum(masks, dim=0).unsqueeze(0)
+    masks = torch.where(masks > 0, True, False)
 
     # inpainting pipeline
     mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
