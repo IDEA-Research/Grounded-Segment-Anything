@@ -21,11 +21,8 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-# BLIP
-from transformers import BlipProcessor, BlipForConditionalGeneration
-
-# ChatGPT
-import openai
+# whisper
+import whisper
 
 
 def load_image(image_path):
@@ -41,54 +38,6 @@ def load_image(image_path):
     )
     image, _ = transform(image_pil, None)  # 3, h, w
     return image_pil, image
-
-
-def generate_caption(raw_image):
-    # unconditional image captioning
-    inputs = processor(raw_image, return_tensors="pt").to("cuda", torch.float16)
-    out = blip_model.generate(**inputs)
-    caption = processor.decode(out[0], skip_special_tokens=True)
-    return caption
-
-
-def generate_tags(caption, split=',', max_tokens=100, model="gpt-3.5-turbo"):
-    prompt = [
-        {
-            'role': 'system',
-            'content': 'Extract the unique nouns in the caption. Remove all the adjectives. ' + \
-                       f'List the nouns in singular form. Split them by "{split} ". ' + \
-                       f'Caption: {caption}.'
-        }
-    ]
-    response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
-    reply = response['choices'][0]['message']['content']
-    # sometimes return with "noun: xxx, xxx, xxx"
-    tags = reply.split(':')[-1].strip()
-    return tags
-
-
-def check_caption(caption, pred_phrases, max_tokens=100, model="gpt-3.5-turbo"):
-    object_list = [obj.split('(')[0] for obj in pred_phrases]
-    object_num = []
-    for obj in set(object_list):
-        object_num.append(f'{object_list.count(obj)} {obj}')
-    object_num = ', '.join(object_num)
-    print(f"Correct object number: {object_num}")
-
-    prompt = [
-        {
-            'role': 'system',
-            'content': 'Revise the number in the caption if it is wrong. ' + \
-                       f'Caption: {caption}. ' + \
-                       f'True object number: {object_num}. ' + \
-                       'Only give the revised caption: '
-        }
-    ]
-    response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
-    reply = response['choices'][0]['message']['content']
-    # sometimes return with "Caption: xxx, xxx, xxx"
-    caption = reply.split(':')[-1].strip()
-    return caption
 
 
 def load_model(model_config_path, model_checkpoint_path, device):
@@ -136,7 +85,6 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold,de
 
     return boxes_filt, torch.Tensor(scores), pred_phrases
 
-
 def show_mask(mask, ax, random_color=False):
     if random_color:
         color = np.concatenate([np.random.random(3), np.array([0.6])], axis=0)
@@ -154,7 +102,7 @@ def show_box(box, ax, label):
     ax.text(x0, y0, label)
 
 
-def save_mask_data(output_dir, caption, mask_list, box_list, label_list):
+def save_mask_data(output_dir, mask_list, box_list, label_list):
     value = 0  # 0 for background
 
     mask_img = torch.zeros(mask_list.shape[-2:])
@@ -165,26 +113,44 @@ def save_mask_data(output_dir, caption, mask_list, box_list, label_list):
     plt.axis('off')
     plt.savefig(os.path.join(output_dir, 'mask.jpg'), bbox_inches="tight", dpi=300, pad_inches=0.0)
 
-    json_data = {
-        'caption': caption,
-        'mask':[{
-            'value': value,
-            'label': 'background'
-        }]
-    }
+    json_data = [{
+        'value': value,
+        'label': 'background'
+    }]
     for label, box in zip(label_list, box_list):
         value += 1
         name, logit = label.split('(')
         logit = logit[:-1] # the last is ')'
-        json_data['mask'].append({
+        json_data.append({
             'value': value,
             'label': name,
             'logit': float(logit),
             'box': box.numpy().tolist(),
         })
-    with open(os.path.join(output_dir, 'label.json'), 'w') as f:
+    with open(os.path.join(output_dir, 'mask.json'), 'w') as f:
         json.dump(json_data, f)
     
+
+def speech_recognition(speech_file, model):
+    # whisper
+    # load audio and pad/trim it to fit 30 seconds
+    audio = whisper.load_audio(speech_file)
+    audio = whisper.pad_or_trim(audio)
+
+    # make log-Mel spectrogram and move to the same device as the model
+    mel = whisper.log_mel_spectrogram(audio).to(model.device)
+
+    # detect the spoken language
+    _, probs = model.detect_language(mel)
+    speech_language = max(probs, key=probs.get)
+
+    # decode the audio
+    options = whisper.DecodingOptions()
+    result = whisper.decode(model, mel, options)
+
+    # print the recognized text
+    speech_text = result.text
+    return speech_text, speech_language
 
 if __name__ == "__main__":
 
@@ -197,15 +163,13 @@ if __name__ == "__main__":
         "--sam_checkpoint", type=str, required=True, help="path to checkpoint file"
     )
     parser.add_argument("--input_image", type=str, required=True, help="path to image file")
-    parser.add_argument("--split", default=",", type=str, help="split for text prompt")
-    parser.add_argument("--openai_key", type=str, required=True, help="key for chatgpt")
-    parser.add_argument("--openai_proxy", default=None, type=str, help="proxy for chatgpt")
+    parser.add_argument("--speech_file", type=str, required=True, help="speech file")
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
     )
 
-    parser.add_argument("--box_threshold", type=float, default=0.25, help="box threshold")
-    parser.add_argument("--text_threshold", type=float, default=0.2, help="text threshold")
+    parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
+    parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
     parser.add_argument("--iou_threshold", type=float, default=0.5, help="iou threshold")
 
     parser.add_argument("--device", type=str, default="cpu", help="running on cpu only!, default=False")
@@ -216,18 +180,17 @@ if __name__ == "__main__":
     grounded_checkpoint = args.grounded_checkpoint  # change the path of the model
     sam_checkpoint = args.sam_checkpoint
     image_path = args.input_image
-    split = args.split
-    openai_key = args.openai_key
-    openai_proxy = args.openai_proxy
     output_dir = args.output_dir
     box_threshold = args.box_threshold
-    text_threshold = args.box_threshold
+    text_threshold = args.text_threshold
     iou_threshold = args.iou_threshold
     device = args.device
 
-    openai.api_key = openai_key
-    if openai_proxy:
-        openai.proxy = {"http": openai_proxy, "https": openai_proxy}
+    # load speech
+    whisper_model = whisper.load_model("base")
+    speech_text, speech_language = speech_recognition(args.speech_file, whisper_model)
+    print(f"speech_text: {speech_text}")
+    print(f"speech_language: {speech_language}")
 
     # make dir
     os.makedirs(output_dir, exist_ok=True)
@@ -239,26 +202,14 @@ if __name__ == "__main__":
     # visualize raw image
     image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
 
-    # generate caption and tags
-    # use Tag2Text can generate better captions
-    # https://huggingface.co/spaces/xinyu1205/Tag2Text
-    # but there are some bugs...
-    processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-    blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
-    caption = generate_caption(image_pil)
-    # Currently ", " is better for detecting single tags
-    # while ". " is a little worse in some case
-    text_prompt = generate_tags(caption, split=split)
-    print(f"Caption: {caption}")
-    print(f"Tags: {text_prompt}")
-
     # run grounding dino model
+    text_prompt = speech_text
     boxes_filt, scores, pred_phrases = get_grounding_output(
         model, image, text_prompt, box_threshold, text_threshold, device=device
     )
 
     # initialize SAM
-    predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint))
+    predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint).to(args.device))
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     predictor.set_image(image)
@@ -277,15 +228,13 @@ if __name__ == "__main__":
     boxes_filt = boxes_filt[nms_idx]
     pred_phrases = [pred_phrases[idx] for idx in nms_idx]
     print(f"After NMS: {boxes_filt.shape[0]} boxes")
-    caption = check_caption(caption, pred_phrases)
-    print(f"Revise caption with number: {caption}")
 
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
 
     masks, _, _ = predictor.predict_torch(
         point_coords = None,
         point_labels = None,
-        boxes = transformed_boxes,
+        boxes = transformed_boxes.to(args.device),
         multimask_output = False,
     )
     
@@ -296,12 +245,14 @@ if __name__ == "__main__":
         show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
     for box, label in zip(boxes_filt, pred_phrases):
         show_box(box.numpy(), plt.gca(), label)
-
-    plt.title(caption)
+    
+    plt.title(speech_text)
     plt.axis('off')
     plt.savefig(
-        os.path.join(output_dir, "automatic_label_output.jpg"), 
+        os.path.join(output_dir, "grounded_sam_whisper_output.jpg"), 
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
 
-    save_mask_data(output_dir, caption, masks, boxes_filt, pred_phrases)
+
+    save_mask_data(output_dir, masks, boxes_filt, pred_phrases)
+    
