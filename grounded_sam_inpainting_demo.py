@@ -125,6 +125,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
+    parser.add_argument("--inpaint_mode", type=str, default="first", help="inpaint mode")
     parser.add_argument("--device", type=str, default="cpu", help="running on cpu only!, default=False")
     args = parser.parse_args()
 
@@ -138,6 +139,7 @@ if __name__ == "__main__":
     output_dir = args.output_dir
     box_threshold = args.box_threshold
     text_threshold = args.box_threshold
+    inpaint_mode = args.inpaint_mode
     device = args.device
 
     # make dir
@@ -179,9 +181,11 @@ if __name__ == "__main__":
     )
 
     # masks: [1, 1, 512, 512]
-    # merge masks 
-    # masks = torch.sum(masks, dim=0).unsqueeze(0)
-    # masks = torch.where(masks > 0, True, False)
+    if inpaint_mode == 'merge':
+        masks = torch.sum(masks, dim=0).unsqueeze(0)
+        masks = torch.where(masks > 0, True, False)
+    else:
+        mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
 
     # inpainting pipeline
     mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
