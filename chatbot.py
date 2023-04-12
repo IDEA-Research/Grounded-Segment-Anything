@@ -1393,9 +1393,8 @@ def speech_recognition(speech_file):
 
 
 if __name__ == '__main__':
-    # load_dict = {'Grounded_dino_sam_inpainting': 'cuda:0'}
+    load_dict = {'Grounded_dino_sam_inpainting': 'cuda:0'}
     # load_dict = {'ImageCaptioning': 'cuda:0'}
-    load_dict = {}
     
     bot = ConversationBot(load_dict)
 
