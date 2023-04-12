@@ -158,7 +158,9 @@ if __name__ == "__main__":
     )
 
     # initialize SAM
-    predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint))
+    sam = build_sam(checkpoint=sam_checkpoint)
+    sam.to(device=device)
+    predictor = SamPredictor(sam)
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     predictor.set_image(image)
@@ -171,7 +173,7 @@ if __name__ == "__main__":
         boxes_filt[i][2:] += boxes_filt[i][:2]
 
     boxes_filt = boxes_filt.cpu()
-    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
+    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
 
     masks, _, _ = predictor.predict_torch(
         point_coords = None,
