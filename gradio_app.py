@@ -1,9 +1,8 @@
 import os
-# os.system('pip install v0.1.0-alpha2.tar.gz')
-import gradio as gr
+import random
 
+import gradio as gr
 import argparse
-import copy
 
 import numpy as np
 import torch
@@ -13,40 +12,20 @@ from PIL import Image, ImageDraw, ImageFont
 # Grounding DINO
 import GroundingDINO.groundingdino.datasets.transforms as T
 from GroundingDINO.groundingdino.models import build_model
-from GroundingDINO.groundingdino.util import box_ops
 from GroundingDINO.groundingdino.util.slconfig import SLConfig
 from GroundingDINO.groundingdino.util.utils import clean_state_dict, get_phrases_from_posmap
 
 # segment anything
 from segment_anything import build_sam, SamPredictor 
-import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-
 
 # diffusers
-import PIL
-import requests
 import torch
-from io import BytesIO
 from diffusers import StableDiffusionInpaintPipeline
-from huggingface_hub import hf_hub_download
 
 # BLIP
 from transformers import BlipProcessor, BlipForConditionalGeneration
 
-
-def load_model_hf(model_config_path, repo_id, filename, device='cpu'):
-    args = SLConfig.fromfile(model_config_path) 
-    model = build_model(args)
-    args.device = device
-
-    cache_file = hf_hub_download(repo_id=repo_id, filename=filename)
-    checkpoint = torch.load(cache_file, map_location='cpu')
-    log = model.load_state_dict(clean_state_dict(checkpoint['model']), strict=False)
-    print("Model loaded from {} \n => {}".format(cache_file, log))
-    _ = model.eval()
-    return model    
 
 def generate_caption(processor, blip_model, raw_image):
     # unconditional image captioning
@@ -55,50 +34,7 @@ def generate_caption(processor, blip_model, raw_image):
     caption = processor.decode(out[0], skip_special_tokens=True)
     return caption
 
-def plot_boxes_to_image(image_pil, tgt):
-    H, W = tgt["size"]
-    boxes = tgt["boxes"]
-    labels = tgt["labels"]
-    assert len(boxes) == len(labels), "boxes and labels must have same length"
-
-    draw = ImageDraw.Draw(image_pil)
-    mask = Image.new("L", image_pil.size, 0)
-    mask_draw = ImageDraw.Draw(mask)
-
-    # draw boxes and masks
-    for box, label in zip(boxes, labels):
-        # from 0..1 to 0..W, 0..H
-        box = box * torch.Tensor([W, H, W, H])
-        # from xywh to xyxy
-        box[:2] -= box[2:] / 2
-        box[2:] += box[:2]
-        # random color
-        color = tuple(np.random.randint(0, 255, size=3).tolist())
-        # draw
-        x0, y0, x1, y1 = box
-        x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)
-
-        draw.rectangle([x0, y0, x1, y1], outline=color, width=6)
-        # draw.text((x0, y0), str(label), fill=color)
-
-        font = ImageFont.load_default()
-        if hasattr(font, "getbbox"):
-            bbox = draw.textbbox((x0, y0), str(label), font)
-        else:
-            w, h = draw.textsize(str(label), font)
-            bbox = (x0, y0, w + x0, y0 + h)
-        # bbox = draw.textbbox((x0, y0), str(label))
-        draw.rectangle(bbox, fill=color)
-        draw.text((x0, y0), str(label), fill="white")
-
-        mask_draw.rectangle([x0, y0, x1, y1], fill=255, width=6)
-
-    return image_pil, mask
-
-def load_image(image_path):
-    # # load image
-    # image_pil = Image.open(image_path).convert("RGB")  # load image
-    image_pil = image_path
+def transform_image(image_pil):
 
     transform = T.Compose(
         [
@@ -108,7 +44,7 @@ def load_image(image_path):
         ]
     )
     image, _ = transform(image_pil, None)  # 3, h, w
-    return image_pil, image
+    return image
 
 
 def load_model(model_config_path, model_checkpoint_path, device):
@@ -122,13 +58,12 @@ def load_model(model_config_path, model_checkpoint_path, device):
     return model
 
 
-def get_grounding_output(model, image, caption, box_threshold, text_threshold, with_logits=True, device="cpu"):
+def get_grounding_output(model, image, caption, box_threshold, text_threshold, with_logits=True):
     caption = caption.lower()
     caption = caption.strip()
     if not caption.endswith("."):
         caption = caption + "."
-    model = model.to(device)
-    image = image.to(device)
+
     with torch.no_grad():
         outputs = model(image[None], captions=[caption])
     logits = outputs["pred_logits"].cpu().sigmoid()[0]  # (nq, 256)
@@ -159,21 +94,35 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold, w
 
     return boxes_filt, torch.Tensor(scores), pred_phrases
 
-def show_mask(mask, ax, random_color=False):
+def draw_mask(mask, draw, random_color=False):
     if random_color:
-        color = np.concatenate([np.random.random(3), np.array([0.6])], axis=0)
+        color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 153)
     else:
-        color = np.array([30/255, 144/255, 255/255, 0.6])
-    h, w = mask.shape[-2:]
-    mask_image = mask.reshape(h, w, 1) * color.reshape(1, 1, -1)
-    ax.imshow(mask_image)
+        color = (30, 144, 255, 153)
 
+    nonzero_coords = np.transpose(np.nonzero(mask))
 
-def show_box(box, ax, label):
-    x0, y0 = box[0], box[1]
-    w, h = box[2] - box[0], box[3] - box[1]
-    ax.add_patch(plt.Rectangle((x0, y0), w, h, edgecolor='green', facecolor=(0,0,0,0), lw=2)) 
-    ax.text(x0, y0, label)
+    for coord in nonzero_coords:
+        draw.point(coord[::-1], fill=color)
+
+def draw_box(box, draw, label):
+    # random color
+    color = tuple(np.random.randint(0, 255, size=3).tolist())
+
+    draw.rectangle(((box[0], box[1]), (box[2], box[3])), outline=color,  width=2)
+
+    if label:
+        font = ImageFont.load_default()
+        if hasattr(font, "getbbox"):
+            bbox = draw.textbbox((box[0], box[1]), str(label), font)
+        else:
+            w, h = draw.textsize(str(label), font)
+            bbox = (box[0], box[1], w + box[0], box[1] + h)
+        draw.rectangle(bbox, fill=color)
+        draw.text((box[0], box[1]), str(label), fill="white")
+
+        draw.text((box[0], box[1]), label)
+
 
 
 config_file = 'GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py'
@@ -183,49 +132,61 @@ sam_checkpoint='sam_vit_h_4b8939.pth'
 output_dir="outputs"
 device="cuda"
 
-def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode):
+
+blip_processor = None
+blip_model = None
+groundingdino_model = None
+sam_predictor = None
+inpaint_pipeline = None
+
+def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode):
+
+    global blip_processor, blip_model, groundingdino_model, sam_predictor, inpaint_pipeline
 
     # make dir
     os.makedirs(output_dir, exist_ok=True)
     # load image
-    image_pil, image = load_image(image_path.convert("RGB"))
-    # load model
-    model = load_model_hf(config_file, ckpt_repo_id, ckpt_filenmae)
-    # model = load_model(config_file, ckpt_filenmae, device=device)
+    image_pil = input_image.convert("RGB")
+    transformed_image = transform_image(image_pil)
 
-    # visualize raw image
-    image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
+    if groundingdino_model is None:
+        groundingdino_model = load_model(config_file, ckpt_filenmae, device=device)
 
     if task_type == 'automatic':
         # generate caption and tags
         # use Tag2Text can generate better captions
         # https://huggingface.co/spaces/xinyu1205/Tag2Text
         # but there are some bugs...
-        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-        blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
-        text_prompt = generate_caption(processor, blip_model, image_pil)
+        blip_processor = blip_processor or BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
+        blip_model = blip_model or BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
+        text_prompt = generate_caption(blip_processor, blip_model, image_pil)
         print(f"Caption: {text_prompt}")
 
     # run grounding dino model
     boxes_filt, scores, pred_phrases = get_grounding_output(
-        model, image, text_prompt, box_threshold, text_threshold, device=device
+        groundingdino_model, transformed_image, text_prompt, box_threshold, text_threshold
     )
 
     size = image_pil.size
 
+    # process boxes
+    H, W = size[1], size[0]
+    for i in range(boxes_filt.size(0)):
+        boxes_filt[i] = boxes_filt[i] * torch.Tensor([W, H, W, H])
+        boxes_filt[i][:2] -= boxes_filt[i][2:] / 2
+        boxes_filt[i][2:] += boxes_filt[i][:2]
+
+    boxes_filt = boxes_filt.cpu()
+
+
     if task_type == 'seg' or task_type == 'inpainting' or task_type == 'automatic':
-        # initialize SAM
-        predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint))
-        image = np.array(image_path)
-        predictor.set_image(image)
+        if sam_predictor is None:
+            # initialize SAM
+            assert sam_checkpoint, 'sam_checkpoint is not found!'
+            sam_predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint))
 
-        H, W = size[1], size[0]
-        for i in range(boxes_filt.size(0)):
-            boxes_filt[i] = boxes_filt[i] * torch.Tensor([W, H, W, H])
-            boxes_filt[i][:2] -= boxes_filt[i][2:] / 2
-            boxes_filt[i][2:] += boxes_filt[i][:2]
-
-        boxes_filt = boxes_filt.cpu()
+        image = np.array(image_pil)
+        sam_predictor.set_image(image)
 
         if task_type == 'automatic':
             # use NMS to handle overlapped boxes
@@ -236,9 +197,9 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
             print(f"After NMS: {boxes_filt.shape[0]} boxes")
             print(f"Revise caption with number: {text_prompt}")
 
-        transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
+        transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
 
-        masks, _, _ = predictor.predict_torch(
+        masks, _, _ = sam_predictor.predict_torch(
             point_coords = None,
             point_labels = None,
             boxes = transformed_boxes,
@@ -248,34 +209,30 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         # masks: [1, 1, 512, 512]
 
     if task_type == 'det':
-        pred_dict = {
-            "boxes": boxes_filt,
-            "size": [size[1], size[0]],  # H,W
-            "labels": pred_phrases,
-        }
-        # import ipdb; ipdb.set_trace()
-        image_with_box = plot_boxes_to_image(image_pil, pred_dict)[0]
-        image_path = os.path.join(output_dir, "grounding_dino_output.jpg")
-        image_with_box.save(image_path)
-        image_result = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
-        return image_result
-    elif task_type == 'seg' or task_type == 'automatic':
-        assert sam_checkpoint, 'sam_checkpoint is not found!'
-
-        # draw output image
-        plt.figure(figsize=(10, 10))
-        plt.imshow(image)
-        for mask in masks:
-            show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
+        image_draw = ImageDraw.Draw(image_pil)
         for box, label in zip(boxes_filt, pred_phrases):
-            show_box(box.numpy(), plt.gca(), label)
+            draw_box(box, image_draw, label)
+
+        return [image_pil]
+    elif task_type == 'seg' or task_type == 'automatic':
+        
+        mask_image = Image.new('RGBA', size, color=(0, 0, 0, 0))
+
+        mask_draw = ImageDraw.Draw(mask_image)
+        for mask in masks:
+            draw_mask(mask[0].cpu().numpy(), mask_draw, random_color=True)
+
+        image_draw = ImageDraw.Draw(image_pil)
+
+        for box, label in zip(boxes_filt, pred_phrases):
+            draw_box(box, image_draw, label)
+
         if task_type == 'automatic':
-            plt.title(text_prompt)
-        plt.axis('off')
-        image_path = os.path.join(output_dir, "grounding_dino_output.jpg")
-        plt.savefig(image_path, bbox_inches="tight")
-        image_result = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
-        return image_result
+            image_draw.text((10, 10), text_prompt, fill='black')
+
+        image_pil = image_pil.convert('RGBA')
+        image_pil.alpha_composite(mask_image)
+        return [image_pil, mask_image]
     elif task_type == 'inpainting':
         assert inpaint_prompt, 'inpaint_prompt is not found!'
         # inpainting pipeline
@@ -285,33 +242,33 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
         mask_pil = Image.fromarray(mask)
         
-        pipe = StableDiffusionInpaintPipeline.from_pretrained(
-        "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16
-        )
-        pipe = pipe.to("cuda")
+        if inpaint_pipeline is None:
+            inpaint_pipeline = StableDiffusionInpaintPipeline.from_pretrained(
+            "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16
+            )
+            inpaint_pipeline = inpaint_pipeline.to("cuda")
 
-        image_pil = image_pil.resize((512, 512))
-        mask_pil = mask_pil.resize((512, 512))
-
-        image = pipe(prompt=inpaint_prompt, image=image_pil, mask_image=mask_pil).images[0]
+        image = inpaint_pipeline(prompt=inpaint_prompt, image=image_pil.resize((512, 512)), mask_image=mask_pil.resize((512, 512))).images[0]
         image = image.resize(size)
 
-        image_path = os.path.join(output_dir, "grounded_sam_inpainting_output.jpg")
-        image.save(image_path)
-        image_result = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
-        return image_result
+        return [image, mask_pil]
     else:
         print("task_type:{} error!".format(task_type))
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser("Grounded SAM demo", add_help=True)
     parser.add_argument("--debug", action="store_true", help="using debug mode")
     parser.add_argument("--share", action="store_true", help="share the app")
     parser.add_argument('--port', type=int, default=7589, help='port to run the server')
+    parser.add_argument('--no-gradio-queue', action="store_true", help='path to the SAM checkpoint')
     args = parser.parse_args()
 
-    block = gr.Blocks().queue()
+    print(args)
+
+    block = gr.Blocks()
+    if not args.no_gradio_queue:
+        block = block.queue()
+
     with block:
         with gr.Row():
             with gr.Column():
@@ -333,12 +290,12 @@ if __name__ == "__main__":
                     inpaint_mode = gr.Dropdown(["merge", "first"], value="merge", label="inpaint_mode")
 
             with gr.Column():
-                gallery = gr.outputs.Image(
-                    type="pil",
-                ).style(full_width=True, full_height=True)
+                gallery = gr.Gallery(
+                    label="Generated images", show_label=False, elem_id="gallery"
+                ).style(preview=True, grid=2, object_fit="scale-down")
 
         run_button.click(fn=run_grounded_sam, inputs=[
-                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode], outputs=[gallery])
+                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode], outputs=gallery)
 
 
     block.launch(server_name='0.0.0.0', server_port=args.port, debug=args.debug, share=args.share)
