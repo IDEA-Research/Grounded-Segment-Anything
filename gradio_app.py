@@ -282,8 +282,7 @@ def run_grounded_sam(image_path, text_prompt, task_type, inpaint_prompt, box_thr
         if inpaint_mode == 'merge':
             masks = torch.sum(masks, dim=0).unsqueeze(0)
             masks = torch.where(masks > 0, True, False)
-        else:
-            mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
+        mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
         mask_pil = Image.fromarray(mask)
         
         pipe = StableDiffusionInpaintPipeline.from_pretrained(

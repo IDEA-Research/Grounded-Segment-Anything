@@ -186,8 +186,7 @@ if __name__ == "__main__":
     if inpaint_mode == 'merge':
         masks = torch.sum(masks, dim=0).unsqueeze(0)
         masks = torch.where(masks > 0, True, False)
-    else:
-        mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
+    mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
     mask_pil = Image.fromarray(mask)
     image_pil = Image.fromarray(image)
     
