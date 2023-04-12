@@ -1270,15 +1270,6 @@ class Grounded_dino_sam_inpainting:
              f"Output Image: {updated_image_path}")
         return updated_image_path
 
-    @prompts(name="Remove Something From The Photo",
-             description="useful when you want to remove and object or something from the photo "
-                         "from its description or location. "
-                         "The input to this tool should be a comma separated string of two, "
-                         "representing the image_path and the object need to be removed. ")
-    def inference_remove(self, inputs):
-        image_path, to_be_removed_txt = inputs.split(",")[0], ','.join(inputs.split(',')[1:])
-        return self.inference_replace(f"{image_path},{to_be_removed_txt},background")
-
 #############################################New Tool#############################################
 
 
