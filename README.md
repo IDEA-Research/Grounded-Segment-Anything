@@ -28,9 +28,12 @@ The **core idea** behind this project is to **combine the strengths of different
 
 **BLIP + Grounded-SAM: Automatic Label System!**
 
-Using BLIP to generate caption, extract tags and using Grounded-SAM for box and mask generating. Here's the demo output:
+Using BLIP to generate caption, extracting tags with ChatGPT, and using Grounded-SAM for box and mask generating. Here's the demo output:
 
 ![](./assets/automatic_label_output_demo3.jpg)
+
+**ChatBot**
+![](./assets/chatbot_demo.png)
 
 
 **Imagine Space**
@@ -305,6 +308,24 @@ python grounded_sam_whisper_inpainting_demo.py \
 ```
 
 ![](./assets/acoustics/gsam_whisper_inpainting_pipeline.png)
+
+## :speech_balloon: Run ChatBot Demo
+Following [Visual ChatGPT](https://github.com/microsoft/visual-chatgpt), we add a ChatBot for our project. Currently, it supports:
+1. "Descripe the image."
+2. "Detect the dog (and the cat) in the image."
+3. "Segment anything in the image."
+4. "Segment the dog (and the cat) in the image."
+5. "Help me label the image."
+6. "Replace the dog with a cat in the image."
+
+To use the ChatBot:
+- Install whisper if you want to use audio as input.
+- Set the default model setting in the tool `Grounded_dino_sam_inpainting`.
+- Run Demo
+```bash
+export CUDA_VISIBLE_DEVICES=0
+python chatbot.py 
+```
 
 
 ## :cupid: Acknowledgements
