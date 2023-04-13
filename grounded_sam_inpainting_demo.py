@@ -138,7 +138,7 @@ if __name__ == "__main__":
     inpaint_prompt = args.inpaint_prompt
     output_dir = args.output_dir
     box_threshold = args.box_threshold
-    text_threshold = args.box_threshold
+    text_threshold = args.text_threshold
     inpaint_mode = args.inpaint_mode
     device = args.device
 
