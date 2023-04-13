@@ -209,7 +209,9 @@ if __name__ == "__main__":
     )
 
     # initialize SAM
-    predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint).to(args.device))
+    sam = build_sam(checkpoint=sam_checkpoint)
+    sam.to(device=device)
+    predictor = SamPredictor(sam)
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     predictor.set_image(image)
@@ -229,7 +231,7 @@ if __name__ == "__main__":
     pred_phrases = [pred_phrases[idx] for idx in nms_idx]
     print(f"After NMS: {boxes_filt.shape[0]} boxes")
 
-    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
+    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
 
     masks, _, _ = predictor.predict_torch(
         point_coords = None,
