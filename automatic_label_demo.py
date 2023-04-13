@@ -224,7 +224,7 @@ if __name__ == "__main__":
     openai_proxy = args.openai_proxy
     output_dir = args.output_dir
     box_threshold = args.box_threshold
-    text_threshold = args.box_threshold
+    text_threshold = args.text_threshold
     iou_threshold = args.iou_threshold
     device = args.device
 
