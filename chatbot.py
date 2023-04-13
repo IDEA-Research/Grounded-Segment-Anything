@@ -1077,9 +1077,9 @@ class Grounded_dino_sam_inpainting:
                          "representing the image_path and the description of specific object.")
     def inference_detect_one_object(self, inputs):
         image_path, text_prompt = inputs.split(',')
+        print(f"\nInput Text Prompt: {text_prompt}")
         updated_image_path = self._detect_object(image_path, text_prompt, func_name="det-object")
-        print(f"\nProcessed DetectOneObject, Input Image: {image_path}, Input Text Prompt: {text_prompt}, "
-              f"Output Image: {updated_image_path}")
+        print(f"Processed DetectOneObject, Input Image: {image_path}, Output Image: {updated_image_path}")
         return updated_image_path
 
     @prompts(name="Detect Multiple Objects In Image",
@@ -1092,9 +1092,9 @@ class Grounded_dino_sam_inpainting:
     def inference_detect_multi_object(self, inputs):
         image_path, text_prompt = inputs.split(',')
         processed_text_prompt = text_prompt.replace(' &', ',')
+        print(f"\nOriginal Text Prompt: {text_prompt}, Input Text Prompt: {processed_text_prompt}")
         updated_image_path = self._detect_object(image_path, text_prompt, func_name="det-objects")
-        print(f"\nProcessed DetectMultiObject, Input Image: {image_path}, Original Text Prompt: {text_prompt}, "
-              f"Input Text Prompt: {processed_text_prompt}, Output Image: {updated_image_path}")
+        print(f"Processed DetectMultiObject, Input Image: {image_path}, Output Image: {updated_image_path}")
         return updated_image_path
 
     # modified from https://github.com/Cheems-Seminar/segment-anything-and-name-it/blob/58408f1e4e340f565c5ef6b0c71920cdcd30b213/chatbot.py#L1046
@@ -1185,9 +1185,9 @@ class Grounded_dino_sam_inpainting:
                          "representing the image_path and the description of specific object.")
     def inference_segment_one_object(self, inputs):
         image_path, text_prompt = inputs.split(',')
+        print(f"\nInput Text Prompt: {text_prompt}")
         updated_image_path, _ = self._segment_object(image_path, text_prompt, func_name="seg-object")
-        print(f"\nProcessed SegmentOneObject, Input Image: {image_path}, Input Text Prompt: {text_prompt}, "
-              f"Output Image: {updated_image_path}")
+        print(f"Processed SegmentOneObject, Input Image: {image_path}, Output Image: {updated_image_path}")
         return updated_image_path
 
     @prompts(name="Segment Multiple Object In Image",
@@ -1200,9 +1200,9 @@ class Grounded_dino_sam_inpainting:
     def inference_segment_multi_object(self, inputs):
         image_path, text_prompt = inputs.split(',')
         processed_text_prompt = text_prompt.replace(' &', ',')
+        print("\nOriginal Text Prompt: {text_prompt}, Input Text Prompt: {processed_text_prompt}, ")
         updated_image_path, _ = self._segment_object(image_path, text_prompt, func_name="seg-objects")
-        print(f"\nProcessed SegmentMultiObject, Input Image: {image_path}, Original Text Prompt: {text_prompt}, "
-              f"Input Text Prompt: {processed_text_prompt}, Output Image: {updated_image_path}")
+        print(f"Processed SegmentMultiObject, Input Image: {image_path}, Output Image: {updated_image_path}")
         return updated_image_path
 
     @prompts(name="Auto Label the Image",
@@ -1214,12 +1214,12 @@ class Grounded_dino_sam_inpainting:
         out = self.blip_model.generate(**inputs)
         caption = self.blip_processor.decode(out[0], skip_special_tokens=True)
         text_prompt = generate_tags(caption, split=",")
-        print(f"Caption: {caption}")
+        print(f"\nCaption: {caption}")
         print(f"Tags: {text_prompt}")
         updated_image_path, pred_phrases = self._segment_object(image_path, text_prompt, func_name="seg-objects")
         caption = check_caption(caption, pred_phrases)
         print(f"Revise caption with number: {caption}")
-        print(f"\nProcessed SegmentMultiObject, Input Image: {image_path}, Caption: {caption}, "
+        print(f"Processed SegmentMultiObject, Input Image: {image_path}, Caption: {caption}, "
               f"Text Prompt: {text_prompt}, Output Image: {updated_image_path}")
         return updated_image_path
 
@@ -1265,9 +1265,9 @@ class Grounded_dino_sam_inpainting:
                          "representing the image_path, the object to be replaced, the object to be replaced with ")
     def inference_replace(self, inputs):
         image_path, to_be_replaced_txt, replace_with_txt = inputs.split(",")
+        print(f"\nReplace {to_be_replaced_txt} to {replace_with_txt}")
         updated_image_path = self._inpainting(image_path, to_be_replaced_txt, replace_with_txt, 'replace-something')
-        print(f"\nProcessed ImageEditing, Input Image: {image_path}, Replace {to_be_replaced_txt} to {replace_with_txt}, "
-             f"Output Image: {updated_image_path}")
+        print(f"Processed ImageEditing, Input Image: {image_path}, Output Image: {updated_image_path}")
         return updated_image_path
 
 #############################################New Tool#############################################
@@ -1277,8 +1277,8 @@ class ConversationBot:
     def __init__(self, load_dict):
         # load_dict = {'VisualQuestionAnswering':'cuda:0', 'ImageCaptioning':'cuda:1',...}
         print(f"Initializing VisualChatGPT, load_dict={load_dict}")
-        # if 'ImageCaptioning' not in load_dict:
-        #     raise ValueError("You have to load ImageCaptioning as a basic function for VisualChatGPT")
+        if 'ImageCaptioning' not in load_dict and 'Grounded_dino_sam_inpainting' not in load_dict:
+            raise ValueError("You have to load ImageCaptioning or Grounded_dino_sam_inpainting as a basic function for VisualChatGPT")
 
         self.models = {}
         # Load Basic Foundation Models
@@ -1325,7 +1325,10 @@ class ConversationBot:
         img = img.convert('RGB')
         img.save(image_filename, "PNG")
         print(f"Resize image form {width}x{height} to {width_new}x{height_new}")
-        description = self.models['Grounded_dino_sam_inpainting'].inference_caption(image_filename)
+        if 'Grounded_dino_sam_inpainting' in self.models:
+            description = self.models['Grounded_dino_sam_inpainting'].inference_caption(image_filename)
+        else:
+            description = self.models['ImageCaptioning'].inference(image_filename)
         if lang == 'Chinese':
             Human_prompt = f'\nHuman: 提供一张名为 {image_filename}的图片。它的描述是: {description}。 这些信息帮助你理解这个图像，但是你应该使用工具来完成下面的任务，而不是直接从我的描述中想象。 如果你明白了, 说 \"收到\". \n'
             AI_prompt = "收到。  "
@@ -1373,7 +1376,7 @@ def speech_recognition(speech_file):
     # detect the spoken language
     _, probs = whisper_model.detect_language(mel)
     speech_language = max(probs, key=probs.get)
-    print(f'Detect Language: {speech_language}')
+    print(f'\nDetect Language: {speech_language}')
 
     # decode the audio
     options = whisper.DecodingOptions(fp16 = False)
@@ -1384,8 +1387,8 @@ def speech_recognition(speech_file):
 
 
 if __name__ == '__main__':
-    load_dict = {'Grounded_dino_sam_inpainting': 'cuda:0'}
-    # load_dict = {'ImageCaptioning': 'cuda:0'}
+    # load_dict = {'Grounded_dino_sam_inpainting': 'cuda:0'}
+    load_dict = {'ImageCaptioning': 'cuda:0'}
     
     bot = ConversationBot(load_dict)
 
@@ -1448,4 +1451,3 @@ if __name__ == '__main__':
         clear.click(lambda: [], None, state)
 
     demo.launch(server_name="0.0.0.0", server_port=10010)
-
