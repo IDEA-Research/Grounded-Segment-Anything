@@ -171,7 +171,7 @@ if __name__ == "__main__":
         boxes_filt[i][2:] += boxes_filt[i][:2]
 
     boxes_filt = boxes_filt.cpu()
-    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
+    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
 
     masks, _, _ = predictor.predict_torch(
         point_coords = None,

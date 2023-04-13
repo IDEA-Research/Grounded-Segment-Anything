@@ -286,7 +286,7 @@ if __name__ == "__main__":
     caption = check_caption(caption, pred_phrases)
     print(f"Revise caption with number: {caption}")
 
-    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
+    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
 
     masks, _, _ = predictor.predict_torch(
         point_coords = None,

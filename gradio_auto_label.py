@@ -284,7 +284,9 @@ def run_grounded_sam(image_path, openai_key, box_threshold, text_threshold, iou_
     size = image_pil.size
 
     # initialize SAM
-    predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint))
+    sam = build_sam(checkpoint=sam_checkpoint)
+    sam.to(device=device)
+    predictor = SamPredictor(sam)
     image = np.array(image_path)
     predictor.set_image(image)
 
@@ -304,7 +306,7 @@ def run_grounded_sam(image_path, openai_key, box_threshold, text_threshold, iou_
     caption = check_caption(caption, pred_phrases)
     print(f"Revise caption with number: {caption}")
 
-    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
+    transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
 
     masks, _, _ = predictor.predict_torch(
         point_coords = None,

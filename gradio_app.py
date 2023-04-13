@@ -183,7 +183,9 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
         if sam_predictor is None:
             # initialize SAM
             assert sam_checkpoint, 'sam_checkpoint is not found!'
-            sam_predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint))
+            sam = build_sam(checkpoint=sam_checkpoint)
+            sam.to(device=device)
+            sam_predictor = SamPredictor(sam)
 
         image = np.array(image_pil)
         sam_predictor.set_image(image)
@@ -197,7 +199,7 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
             print(f"After NMS: {boxes_filt.shape[0]} boxes")
             print(f"Revise caption with number: {text_prompt}")
 
-        transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2])
+        transformed_boxes = sam_predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
 
         masks, _, _ = sam_predictor.predict_torch(
             point_coords = None,
