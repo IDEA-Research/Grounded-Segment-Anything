@@ -43,7 +43,7 @@ def process():
 
     png_bytes: bytes = base64.b64decode(image_base64)
     png_result = generate_img(hint, prompt, png_bytes)
-    png_result_base64 = base64.b64encode(png_result)
+    png_result_base64 = base64.b64encode(png_result).decode()
 
     return Response(
         response=json.dumps({"resultbase64": png_result_base64}),
