@@ -1,6 +1,7 @@
 from flask import Flask, request, Response
 import base64
 import json
+from loguru import logger
 import tempfile
 from grounded_sam_inpainting_demo import main as grounded_sam_inpainting
 from pathlib import Path
@@ -41,6 +42,10 @@ def process():
     prompt: str = request.json["prompt"]
     image_base64: str = request.json["imagebase64"]
 
+    logger.info(
+        f"hint: {hint}, prompt: {prompt}, len(image_base64): {len(image_base64)}"
+    )
+
     png_bytes: bytes = base64.b64decode(image_base64)
     png_result = generate_img(hint, prompt, png_bytes)
     png_result_base64 = base64.b64encode(png_result).decode()
@@ -49,6 +54,7 @@ def process():
         response=json.dumps({"resultbase64": png_result_base64}),
         status=200,
     )
+
 
 @app.route("/", methods=["GET"])
 def hello():
