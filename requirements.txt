@@ -18,3 +18,7 @@ torch
 torchvision
 transformers
 yapf
+click
+loguru
+flask
+gunicorn

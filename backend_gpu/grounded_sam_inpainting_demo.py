@@ -131,7 +131,7 @@ def main(
     text_threshold,
     inpaint_mode,
     device,
-) -> str:
+) -> None:
     # make dir
     os.makedirs(output_dir, exist_ok=True)
 
@@ -205,10 +205,7 @@ def main(
     # prompt = "A sofa, high quality, detailed"
     image = pipe(prompt=inpaint_prompt, image=image_pil, mask_image=mask_pil).images[0]
     image = image.resize(size)
-    inpainting_out_fname = os.path.join(output_dir, "grounded_sam_inpainting_output.jpg")
-    image.save(inpainting_out_fname)
-
-    return inpainting_out_fname
+    image.save(os.path.join(output_dir, "grounded_sam_inpainting_output.jpg"))
 
 
 if __name__ == "__main__":
