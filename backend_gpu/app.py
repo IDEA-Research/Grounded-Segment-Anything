@@ -49,3 +49,7 @@ def process():
         response=json.dumps({"resultbase64": png_result_base64}),
         status=200,
     )
+
+@app.route("/", methods=["GET"])
+def hello():
+    return "hello"
