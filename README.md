@@ -52,9 +52,9 @@ Some possible avenues for future work ...
 
 - :fire: **ChatBot** for our project is built!
 
-<video width="900" height="600" controls>
-    <source src="assets/chatbot.mp4" type="video/mp4">
-</video>
+https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-9b7b-517aa1432123.mp4
+
+
 
 - 🆕 Release the interactive fashion-edit playground in [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). Run in the notebook, just click for annotating points for further segmentation. Enjoy it! 
 
