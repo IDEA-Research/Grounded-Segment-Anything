@@ -12,7 +12,7 @@ The **core idea** behind this project is to **combine the strengths of different
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it needs prompts (like boxes/points) to generate masks. 
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
 - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
-- The combination of `Tag2Text/BLIP + Grounding DINO + SAM` for **automatic labeling system**!
+- The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
 - The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
 - The combination of `Whisper + Grounding DINO + SAM` to **detect and segment anything with speech**!
 
@@ -26,9 +26,9 @@ The **core idea** behind this project is to **combine the strengths of different
 **Grounded-SAM + Stable-Diffusion Inpainting: Data-Factory, Generating New Data!**
 ![](./assets/grounded_sam_inpainting_demo.png)
 
-**Tag2Text/BLIP + Grounded-SAM: Automatic Label System!**
+**BLIP + Grounded-SAM: Automatic Label System!**
 
-Using Tag2Text/BLIP to generate caption, extracting tags with ChatGPT, and using Grounded-SAM for box and mask generating. Here's the demo output:
+Using BLIP to generate caption, extracting tags with ChatGPT, and using Grounded-SAM for box and mask generating. Here's the demo output:
 
 ![](./assets/automatic_label_output_demo3.jpg)
 
@@ -79,13 +79,14 @@ Some possible avenues for future work ...
 - [Optical Character Recognition with Segment Anything](https://github.com/yeungchenwa/OCR-SAM) by Zhenhua Yang
 - [Transform Image into Unique Paragraph with ChatGPT, BLIP2, OFA, GRIT, Segment Anything, ControlNet](https://github.com/showlab/Image2Paragraph) by showlab
 - [Lang-Segment-Anything: Another awesome demo for combining GroundingDINO with Segment-Anything](https://github.com/luca-medeiros/lang-segment-anything) by Luca Medeiros
+- [🥳 🚀 **Playground: Integrate SAM and OpenMMLab!**](https://github.com/open-mmlab/playground)
 
 
 ## :bookmark_tabs: Catelog
 - [x] Grounding DINO Demo
 - [x] Grounding DINO + Segment Anything Demo
 - [x] Grounding DINO + Segment Anything + Stable-Diffusion Demo
-- [x] Tag2Text/BLIP + Grounding DINO + Segment Anything + Stable-Diffusion Demo
+- [x] BLIP + Grounding DINO + Segment Anything + Stable-Diffusion Demo
 - [x] Whisper + Grounding DINO + Segment Anything + Stable-Diffusion Demo
 - [ ] Hugging Face Demo
 - [ ] Colab demo
@@ -206,9 +207,9 @@ python gradio_app.py
 ![](./assets/gradio_demo.png)
 
 
-## :robot: Run Grounded-Segment-Anything + Tag2Text/BLIP Demo
+## :robot: Run Grounded-Segment-Anything + BLIP Demo
 It is easy to generate pseudo labels automatically as follows:
-1. Use Tag2Text/BLIP (or other caption models) to generate a caption.
+1. Use BLIP (or other caption models) to generate a caption.
 2. Extract tags from the caption. We use ChatGPT to handle the potential complicated sentences. 
 3. Use Grounded-Segment-Anything to generate the boxes and masks.
 
@@ -226,7 +227,6 @@ python automatic_label_demo.py \
   --text_threshold 0.2 \
   --iou_threshold 0.5 \
   --device "cuda"
-  --revise
 ```
 
 - The pseudo labels and model prediction visualization will be saved in `output_dir` as follows:
@@ -332,7 +332,7 @@ python chatbot.py
 ## :cupid: Acknowledgements
 - [Segment Anything](https://github.com/facebookresearch/segment-anything)
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO)
-- [Tag2Text](https://github.com/xinyu1205/Tag2Text.git)
+
 ## Citation
 If you find this project helpful for your research, please consider citing the following BibTeX entry.
 ```BibTex

@@ -22,7 +22,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # BLIP
-#from transformers import BlipProcessor, BlipForConditionalGeneration
+from transformers import BlipProcessor, BlipForConditionalGeneration
 
 # ChatGPT
 import openai
@@ -206,9 +206,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
     )
-    parser.add_argument(
-        "--revise", action='store_true', help="gpt revise"
-    )
+
     parser.add_argument("--box_threshold", type=float, default=0.25, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.2, help="text threshold")
     parser.add_argument("--iou_threshold", type=float, default=0.5, help="iou threshold")
@@ -248,61 +246,18 @@ if __name__ == "__main__":
     # use Tag2Text can generate better captions
     # https://huggingface.co/spaces/xinyu1205/Tag2Text
     # but there are some bugs...
-    text_prompt={}
-    caption={}
-    if os.path.exists("Tag2Text") or os.path.exists("Tag2Text-main"):
-                print('check git repo https://huggingface.co/spaces/xinyu1205/Tag2Text') 
-                print('<info> if 4.25 version bug, please pip install transformers==4.15.0 ,and switch 4.25 with others demo ')
-                import sys
-                
-                sys.path.append("Tag2Text")
-                from Tag2Text.models import tag2text
-                from Tag2Text import inference
-                import torchvision.transforms as TS
-                normalize = TS.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
-                transform = TS.Compose([
-                    TS.Resize((384, 384)),
-                    TS.ToTensor(), normalize
-                ])
-                delete_tag_index = [127,2961, 3351, 3265, 3338, 3355, 3359]
-                specified_tags='None'
-                ##load model
-                tag2text_model = tag2text.tag2text_caption(pretrained="Tag2Text/pretrained/tag2text_swin_14m.pth",
-                                        image_size=384,
-                                        vit='swin_b',
-                                        delete_tag_index=delete_tag_index)
-                tag2text_model.threshold = 0.68  # threshold for tagging
-                tag2text_model.eval()
-
-                tag2text_model = tag2text_model.to(device)
-                raw_image = image_pil.resize(
-                    (384, 384))
-                raw_image  = transform(raw_image).unsqueeze(0).to(device)
-
-                res = inference.inference(raw_image , tag2text_model, specified_tags)
-                text_prompt=res[0]
-                caption=res[2]
-                print("Model Identified Tags: ", res[0])
-                print("User Specified Tags: ", res[1])
-                print("Image Caption: ", res[2])
-
+    processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
+    if device == "cuda":
+        blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
     else:
-        # BLIP
-        from transformers import BlipProcessor, BlipForConditionalGeneration
-        #print('<info> pip install transformers>=4.25.0')
-        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-        if device == "cuda":
-            blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
-        else:
-            blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
-        caption = generate_caption(image_pil, device=device)
-        # Currently ", " is better for detecting single tags
-        # while ". " is a little worse in some case
-        text_prompt = generate_tags(caption, split=split)
-        print(f"Caption: {caption}")
-        print(f"Tags: {text_prompt}")
-    
+        blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
+    caption = generate_caption(image_pil, device=device)
+    # Currently ", " is better for detecting single tags
+    # while ". " is a little worse in some case
+    text_prompt = generate_tags(caption, split=split)
+    print(f"Caption: {caption}")
+    print(f"Tags: {text_prompt}")
+
     # run grounding dino model
     boxes_filt, scores, pred_phrases = get_grounding_output(
         model, image, text_prompt, box_threshold, text_threshold, device=device
@@ -328,9 +283,8 @@ if __name__ == "__main__":
     boxes_filt = boxes_filt[nms_idx]
     pred_phrases = [pred_phrases[idx] for idx in nms_idx]
     print(f"After NMS: {boxes_filt.shape[0]} boxes")
-    if args.revise:
-        caption = check_caption(caption, pred_phrases)
-        print(f"Revise caption with number: {caption}")
+    caption = check_caption(caption, pred_phrases)
+    print(f"Revise caption with number: {caption}")
 
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
 
