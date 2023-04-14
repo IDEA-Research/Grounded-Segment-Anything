@@ -15,6 +15,7 @@ The **core idea** behind this project is to **combine the strengths of different
 - The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
 - The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
 - The combination of `Whisper + Grounding DINO + SAM` to **detect and segment anything with speech**!
+- The chatbot **for the above tools** with better reasoning!
 
 **🔥 🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
 
@@ -32,10 +33,6 @@ Using BLIP to generate caption, extracting tags with ChatGPT, and using Grounded
 
 ![](./assets/automatic_label_output_demo3.jpg)
 
-**ChatBot**
-![](./assets/chatbot_demo.png)
-
-
 **Imagine Space**
 
 Some possible avenues for future work ...
@@ -51,13 +48,18 @@ Some possible avenues for future work ...
 **Tips**
 - If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest seperating each name with `.` . An example: `cat . dog . chair .`
 
-## :fire: What's New 
+## What's New
+
+- :fire: **ChatBot** for our project is built!
+
+<video width="900" height="600" controls>
+    <source src="assets/chatbot.mp4" type="video/mp4">
+</video>
+
 - 🆕 Release the interactive fashion-edit playground in [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). Run in the notebook, just click for annotating points for further segmentation. Enjoy it! 
 
 
   <img src="https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/interactive-fashion-edit.png" width="500" height="260"/><img src="https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/interactive-mark.gif" width="250" height="250"/>
-
-
 
 - :new: Checkout our related human-face-edit branch [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). We'll keep updating this branch with more interesting features. Here are some examples:
 
