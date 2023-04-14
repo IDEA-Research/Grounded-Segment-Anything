@@ -5,7 +5,9 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 
 We are very willing to **help everyone share and promote new projects** based on Segment-Anything, we highlight some excellent projects here: [Highlight Extension Projects](#bulb-highlight-extension-projects). You can submit a new issue (with `project` tag) or a new pull request to add new projects' links. 
 
-🔥 Especially, we would like to highlight the awesome project [Segment Everything Everywhere All at Once](https://github.com/UX-Decoder/Segment-Everything-Everywhere-All-At-Once) which support various types of prompts and any combination of prompts.
+**🔥 Highlighted Projects** 
+
+Checkout the [Segment Everything Everywhere All at Once](https://github.com/UX-Decoder/Segment-Everything-Everywhere-All-At-Once) demo! It supports segmenting with various types of prompts (text, point, scribble, referring image, etc.) and any combination of prompts.
 
 **Why this project?**
 
