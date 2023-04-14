@@ -11,11 +11,13 @@ The **core idea** behind this project is to **combine the strengths of different
 
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it needs prompts (like boxes/points) to generate masks. 
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
+- [OSX](https://osx-ubody.github.io/) is a strong motion capture method to generate high quality human mesh from monucular image.
 - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
 - The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
 - The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
 - The combination of `Whisper + Grounding DINO + SAM` to **detect and segment anything with speech**!
 - The chatbot **for the above tools** with better reasoning!
+- The combination of `Grounding DINO + SAM + OSX` to **reconstruct 3D human mesh**!
 
 **🔥 🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
 
@@ -118,8 +120,15 @@ Install diffusers:
 pip install --upgrade diffusers[torch]
 ```
 
+Install osx:
+
+```bash
+cd osx
+bash install.sh
+```
 
 The following optional dependencies are necessary for mask post-processing, saving masks in COCO format, the example notebooks, and exporting the model in ONNX format. `jupyter` is also required to run the example notebooks.
+
 ```
 pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
 ```
@@ -330,8 +339,40 @@ export CUDA_VISIBLE_DEVICES=0
 python chatbot.py 
 ```
 
+## :man_dancing: Run Grounded-Segment-Anything + OSX Demo
+
+- Download the checkpoint for OSX:
+
+```bash
+cd Grounded-Segment-Anything
+wget https://github.com/IDEA-Research/OSX/releases/download/osx_.pth
+```
+
+- Download the human model files and place it into `osx/utils/human_model_files` following the instruction of [OSX](https://github.com/IDEA-Research/OSX).
+
+- Run Demo
+
+```shell
+export CUDA_VISIBLE_DEVICES=0
+python grounded_sam_osx_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --osx_checkpoint osx_l.pth.tar \
+  --input_image assets/grounded_sam_osx_demo2.png \
+  --output_dir "outputs" \
+  --box_threshold 0.3 \
+  --text_threshold 0.25 \
+  --text_prompt "humans, chairs" \
+  --device "cuda"
+```
+
+- The model prediction visualization will be saved in `output_dir` as follow:
+
+![](./assets/grounded_sam_osx_output.jpg)
 
 ## :cupid: Acknowledgements
+
 - [Segment Anything](https://github.com/facebookresearch/segment-anything)
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO)
 

@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - name: "Poseur Contributors"
+title: "Poseur: Direct Human Pose Regression with Transformers"
+date-released: 2022-07-21
+url: "https://github.com/aim-uofa/Poseur"
+license: 2-clause BSD
