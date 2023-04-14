@@ -53,6 +53,7 @@ def process():
     return Response(
         response=json.dumps({"resultbase64": png_result_base64}),
         status=200,
+        mimetype="application/json",
     )
 
 
