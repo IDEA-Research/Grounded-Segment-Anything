@@ -17,22 +17,22 @@ def generate_img(hint: str, prompt: str, img: bytes) -> bytes:
         with open(input_path, "wb") as f:
             f.write(img)
 
-    img_fname = grounded_sam_inpainting(
-        config_file=str(config_file),
-        grounded_checkpoint=grounded_checkpoint,
-        sam_checkpoint=sam_checkpoint,
-        image_path=input_path,
-        det_prompt=hint,
-        inpaint_prompt=prompt,
-        output_dir=temp_dir,
-        box_threshold=0.3,
-        text_threshold=0.25,
-        inpaint_mode="first",
-        device="cuda",
-    )
+        img_fname = grounded_sam_inpainting(
+            config_file=str(config_file),
+            grounded_checkpoint=grounded_checkpoint,
+            sam_checkpoint=sam_checkpoint,
+            image_path=input_path,
+            det_prompt=hint,
+            inpaint_prompt=prompt,
+            output_dir=temp_dir,
+            box_threshold=0.3,
+            text_threshold=0.25,
+            inpaint_mode="first",
+            device="cuda",
+        )
 
-    with open(img_fname, "rb") as f:
-        return f.read()
+        with open(img_fname, "rb") as f:
+            return f.read()
 
 
 @app.route("/api/process", methods=["POST"])
