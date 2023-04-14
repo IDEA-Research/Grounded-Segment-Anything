@@ -1,6 +1,7 @@
 import argparse
 import os
 import copy
+import gc
 
 import numpy as np
 import torch
@@ -157,6 +158,11 @@ if __name__ == "__main__":
         model, image, det_prompt, box_threshold, text_threshold, device=device
     )
 
+    model.cpu()
+    del model
+    gc.collect()
+    torch.cuda.empty_cache()
+
     # initialize SAM
     predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint).to(device))
     image = cv2.imread(image_path)
@@ -189,6 +195,11 @@ if __name__ == "__main__":
     mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
     mask_pil = Image.fromarray(mask)
     image_pil = Image.fromarray(image)
+
+    predictor.model.cpu()
+    del predictor
+    gc.collect()
+    torch.cuda.empty_cache() 
     
     pipe = StableDiffusionInpaintPipeline.from_pretrained(
     "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16
