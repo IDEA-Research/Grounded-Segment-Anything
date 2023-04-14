@@ -12,6 +12,7 @@ import numpy as np
 import argparse
 import inspect
 
+import shutil
 import torchvision
 import whisper
 import matplotlib.pyplot as plt
@@ -1216,7 +1217,7 @@ class Grounded_dino_sam_inpainting:
         text_prompt = generate_tags(caption, split=",")
         print(f"\nCaption: {caption}")
         print(f"Tags: {text_prompt}")
-        updated_image_path, pred_phrases = self._segment_object(image_path, text_prompt, func_name="seg-objects")
+        updated_image_path, pred_phrases = self._segment_object(image_path, text_prompt, func_name="auto-label")
         caption = check_caption(caption, pred_phrases)
         print(f"Revise caption with number: {caption}")
         print(f"Processed SegmentMultiObject, Input Image: {image_path}, Caption: {caption}, "
@@ -1251,8 +1252,8 @@ class Grounded_dino_sam_inpainting:
         )
         # inpainting pipeline
         mask = masks[0][0].cpu().numpy() # simply choose the first mask, which will be refine in the future release
-        mask_pil = Image.fromarray(mask)
-        image_pil = Image.fromarray(image)
+        mask_pil = Image.fromarray(mask).resize((512, 512))
+        image_pil = Image.fromarray(image).resize((512, 512))
         image = self.sd_pipe(prompt=replace_with_txt, image=image_pil, mask_image=mask_pil).images[0]
         updated_image_path = get_new_image_name(image_path, func_name)
         image.save(updated_image_path)
@@ -1313,18 +1314,23 @@ class ConversationBot:
         return state, state
 
     def run_image(self, image, state, txt, lang):
-        image_filename = os.path.join('image', f"{str(uuid.uuid4())[:8]}.png")
-        print("======>Auto Resize Image...")
-        img = Image.open(image.name)
-        width, height = img.size
-        ratio = min(512 / width, 512 / height)
-        width_new, height_new = (round(width * ratio), round(height * ratio))
-        width_new = int(np.round(width_new / 64.0)) * 64
-        height_new = int(np.round(height_new / 64.0)) * 64
-        img = img.resize((width_new, height_new))
-        img = img.convert('RGB')
-        img.save(image_filename, "PNG")
-        print(f"Resize image form {width}x{height} to {width_new}x{height_new}")
+        # image_filename = os.path.join('image', f"{str(uuid.uuid4())[:8]}.png")
+        # print("======>Auto Resize Image...")
+        # img = Image.open(image.name)
+        # width, height = img.size
+        # ratio = min(512 / width, 512 / height)
+        # width_new, height_new = (round(width * ratio), round(height * ratio))
+        # width_new = int(np.round(width_new / 64.0)) * 64
+        # height_new = int(np.round(height_new / 64.0)) * 64
+        # img = img.resize((width_new, height_new))
+        # img = img.convert('RGB')
+        # img.save(image_filename)
+        # img.save(image_filename, "PNG")
+        # print(f"Resize image form {width}x{height} to {width_new}x{height_new}")
+        ## Directly use original image for better results
+        suffix = image.name.split('.')[-1] 
+        image_filename = os.path.join('image', f"{str(uuid.uuid4())[:8]}.{suffix}")
+        shutil.copy(image.name, image_filename)
         if 'Grounded_dino_sam_inpainting' in self.models:
             description = self.models['Grounded_dino_sam_inpainting'].inference_caption(image_filename)
         else:
@@ -1388,7 +1394,7 @@ def speech_recognition(speech_file):
 
 if __name__ == '__main__':
     load_dict = {'Grounded_dino_sam_inpainting': 'cuda:0'}
-#     load_dict = {'ImageCaptioning': 'cuda:0'}
+    # load_dict = {'ImageCaptioning': 'cuda:0'}
     
     bot = ConversationBot(load_dict)
 
@@ -1451,3 +1457,4 @@ if __name__ == '__main__':
         clear.click(lambda: [], None, state)
 
     demo.launch(server_name="0.0.0.0", server_port=10010)
+
