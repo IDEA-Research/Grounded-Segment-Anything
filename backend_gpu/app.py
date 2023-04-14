@@ -9,7 +9,7 @@ app = Flask(__name__, static_url_path="")
 
 
 def generate_img(hint: str, prompt: str, img: bytes) -> bytes:
-    config_file = Path("grounded_sam_cfg.py")
+    config_file = Path("GroundingDINO_SwinT_OGC.py")
     grounded_checkpoint = Path("groundingdino_swint_ogc.pth")
     sam_checkpoint = Path("sam_vit_h_4b8939.pth")
     with tempfile.TemporaryDirectory() as temp_dir:
