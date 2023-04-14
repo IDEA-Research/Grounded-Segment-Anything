@@ -1,0 +1,9 @@
+{
+    "ckpt": "pretrain_model/swin_base_patch4_window7_224_22k.pth",
+    "vision_width": 1024,
+    "image_res": 384,
+    "window_size": 12,
+    "embed_dim": 128,
+    "depths": [ 2, 2, 18, 2 ],
+    "num_heads": [ 4, 8, 16, 32 ]
+  }

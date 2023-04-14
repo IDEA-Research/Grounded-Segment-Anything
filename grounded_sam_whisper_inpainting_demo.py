@@ -168,6 +168,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
     )
+    parser.add_argument("--cache_dir", type=str, default="./hugging_cache", help="save_your huggingface cache")
     parser.add_argument("--det_speech_file", type=str, help="grounding speech file")
     parser.add_argument("--inpaint_speech_file", type=str, help="inpaint speech file")
     parser.add_argument("--prompt_speech_file", type=str, help="prompt speech file, no need to provide det_speech_file")
@@ -189,6 +190,10 @@ if __name__ == "__main__":
     image_path = args.input_image
 
     output_dir = args.output_dir
+    cache_dir=args.cache_dir
+    # if not os.path.exists(cache_dir):
+    #     print(f"create your cache dir:{cache_dir}")
+    #     os.mkdir(cache_dir)   
     box_threshold = args.box_threshold
     text_threshold = args.text_threshold
     inpaint_mode = args.inpaint_mode
@@ -260,7 +265,7 @@ if __name__ == "__main__":
     image_pil = Image.fromarray(image)
     
     pipe = StableDiffusionInpaintPipeline.from_pretrained(
-    "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16
+    "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16,cache_dir=cache_dir
     )
     pipe = pipe.to("cuda")
 
