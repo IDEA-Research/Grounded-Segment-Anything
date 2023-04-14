@@ -205,10 +205,11 @@ ckpt_repo_id = "ShilongLiu/GroundingDINO"
 ckpt_filenmae = "groundingdino_swint_ogc.pth"
 sam_checkpoint='sam_vit_h_4b8939.pth'
 output_dir="outputs"
+cache_dir="hugging_cache"
 device="cpu"
 
-processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
+processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large",cache_dir=cache_dir)
+blip_model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large",cache_dir=cache_dir)
 
 def generate_caption(raw_image):
     # unconditional image captioning

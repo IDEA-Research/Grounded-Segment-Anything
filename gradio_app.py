@@ -130,6 +130,7 @@ ckpt_repo_id = "ShilongLiu/GroundingDINO"
 ckpt_filenmae = "groundingdino_swint_ogc.pth"
 sam_checkpoint='sam_vit_h_4b8939.pth' 
 output_dir="outputs"
+cache_dir="hugging_cache"
 device="cuda"
 
 
@@ -157,8 +158,8 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
         # use Tag2Text can generate better captions
         # https://huggingface.co/spaces/xinyu1205/Tag2Text
         # but there are some bugs...
-        blip_processor = blip_processor or BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-        blip_model = blip_model or BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
+        blip_processor = blip_processor or BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large",cache_dir=cache_dir)
+        blip_model = blip_model or BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16,cache_dir=cache_dir).to("cuda")
         text_prompt = generate_caption(blip_processor, blip_model, image_pil)
         print(f"Caption: {text_prompt}")
 
@@ -246,7 +247,7 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
         
         if inpaint_pipeline is None:
             inpaint_pipeline = StableDiffusionInpaintPipeline.from_pretrained(
-            "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16
+            "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16,cache_dir=cache_dir
             )
             inpaint_pipeline = inpaint_pipeline.to("cuda")
 
