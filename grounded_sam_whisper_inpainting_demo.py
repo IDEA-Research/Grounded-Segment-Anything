@@ -168,7 +168,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
     )
-    parser.add_argument("--cache_dir", type=str, default="None", help="save your huggingface large model cache")
+    parser.add_argument("--cache_dir", type=str, default=None, help="save your huggingface large model cache")
     parser.add_argument("--det_speech_file", type=str, help="grounding speech file")
     parser.add_argument("--inpaint_speech_file", type=str, help="inpaint speech file")
     parser.add_argument("--prompt_speech_file", type=str, help="prompt speech file, no need to provide det_speech_file")
