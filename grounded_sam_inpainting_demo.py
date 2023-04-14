@@ -122,7 +122,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
     )
-    parser.add_argument("--cache_dir", type=str, default="./hugging_cache", help="save_your huggingface cache")
+    parser.add_argument("--cache_dir", type=str, default="./hugging_cache", help="save your huggingface large model cache")
     parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
     parser.add_argument("--inpaint_mode", type=str, default="first", help="inpaint mode")
