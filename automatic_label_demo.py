@@ -206,7 +206,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
     )
-
+    parser.add_argument(
+        "--revise", action='store_true', help="gpt revise"
+    )
     parser.add_argument("--box_threshold", type=float, default=0.25, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.2, help="text threshold")
     parser.add_argument("--iou_threshold", type=float, default=0.5, help="iou threshold")
@@ -326,8 +328,9 @@ if __name__ == "__main__":
     boxes_filt = boxes_filt[nms_idx]
     pred_phrases = [pred_phrases[idx] for idx in nms_idx]
     print(f"After NMS: {boxes_filt.shape[0]} boxes")
-    caption = check_caption(caption, pred_phrases)
-    print(f"Revise caption with number: {caption}")
+    if args.revise:
+        caption = check_caption(caption, pred_phrases)
+        print(f"Revise caption with number: {caption}")
 
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
 
