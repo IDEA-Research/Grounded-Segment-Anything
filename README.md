@@ -355,7 +355,7 @@ python chatbot.py
 
 ## :man_dancing: Run Grounded-Segment-Anything + OSX Demo
 
-- Download the checkpoint `osx_l_wo_decoder.pth.tar` for OSX:
+- Download the checkpoint `osx_l_wo_decoder.pth.tar` from [here](https://drive.google.com/drive/folders/1x7MZbB6eAlrq5PKC9MaeIm4GqkBpokow?usp=share_link) for OSX:
 - Download the human model files and place it into `osx/utils/human_model_files` following the instruction of [OSX](https://github.com/IDEA-Research/OSX).
 
 - Run Demo
