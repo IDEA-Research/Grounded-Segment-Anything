@@ -114,7 +114,7 @@ def show_box(box, ax, label):
     else:
         color = 'blue'
     ax.add_patch(plt.Rectangle((x0, y0), w, h, edgecolor=color, facecolor=(0, 0, 0, 0), lw=2))
-    ax.text(x0, y0-5, label, fontsize=5, bbox={'facecolor': color, 'alpha': 0.5, 'pad': 1, 'edgecolor': 'none'})
+    ax.text(x0, y0-5, label, fontsize=5, color='white',bbox={'facecolor': color, 'alpha': 0.7, 'pad': 1, 'edgecolor': 'none'})
 
 def save_mask_data(output_dir, mask_list, box_list, label_list):
     value = 0  # 0 for background
@@ -287,13 +287,9 @@ if __name__ == "__main__":
     for box, label in zip(boxes_filt, pred_phrases):
         show_box(box.numpy(), plt1, label)
     rendered_img = cv2.imread(os.path.join(output_dir, "grounded_sam_osx_output.jpg"))
-    # rendered_img = cv2.cvtColor(rendered_img, cv2.COLOR_BGR2RGB)
     plt2.imshow(rendered_img)
     for box, label in zip(boxes_filt, pred_phrases):
-        # if 'person' in label.lower() or 'human' in label.lower():
         show_box(box.numpy(), plt2, label)
-    # for mask in masks:
-    #     show_mask(mask.cpu().numpy(), plt2, random_color=True)
     plt1.axis('off')
     plt2.axis('off')
     plt.savefig(
