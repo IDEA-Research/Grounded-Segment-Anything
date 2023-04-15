@@ -15,13 +15,13 @@ The **core idea** behind this project is to **combine the strengths of different
 
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it needs prompts (like boxes/points) to generate masks. 
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
-- [OSX](https://osx-ubody.github.io/) is a strong and efficient one-stage motion capture method to generate high quality 3D human mesh from monucular image.
+- [OSX](https://osx-ubody.github.io/) is a strong and efficient one-stage motion capture method to generate high quality 3D human mesh from monucular image. We also release a large-scale upper-body dataset UBody for a more accurate reconstrution in the upper-body scene.
 - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
 - The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
 - The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
 - The combination of `Whisper + Grounding DINO + SAM` to **detect and segment anything with speech**!
 - The chatbot **for the above tools** with better reasoning!
-- The combination of `Grounding DINO + SAM + OSX` to **reconstruct 3D human mesh**!
+- The combination of `Grounding DINO + SAM + OSX` to **detect anyone and reconstruct his 3D human mesh**!  
 
 **🔥 🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
 
@@ -409,6 +409,13 @@ If you find this project helpful for your research, please consider citing the f
 @inproceedings{ShilongLiu2023GroundingDM,
   title={Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection},
   author={Shilong Liu and Zhaoyang Zeng and Tianhe Ren and Feng Li and Hao Zhang and Jie Yang and Chunyuan Li and Jianwei Yang and Hang Su and Jun Zhu and Lei Zhang},
+  year={2023}
+}
+
+@article{lin2023one,
+  title={One-Stage 3D Whole-Body Mesh Recovery with Component Aware Transformer},
+  author={Lin, Jing and Zeng, Ailing and Wang, Haoqian and Zhang, Lei and Li, Yu},
+  journal={arXiv preprint arXiv:2303.16160},
   year={2023}
 }
 ```
