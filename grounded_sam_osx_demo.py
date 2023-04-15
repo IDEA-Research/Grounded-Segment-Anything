@@ -273,10 +273,10 @@ if __name__ == "__main__":
 
     # predict and visualize 3d human mesh
     for i, label in enumerate(pred_phrases):
-        if 'person' in label.lower() or 'human' in label.lower():
+        if 'person' in label.lower() or 'man' in label.lower():
             boxes_human.append(boxes_filt[i])
     rendered_img = mesh_recovery(image, boxes_human)
-    cv2.imwrite(os.path.join(output_dir, "grounded_osx_output.jpg"), rendered_img)
+    cv2.imwrite(os.path.join(output_dir, "grounded_sam_osx_output.jpg"), rendered_img)
 
     # draw output image
     fig, (plt1, plt2) = plt.subplots(ncols=2, figsize=(10, 20), gridspec_kw={'wspace':0, 'hspace':0})

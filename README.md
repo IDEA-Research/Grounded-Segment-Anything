@@ -15,7 +15,7 @@ The **core idea** behind this project is to **combine the strengths of different
 
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it needs prompts (like boxes/points) to generate masks. 
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
-- [OSX](https://osx-ubody.github.io/) is a strong motion capture method to generate high quality human mesh from monucular image.
+- [OSX](https://osx-ubody.github.io/) is a strong and efficient one-stage motion capture method to generate high quality 3D human mesh from monucular image.
 - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
 - The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
 - The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
@@ -41,7 +41,7 @@ Using BLIP to generate caption, extracting tags with ChatGPT, and using Grounded
 
 **Grounded-SAM+OSX: Reconstruct 3D Human Whole-Body Mesh!**
 
-Using Grounded-SAM for box and mask generating, Using [OSX](https://github.com/IDEA-Research/OSX) to estimate the SMPLX parameters and reconstruct 3D whole-body human mesh. Here's a demo:
+Using Grounded-SAM for box and mask generating, Using [OSX](https://github.com/IDEA-Research/OSX) to estimate the SMPLX parameters and reconstruct 3D whole-body (body, face and hand) human mesh. Here's a demo:
 
 <p align="middle">
 <img src="./assets/grouned_sam_osx_demo.gif">
@@ -355,13 +355,7 @@ python chatbot.py
 
 ## :man_dancing: Run Grounded-Segment-Anything + OSX Demo
 
-- Download the checkpoint for OSX:
-
-```bash
-cd Grounded-Segment-Anything
-wget https://github.com/IDEA-Research/OSX/releases/download/osx_.pth
-```
-
+- Download the checkpoint `osx_l_wo_decoder.pth.tar` for OSX:
 - Download the human model files and place it into `osx/utils/human_model_files` following the instruction of [OSX](https://github.com/IDEA-Research/OSX).
 
 - Run Demo
@@ -372,7 +366,7 @@ python grounded_sam_osx_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
   --grounded_checkpoint groundingdino_swint_ogc.pth \
   --sam_checkpoint sam_vit_h_4b8939.pth \
-  --osx_checkpoint osx_l.pth.tar \
+  --osx_checkpoint osx_l_wo_decoder.pth.tar \
   --input_image assets/grounded_sam_osx_demo2.png \
   --output_dir "outputs" \
   --box_threshold 0.3 \
@@ -383,7 +377,17 @@ python grounded_sam_osx_demo.py \
 
 - The model prediction visualization will be saved in `output_dir` as follow:
 
-![](./assets/grounded_sam_osx_output.jpg)
+<img src="./assets/grounded_sam_osx_output.jpg" style="zoom: 49%;" />
+
+- You can also track someone and estimate his 3D pose and shape with a text prompt, for example:
+
+| ![space-1.jpg](./assets/grounded_sam_osx_output1.jpg) |
+| :---------------------------------------------------: |
+|             *A person with pink clothes*              |
+
+| ![space-1.jpg](./assets/grounded_sam_osx_output2.jpg) |
+| :---------------------------------------------------: |
+|               *A man with a sunglasses*               |
 
 ## :cupid: Acknowledgements
 
