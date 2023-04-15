@@ -3,7 +3,11 @@
 # Grounded-Segment-Anything
 We plan to create a very interesting demo by combining [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) and [Segment Anything](https://github.com/facebookresearch/segment-anything)! Right now, this is just a simple small project. We will continue to improve it and create more interesting demos. And thanks for the community users provide the [colab demo](https://github.com/camenduru/grounded-segment-anything-colab) for us.
 
-We are very willing to **help everyone share and promote new projects** based on Segment-Anything, we highlight some excellent projects here: [Highlight Extension Projects](#bulb-highlight-extension-projects). You can submit a new issue (with `project` tag) or a new pull request to add new projects' links.
+We are very willing to **help everyone share and promote new projects** based on Segment-Anything, we highlight some excellent projects here: [Highlight Extension Projects](#bulb-highlight-extension-projects). You can submit a new issue (with `project` tag) or a new pull request to add new projects' links. 
+
+**🔥 Highlighted Projects** 
+
+Checkout the [Segment Everything Everywhere All at Once](https://github.com/UX-Decoder/Segment-Everything-Everywhere-All-At-Once) demo! It supports segmenting with various types of prompts (text, point, scribble, referring image, etc.) and any combination of prompts.
 
 **Why this project?**
 
@@ -69,6 +73,7 @@ https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-
 
 
 ## :bulb: Highlight Extension Projects
+- [Segment Everything Everywhere All at Once](https://github.com/UX-Decoder/Segment-Everything-Everywhere-All-At-Once) Support various types of prompts and any combination of prompts.
 - [Zero-Shot Anomaly Detection](https://github.com/caoyunkang/GroundedSAM-zero-shot-anomaly-detection) by Yunkang Cao
 - [EditAnything: ControlNet + StableDiffusion based on the SAM segmentation mask](https://github.com/sail-sg/EditAnything) by Shanghua Gao and Pan Zhou
 - [IEA: Image Editing Anything](https://github.com/feizc/IEA) by Zhengcong Fei
@@ -84,7 +89,7 @@ https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-
 - [Transform Image into Unique Paragraph with ChatGPT, BLIP2, OFA, GRIT, Segment Anything, ControlNet](https://github.com/showlab/Image2Paragraph) by showlab
 - [Lang-Segment-Anything: Another awesome demo for combining GroundingDINO with Segment-Anything](https://github.com/luca-medeiros/lang-segment-anything) by Luca Medeiros
 - [🥳 🚀 **Playground: Integrate SAM and OpenMMLab!**](https://github.com/open-mmlab/playground)
-
+- [3D-object via Segment Anything](https://github.com/dvlab-research/3D-Box-Segment-Anything) by Yukang Chen
 
 ## :bookmark_tabs: Catelog
 - [x] Grounding DINO Demo

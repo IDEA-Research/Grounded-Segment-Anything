@@ -122,7 +122,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"
     )
-
+    parser.add_argument("--cache_dir", type=str, default=None, help="save your huggingface large model cache")
     parser.add_argument("--box_threshold", type=float, default=0.3, help="box threshold")
     parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
     parser.add_argument("--inpaint_mode", type=str, default="first", help="inpaint mode")
@@ -137,6 +137,10 @@ if __name__ == "__main__":
     det_prompt = args.det_prompt
     inpaint_prompt = args.inpaint_prompt
     output_dir = args.output_dir
+    cache_dir=args.cache_dir
+    # if not os.path.exists(cache_dir):
+    #     print(f"create your cache dir:{cache_dir}")
+    #     os.mkdir(cache_dir)
     box_threshold = args.box_threshold
     text_threshold = args.text_threshold
     inpaint_mode = args.inpaint_mode
@@ -191,7 +195,7 @@ if __name__ == "__main__":
     image_pil = Image.fromarray(image)
     
     pipe = StableDiffusionInpaintPipeline.from_pretrained(
-    "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16
+    "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16,cache_dir=cache_dir
     )
     pipe = pipe.to("cuda")
 
