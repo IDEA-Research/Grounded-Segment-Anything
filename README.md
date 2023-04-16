@@ -30,6 +30,10 @@ The **core idea** behind this project is to **combine the strengths of different
 - [GroundingDINO: Detect Everything with Text Prompt](#runner-run-grounding-dino-demo)
 - [GroundingDINO + Segment-Anything: Detect and Segment Everything with Text Prompt](#runningman-run-grounded-segment-anything-demo)
 - [GroundingDINO + Segment-Anything + Stable-Diffusion: Detect, Segment and Generate Anything with Text Prompts](#skier-run-grounded-segment-anything--inpainting-demo)
+- [Grounded-SAM + Stable-Diffusion Gradio APP](#golfing-run-grounded-segment-anything--inpainting-gradio-app)
+- [Grounded-SAM + BLIP: Automatically Labeling System!](#robot-run-grounded-segment-anything--blip-demo)
+- [Whisper + Grounded-SAM: Detect and Segment Everything with Speech!](#openmouth-run-grounded-segment-anything--whisper-demo)
+- [Grounded-SAM + Visual ChatGPT: Automatically Label & Generate Everything with ChatBot!](#speechballoon-run-chatbot-demo)
 
 <!-- - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
 - The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
