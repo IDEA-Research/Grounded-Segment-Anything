@@ -276,6 +276,7 @@ python automatic_label_demo.py \
 ```
 
 - The pseudo labels and model prediction visualization will be saved in `output_dir` as follows:
+- When you don't have a paid Account for ChatGPT is also possible to use NLTK instead. Just don't include the ```openai_key``` Parameter when starting the Demo.
 
 ![](./assets/automatic_label_output_demo3.jpg)
 

@@ -18,3 +18,4 @@ torch
 torchvision
 transformers
 yapf
+nltk
