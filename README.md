@@ -25,7 +25,7 @@ The **core idea** behind this project is to **combine the strengths of different
 - Checkout the [Segment Everything Everywhere All at Once](https://github.com/UX-Decoder/Segment-Everything-Everywhere-All-At-Once) demo! It supports segmenting with various types of prompts (text, point, scribble, referring image, etc.) and any combination of prompts.
 - Checkout the [OpenSeeD](https://github.com/IDEA-Research/OpenSeeD) for the interactive segmentation with box input to generate mask.
 
-**🍉 The Supported Amazing Demos**
+**🍉 The Supported Amazing Demos in this Project**
 
 - [GroundingDINO: Detect Everything with Text Prompt](#runner-run-grounding-dino-demo)
 - [GroundingDINO + Segment-Anything: Detect and Segment Everything with Text Prompt](#runningman-run-grounded-segment-anything-demo)
