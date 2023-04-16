@@ -8,6 +8,7 @@ We plan to create a very interesting demo by combining [Grounding DINO](https://
 We are very willing to **help everyone share and promote new projects** based on Segment-Anything, we highlight some excellent projects here: [Highlight Extension Projects](#bulb-highlight-extension-projects). You can submit a new issue (with `project` tag) or a new pull request to add new project's links. 
 
 **🍄 Why Building this Project?**
+
 The **core idea** behind this project is to **combine the strengths of different models in order to build a very powerful pipeline for solving complex problems**. And it's worth mentioning that this is a workflow for combining strong expert models, where **all parts can be used separately or in combination, and can be replaced with any similar but different models (like replacing Grounding DINO with GLIP or other detectors / replacing Stable-Diffusion with ControlNet or GLIGEN/ Combining with ChatGPT)**.
 
 **🍊 Preliminary Works**
