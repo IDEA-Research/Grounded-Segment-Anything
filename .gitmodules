@@ -1,0 +1,4 @@
+
+[submodule "grounded-sam-osx"]
+	path = grounded-sam-osx
+	url = https://github.com/linjing7/grounded-sam-osx.git

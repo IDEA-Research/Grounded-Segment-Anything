@@ -15,11 +15,13 @@ The **core idea** behind this project is to **combine the strengths of different
 
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it needs prompts (like boxes/points) to generate masks. 
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
+- [OSX](https://osx-ubody.github.io/) is a strong and efficient one-stage motion capture method to generate high quality 3D human mesh from monucular image. We also release a large-scale upper-body dataset UBody for a more accurate reconstrution in the upper-body scene.
 - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
 - The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
 - The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
 - The combination of `Whisper + Grounding DINO + SAM` to **detect and segment anything with speech**!
 - The chatbot **for the above tools** with better reasoning!
+- The combination of `Grounding DINO + SAM + OSX` to **detect anyone and reconstruct his 3D human mesh**!  
 
 **🔥 🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
 
@@ -36,6 +38,15 @@ The **core idea** behind this project is to **combine the strengths of different
 Using BLIP to generate caption, extracting tags with ChatGPT, and using Grounded-SAM for box and mask generating. Here's the demo output:
 
 ![](./assets/automatic_label_output_demo3.jpg)
+
+**Grounded-SAM+OSX: Promptable 3D Whole-Body Human Mesh Recovery!**
+
+Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/IDEA-Research/OSX) to estimate the SMPLX parameters and reconstruct 3D whole-body (body, face and hand) human mesh. Here's a demo:
+
+<p align="middle">
+<img src="assets/osx/grouned_sam_osx_demo.gif">
+<br>
+</p>
 
 **Imagine Space**
 
@@ -144,13 +155,20 @@ Install diffusers:
 pip install --upgrade diffusers[torch]
 ```
 
+Install osx:
+
+```bash
+git submodule update --init --recursive
+cd grounded-sam-osx && bash install.sh
+```
 
 The following optional dependencies are necessary for mask post-processing, saving masks in COCO format, the example notebooks, and exporting the model in ONNX format. `jupyter` is also required to run the example notebooks.
+
 ```
 pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
 ```
 
-More details can be found in [install segment anything](https://github.com/facebookresearch/segment-anything#installation) and [install GroundingDINO](https://github.com/IDEA-Research/GroundingDINO#install)
+More details can be found in [install segment anything](https://github.com/facebookresearch/segment-anything#installation) and [install GroundingDINO](https://github.com/IDEA-Research/GroundingDINO#install) and [install OSX](https://github.com/IDEA-Research/OSX)
 
 
 ## :runner: Run Grounding DINO Demo
@@ -356,8 +374,44 @@ export CUDA_VISIBLE_DEVICES=0
 python chatbot.py 
 ```
 
+## :man_dancing: Run Grounded-Segment-Anything + OSX Demo
+
+- Download the checkpoint `osx_l_wo_decoder.pth.tar` from [here](https://drive.google.com/drive/folders/1x7MZbB6eAlrq5PKC9MaeIm4GqkBpokow?usp=share_link) for OSX:
+- Download the human model files and place it into `grounded-sam-osx/utils/human_model_files` following the instruction of [OSX](https://github.com/IDEA-Research/OSX).
+
+- Run Demo
+
+```shell
+export CUDA_VISIBLE_DEVICES=0
+python grounded_sam_osx_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --osx_checkpoint osx_l_wo_decoder.pth.tar \
+  --input_image assets/osx/grounded_sam_osx_demo.png \
+  --output_dir "outputs" \
+  --box_threshold 0.3 \
+  --text_threshold 0.25 \
+  --text_prompt "humans, chairs" \
+  --device "cuda"
+```
+
+- The model prediction visualization will be saved in `output_dir` as follow:
+
+<img src="assets/osx/grounded_sam_osx_output.jpg" style="zoom: 49%;" />
+
+- We also support promptable 3D whole-body mesh recovery. For example, you can track someone with with a text prompt  and estimate his 3D pose and shape :
+
+| ![space-1.jpg](assets/osx/grounded_sam_osx_output1.jpg) |
+| :---------------------------------------------------: |
+|             *A person with pink clothes*              |
+
+| ![space-1.jpg](assets/osx/grounded_sam_osx_output2.jpg) |
+| :---------------------------------------------------: |
+|               *A man with a sunglasses*               |
 
 ## :cupid: Acknowledgements
+
 - [Segment Anything](https://github.com/facebookresearch/segment-anything)
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO)
 
