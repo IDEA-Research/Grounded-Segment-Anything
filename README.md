@@ -34,6 +34,7 @@ The **core idea** behind this project is to **combine the strengths of different
 - [Grounded-SAM + BLIP: Automatically Labeling System!](#robot-run-grounded-segment-anything--blip-demo)
 - [Whisper + Grounded-SAM: Detect and Segment Everything with Speech!](#openmouth-run-grounded-segment-anything--whisper-demo)
 - [Grounded-SAM + Visual ChatGPT: Automatically Label & Generate Everything with ChatBot!](#speechballoon-run-chatbot-demo)
+- [Grounded-SAM + OSX: Text to 3D Whole-Body Mesh Recovery](#mandancing-run-grounded-segment-anything--osx-demo)
 
 <!-- - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
 - The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
@@ -42,17 +43,20 @@ The **core idea** behind this project is to **combine the strengths of different
 - The chatbot **for the above tools** with better reasoning!
 - The combination of `Grounding DINO + SAM + OSX` to **detect anyone and reconstruct his 3D human mesh**!   -->
 
+
+## The Amazing Demo Preview
+
 **🔥 🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
 
 ![](assets/acoustics/gsam_whisper_inpainting_demo.png)
 
-**Grounded-SAM**
+**🔥 Grounded-SAM: Semi-automatic Labeling System**
 ![](./assets/grounded_sam2.png)
 
-**Grounded-SAM + Stable-Diffusion Inpainting: Data-Factory, Generating New Data!**
+**Grounded-SAM + Stable-Diffusion Inpainting: Data-Factory, Generating New Data**
 ![](./assets/grounded_sam_inpainting_demo.png)
 
-**BLIP + Grounded-SAM: Automatic Label System!**
+**BLIP + Grounded-SAM: Automatic Label System**
 
 Using BLIP to generate caption, extracting tags with ChatGPT, and using Grounded-SAM for box and mask generating. Here's the demo output:
 
@@ -67,9 +71,6 @@ Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/I
 <br>
 </p>
 
-
-**More Examples**
-![](./assets/grounded_sam_demo3_demo4.png)
 
 
 **Tips**
@@ -227,6 +228,8 @@ python grounded_sam_demo.py \
 
 ![](./assets/grounded_sam_output_demo1.jpg)
 
+**More Examples**
+![](./assets/grounded_sam_demo3_demo4.png)
 
 ## :skier: Run Grounded-Segment-Anything + Inpainting Demo
 
