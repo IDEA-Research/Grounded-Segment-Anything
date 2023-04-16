@@ -34,7 +34,7 @@ The **core idea** behind this project is to **combine the strengths of different
 - [Grounded-SAM + BLIP: Automatically Labeling System!](#robot-run-grounded-segment-anything--blip-demo)
 - [Whisper + Grounded-SAM: Detect and Segment Everything with Speech!](#openmouth-run-grounded-segment-anything--whisper-demo)
 - [Grounded-SAM + Visual ChatGPT: Automatically Label & Generate Everything with ChatBot!](#speechballoon-run-chatbot-demo)
-- [Grounded-SAM + OSX: Text to 3D Whole-Body Mesh Recovery](#mandancing-run-grounded-segment-anything--osx-demo)
+- [Grounded-SAM + OSX: Text to 3D Whole-Body Mesh Recovery, Detect Anyone and Reconstruct his 3D Humen Mesh!](#mandancing-run-grounded-segment-anything--osx-demo)
 
 <!-- - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
 - The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
@@ -44,7 +44,11 @@ The **core idea** behind this project is to **combine the strengths of different
 - The combination of `Grounding DINO + SAM + OSX` to **detect anyone and reconstruct his 3D human mesh**!   -->
 
 
-## The Amazing Demo Preview
+## The Amazing Demo Preview (Continual Updating)
+
+**🔥 ChatBot for our project is built**
+
+https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-9b7b-517aa1432123.mp4
 
 **🔥 🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
 
@@ -53,16 +57,16 @@ The **core idea** behind this project is to **combine the strengths of different
 **🔥 Grounded-SAM: Semi-automatic Labeling System**
 ![](./assets/grounded_sam2.png)
 
-**Grounded-SAM + Stable-Diffusion Inpainting: Data-Factory, Generating New Data**
+**🔥 Grounded-SAM + Stable-Diffusion Inpainting: Data-Factory, Generating New Data**
 ![](./assets/grounded_sam_inpainting_demo.png)
 
-**BLIP + Grounded-SAM: Automatic Label System**
+**🔥 BLIP + Grounded-SAM: Automatic Label System**
 
 Using BLIP to generate caption, extracting tags with ChatGPT, and using Grounded-SAM for box and mask generating. Here's the demo output:
 
 ![](./assets/automatic_label_output_demo3.jpg)
 
-**Grounded-SAM+OSX: Promptable 3D Whole-Body Human Mesh Recovery!**
+**🔥 Grounded-SAM+OSX: Promptable 3D Whole-Body Human Mesh Recovery!**
 
 Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/IDEA-Research/OSX) to estimate the SMPLX parameters and reconstruct 3D whole-body (body, face and hand) human mesh. Here's a demo:
 
@@ -77,10 +81,6 @@ Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/I
 - If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest seperating each name with `.` . An example: `cat . dog . chair .`
 
 ## What's New
-
-- :fire: **ChatBot** for our project is built!
-
-https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-9b7b-517aa1432123.mp4
 
 
 
