@@ -106,6 +106,25 @@ See our [notebook file](grounded_sam.ipynb) as an example.
 ## :hammer_and_wrench: Installation
 The code requires `python>=3.8`, as well as `pytorch>=1.7` and `torchvision>=0.8`. Please follow the instructions [here](https://pytorch.org/get-started/locally/) to install both PyTorch and TorchVision dependencies. Installing both PyTorch and TorchVision with CUDA support is strongly recommended.
 
+### Install with Docker
+
+Open one terminal:
+
+```
+make run
+```
+
+That's it.
+
+If you would like to allow visualization across docker container, open another terminal and type:
+
+```
+xhost +
+```
+
+
+### Install without Docker
+
 Install Segment Anything:
 
 ```bash
