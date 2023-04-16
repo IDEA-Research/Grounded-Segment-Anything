@@ -1,6 +1,3 @@
-import os.path as osp
-import random
-
 import torchvision.transforms as transforms
 from torch.nn.parallel.data_parallel import DataParallel
 import torch.backends.cudnn as cudnn
@@ -25,7 +22,7 @@ from segment_anything import build_sam, SamPredictor
 
 # OSX
 import sys
-sys.path.insert(0, 'osx')
+sys.path.insert(0, 'grounded-sam-osx')
 from osx import get_model
 from config import cfg
 from utils.preprocessing import load_img, process_bbox, generate_patch_image

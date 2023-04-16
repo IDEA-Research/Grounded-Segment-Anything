@@ -41,10 +41,10 @@ Using BLIP to generate caption, extracting tags with ChatGPT, and using Grounded
 
 **Grounded-SAM+OSX: Reconstruct 3D Human Whole-Body Mesh!**
 
-Using Grounded-SAM for box and mask generating, Using [OSX](https://github.com/IDEA-Research/OSX) to estimate the SMPLX parameters and reconstruct 3D whole-body (body, face and hand) human mesh. Here's a demo:
+Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/IDEA-Research/OSX) to estimate the SMPLX parameters and reconstruct 3D whole-body (body, face and hand) human mesh. Here's a demo:
 
 <p align="middle">
-<img src="./assets/grouned_sam_osx_demo.gif">
+<img src="assets/osx/grouned_sam_osx_demo.gif">
 <br>
 </p>
 
@@ -139,8 +139,8 @@ pip install --upgrade diffusers[torch]
 Install osx:
 
 ```bash
-cd osx
-bash install.sh
+git submodule update --init --recursive
+cd grounded-sam-osx & bash install.sh
 ```
 
 The following optional dependencies are necessary for mask post-processing, saving masks in COCO format, the example notebooks, and exporting the model in ONNX format. `jupyter` is also required to run the example notebooks.
@@ -149,7 +149,7 @@ The following optional dependencies are necessary for mask post-processing, savi
 pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
 ```
 
-More details can be found in [install segment anything](https://github.com/facebookresearch/segment-anything#installation) and [install GroundingDINO](https://github.com/IDEA-Research/GroundingDINO#install)
+More details can be found in [install segment anything](https://github.com/facebookresearch/segment-anything#installation) and [install GroundingDINO](https://github.com/IDEA-Research/GroundingDINO#install) and [install OSX](https://github.com/IDEA-Research/OSX)
 
 
 ## :runner: Run Grounding DINO Demo
@@ -358,7 +358,7 @@ python chatbot.py
 ## :man_dancing: Run Grounded-Segment-Anything + OSX Demo
 
 - Download the checkpoint `osx_l_wo_decoder.pth.tar` from [here](https://drive.google.com/drive/folders/1x7MZbB6eAlrq5PKC9MaeIm4GqkBpokow?usp=share_link) for OSX:
-- Download the human model files and place it into `osx/utils/human_model_files` following the instruction of [OSX](https://github.com/IDEA-Research/OSX).
+- Download the human model files and place it into `grounded-sam-osx/utils/human_model_files` following the instruction of [OSX](https://github.com/IDEA-Research/OSX).
 
 - Run Demo
 
@@ -369,7 +369,7 @@ python grounded_sam_osx_demo.py \
   --grounded_checkpoint groundingdino_swint_ogc.pth \
   --sam_checkpoint sam_vit_h_4b8939.pth \
   --osx_checkpoint osx_l_wo_decoder.pth.tar \
-  --input_image assets/grounded_sam_osx_demo2.png \
+  --input_image assets/osx/grounded_sam_osx_demo.png \
   --output_dir "outputs" \
   --box_threshold 0.3 \
   --text_threshold 0.25 \
@@ -379,15 +379,15 @@ python grounded_sam_osx_demo.py \
 
 - The model prediction visualization will be saved in `output_dir` as follow:
 
-<img src="./assets/grounded_sam_osx_output.jpg" style="zoom: 49%;" />
+<img src="assets/osx/grounded_sam_osx_output.jpg" style="zoom: 49%;" />
 
-- You can also track someone and estimate his 3D pose and shape with a text prompt, for example:
+- We also support promptable 3D whole-body mesh recovery. For example, you can also track someone and estimate his 3D pose and shape with a text prompt, for example:
 
-| ![space-1.jpg](./assets/grounded_sam_osx_output1.jpg) |
+| ![space-1.jpg](assets/osx/grounded_sam_osx_output1.jpg) |
 | :---------------------------------------------------: |
 |             *A person with pink clothes*              |
 
-| ![space-1.jpg](./assets/grounded_sam_osx_output2.jpg) |
+| ![space-1.jpg](assets/osx/grounded_sam_osx_output2.jpg) |
 | :---------------------------------------------------: |
 |               *A man with a sunglasses*               |
 
@@ -409,13 +409,6 @@ If you find this project helpful for your research, please consider citing the f
 @inproceedings{ShilongLiu2023GroundingDM,
   title={Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection},
   author={Shilong Liu and Zhaoyang Zeng and Tianhe Ren and Feng Li and Hao Zhang and Jie Yang and Chunyuan Li and Jianwei Yang and Hang Su and Jun Zhu and Lei Zhang},
-  year={2023}
-}
-
-@article{lin2023one,
-  title={One-Stage 3D Whole-Body Mesh Recovery with Component Aware Transformer},
-  author={Lin, Jing and Zeng, Ailing and Wang, Haoqian and Zhang, Lei and Li, Yu},
-  journal={arXiv preprint arXiv:2303.16160},
   year={2023}
 }
 ```
