@@ -381,7 +381,7 @@ python grounded_sam_osx_demo.py \
 
 <img src="assets/osx/grounded_sam_osx_output.jpg" style="zoom: 49%;" />
 
-- We also support promptable 3D whole-body mesh recovery. For example, you can also track someone and estimate his 3D pose and shape with a text prompt, for example:
+- We also support promptable 3D whole-body mesh recovery. For example, you can track someone with with a text prompt  and estimate his 3D pose and shape :
 
 | ![space-1.jpg](assets/osx/grounded_sam_osx_output1.jpg) |
 | :---------------------------------------------------: |
