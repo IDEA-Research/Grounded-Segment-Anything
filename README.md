@@ -39,7 +39,7 @@ Using BLIP to generate caption, extracting tags with ChatGPT, and using Grounded
 
 ![](./assets/automatic_label_output_demo3.jpg)
 
-**Grounded-SAM+OSX: Reconstruct 3D Human Whole-Body Mesh!**
+**Grounded-SAM+OSX: Promptable 3D Whole-Body Human Mesh Recovery!**
 
 Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/IDEA-Research/OSX) to estimate the SMPLX parameters and reconstruct 3D whole-body (body, face and hand) human mesh. Here's a demo:
 
