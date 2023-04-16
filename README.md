@@ -27,12 +27,14 @@ The **core idea** behind this project is to **combine the strengths of different
 
 **🍉 The Supported Amazing Demos**
 
-- The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
+- [GroundingDINO + Segment-Anything: Detect and Segment Everything with Text Prompt]()
+
+<!-- - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
 - The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
 - The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
 - The combination of `Whisper + Grounding DINO + SAM` to **detect and segment anything with speech**!
 - The chatbot **for the above tools** with better reasoning!
-- The combination of `Grounding DINO + SAM + OSX` to **detect anyone and reconstruct his 3D human mesh**!  
+- The combination of `Grounding DINO + SAM + OSX` to **detect anyone and reconstruct his 3D human mesh**!   -->
 
 **🔥 🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
 
