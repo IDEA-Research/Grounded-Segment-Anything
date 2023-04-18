@@ -1,0 +1,10 @@
+numpy
+torch
+torchvision
+easydict
+pyyaml
+opencv-python
+pycocotools
+matplotlib
+onnxruntime
+onnx
