@@ -421,6 +421,32 @@ python grounded_sam_osx_demo.py \
 | :---------------------------------------------------: |
 |               *A man with a sunglasses*               |
 
+
+## :man_dancing: Run Grounded-Segment-Anything + VISAM Demo
+
+- Download the checkpoint `motrv2_dancetrack.pth` from [here](https://drive.google.com/file/d/1EA4lndu2yQcVgBKR09KfMe5efbf631Th/view?usp=share_link) for MOTRv2:
+- See the more thing if you have other questions for the installation.
+
+- Run Demo
+
+```shell
+export CUDA_VISIBLE_DEVICES=0
+python grounded_sam_visam.py \
+  --meta_arch motr \
+  --dataset_file e2e_dance \
+  --with_box_refine \
+  --query_interaction_layer QIMv2 \
+  --num_queries 10 \
+  --det_db det_db_motrv2.json \
+  --use_checkpoint \
+  --mot_path your_data_path \
+  --resume motrv2_dancetrack.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --video_path DanceTrack/test/dancetrack0003 
+```
+|![](https://raw.githubusercontent.com/BingfengYan/MOTSAM/main/visam.gif)|
+
+
 ## :cupid: Acknowledgements
 
 - [Segment Anything](https://github.com/facebookresearch/segment-anything)
