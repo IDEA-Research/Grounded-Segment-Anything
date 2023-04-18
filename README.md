@@ -38,13 +38,6 @@ The **core idea** behind this project is to **combine the strengths of different
 - [Interactive Fashion-Edit Playground: Click for Segmentation And Editing!](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace)
 - [Interactive Human-face Editing Playground: Click And Editing Human Face!](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace)
 
-<!-- - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
-- The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
-- The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
-- The combination of `Whisper + Grounding DINO + SAM` to **detect and segment anything with speech**!
-- The chatbot **for the above tools** with better reasoning!
-- The combination of `Grounding DINO + SAM + OSX` to **detect anyone and reconstruct his 3D human mesh**!   -->
-
 
 ## The Amazing Demo Preview (Continual Updating)
 
@@ -116,6 +109,10 @@ Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/I
 - [Zero-shot Scene Graph Generate with Grounded-SAM](https://github.com/showlab/Image2Paragraph) by JackWhite-rwx
 - [CLIP Surgery for Better Explainability with Enhancement in Open-Vocabulary Tasks](https://github.com/xmed-lab/CLIP_Surgery) by Eli-YiLi
 - [Panoptic-Segment-Anything: Zero-shot panoptic segmentation using SAM](https://github.com/segments-ai/panoptic-segment-anything) by segments-ai
+- [Caption-Anything: Generates Descriptive Captions for Any Object within an Image](https://github.com/ttengwang/Caption-Anything) by Teng Wang
+- [Segment-Anything-3D: Transferring Segmentation Information of 2D Images to 3D Space](https://github.com/Pointcept/SegmentAnything3D) by Yunhan Yang
+- [Expediting SAM without Fine-tuning](https://github.com/Expedit-LargeScale-Vision-Transformer/Expedit-SAM) by Weicong Liang and Yuhui Yuan
+- [Semantic Segment Anything: Providing Rich Sementic Category Annotations for SAM](https://github.com/fudan-zvg/Semantic-Segment-Anything) by Jiaqi Chen and Zeyu Yang and Li Zhang
 
 ## :open_book: Notebook Demo
 See our [notebook file](grounded_sam.ipynb) as an example.
