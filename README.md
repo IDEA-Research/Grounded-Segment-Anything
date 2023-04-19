@@ -18,6 +18,7 @@ The **core idea** behind this project is to **combine the strengths of different
 - [Stable-Diffusion](https://github.com/CompVis/stable-diffusion) is an amazing strong text-to-image diffusion model.
 - [BLIP](https://github.com/salesforce/lavis) is a wonderful language-vision model for image understanding.
 - [Visual ChatGPT](https://github.com/microsoft/visual-chatgpt) is a wonderful tool that connects ChatGPT and a series of Visual Foundation Models to enable sending and receiving images during chatting.
+- [VoxelNeXt](https://github.com/dvlab-research/VoxelNeXt) is a clean, simple, and fully-sparse 3D object detector, which predicts objects directly upon sparse voxel features.
 
 
 **🔥 Highlighted Projects** 
@@ -86,6 +87,10 @@ Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/I
 
   ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/231-hair-edit.png)
 
+**🔥 3D-Box via Segment Anything**
+We extend the scope to 3D world by combining Segment Anything and [VoxelNeXt](https://github.com/dvlab-research/VoxelNeXt). When we provide a prompt (e.g., a point / box), the result is not only 2D segmentation mask, but also 3D boxes.
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/sam-voxelnext.png)
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/image_boxes2.png)
 
 
 ## :bulb: Highlight Extension Projects
