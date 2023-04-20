@@ -334,6 +334,8 @@ It is easy to generate pseudo labels automatically as follows:
 
 - Run Demo
 ```bash
+export OPENAI_API_KEY=your_openai_key
+export OPENAI_API_BASE=https://closeai.deno.dev/v1
 export CUDA_VISIBLE_DEVICES=0
 python automatic_label_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
@@ -341,7 +343,7 @@ python automatic_label_demo.py \
   --sam_checkpoint sam_vit_h_4b8939.pth \
   --input_image assets/demo3.jpg \
   --output_dir "outputs" \
-  --openai_key your_openai_key \
+  --openai_key $OPENAI_API_KEY \
   --box_threshold 0.25 \
   --text_threshold 0.2 \
   --iou_threshold 0.5 \
@@ -396,9 +398,10 @@ You can enable chatgpt to help you automatically detect the object and inpaintin
 Or you can specify the object you want to inpaint [stored in `args.det_speech_file`] and the text you want to inpaint with [stored in `args.inpaint_speech_file`].
 
 ```bash
+export OPENAI_API_KEY=your_openai_key
+export OPENAI_API_BASE=https://closeai.deno.dev/v1
 # Example: enable chatgpt
 export CUDA_VISIBLE_DEVICES=0
-export OPENAI_KEY=your_openai_key
 python grounded_sam_whisper_inpainting_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
   --grounded_checkpoint groundingdino_swint_ogc.pth \
@@ -409,7 +412,7 @@ python grounded_sam_whisper_inpainting_demo.py \
   --text_threshold 0.25 \
   --prompt_speech_file assets/acoustics/prompt_speech_file.mp3 \
   --enable_chatgpt \
-  --openai_key $OPENAI_KEY \
+  --openai_key $OPENAI_API_KEY\
   --device "cuda"
 ```
 
@@ -445,6 +448,8 @@ To use the ChatBot:
 - Set the default model setting in the tool `Grounded_dino_sam_inpainting`.
 - Run Demo
 ```bash
+export OPENAI_API_KEY=your_openai_key
+export OPENAI_API_BASE=https://closeai.deno.dev/v1
 export CUDA_VISIBLE_DEVICES=0
 python chatbot.py 
 ```

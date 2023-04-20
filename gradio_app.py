@@ -28,6 +28,8 @@ from diffusers import StableDiffusionInpaintPipeline
 # BLIP
 from transformers import BlipProcessor, BlipForConditionalGeneration
 
+import openai
+
 def show_anns(anns):
     if len(anns) == 0:
         return
@@ -59,6 +61,23 @@ def generate_caption(processor, blip_model, raw_image):
     out = blip_model.generate(**inputs)
     caption = processor.decode(out[0], skip_special_tokens=True)
     return caption
+
+def generate_tags(caption, split=',', max_tokens=100, model="gpt-3.5-turbo", openai_api_key=''):
+    openai.api_key = openai_api_key
+    openai.api_base = 'https://closeai.deno.dev/v1'
+    prompt = [
+        {
+            'role': 'system',
+            'content': 'Extract the unique nouns in the caption. Remove all the adjectives. ' + \
+                       f'List the nouns in singular form. Split them by "{split} ". ' + \
+                       f'Caption: {caption}.'
+        }
+    ]
+    response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
+    reply = response['choices'][0]['message']['content']
+    # sometimes return with "noun: xxx, xxx, xxx"
+    tags = reply.split(':')[-1].strip()
+    return tags
 
 def transform_image(image_pil):
 
@@ -166,7 +185,7 @@ sam_predictor = None
 sam_automask_generator = None
 inpaint_pipeline = None
 
-def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode, scribble_mode):
+def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode, scribble_mode, openai_api_key):
 
     global blip_processor, blip_model, groundingdino_model, sam_predictor, sam_automask_generator, inpaint_pipeline
 
@@ -231,6 +250,8 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
             blip_processor = blip_processor or BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
             blip_model = blip_model or BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large", torch_dtype=torch.float16).to("cuda")
             text_prompt = generate_caption(blip_processor, blip_model, image_pil)
+            if len(openai_api_key) > 0:
+                text_prompt = generate_tags(text_prompt, split=",", openai_api_key=openai_api_key)
             print(f"Caption: {text_prompt}")
 
         # run grounding dino model
@@ -364,6 +385,7 @@ if __name__ == "__main__":
                     )
                     inpaint_mode = gr.Dropdown(["merge", "first"], value="merge", label="inpaint_mode")
                     scribble_mode = gr.Dropdown(["merge", "split"], value="split", label="scribble_mode")
+                    openai_api_key= gr.Textbox(label="(Optional)OpenAI key, enable chatgpt")
 
             with gr.Column():
                 gallery = gr.Gallery(
@@ -371,7 +393,7 @@ if __name__ == "__main__":
                 ).style(preview=True, grid=2, object_fit="scale-down")
 
         run_button.click(fn=run_grounded_sam, inputs=[
-                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode, scribble_mode], outputs=gallery)
+                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode, scribble_mode, openai_api_key], outputs=gallery)
 
     block.queue(concurrency_count=100)
     block.launch(server_name='0.0.0.0', server_port=args.port, debug=args.debug, share=args.share)
