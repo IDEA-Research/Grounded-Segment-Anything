@@ -282,17 +282,12 @@ python grounded_sam_inpainting_demo.py \
 
 ## :golfing: Run Grounded-Segment-Anything + Inpainting Gradio APP
 The following introduces the 6 task_type modes provided by Gradio APP:
-1. **scribble**: Segmentation is achieved through Segment Anything (https://github.com/facebookresearch/segment-anything) and mouse click interaction (you need to click on the object with the mouse, no need to specify the prompt).
+1. **scribble**: Segmentation is achieved through Segment Anything and mouse click interaction (you need to click on the object with the mouse, no need to specify the prompt).
 2. **automask**: Segment the entire image at once through Segment Anything (no need to specify a prompt).
-3. **det**: Realize detection through Grounding DINO (https://github.com/IDEA-Research/GroundingDINO) and text interaction (text prompt needs to be specified).
+3. **det**: Realize detection through Grounding DINO and text interaction (text prompt needs to be specified).
 4. **seg**: Realize text interaction by combining Grounding DINO and Segment Anything to realize detection + segmentation (need to specify text prompt).
-5. **inpainting**: By combining Grounding DINO + Segment Anything + Stable Diffusion (https://github.com/Stability-AI/StableDiffusion) to achieve text exchange and replace the target object (need to specify text prompt and inpaint prompt) .
-6. **automatic**: By combining BLIP (https://github.com/salesforce/BLIP) + Grounding DINO + Segment Anything to achieve non-interactive detection + segmentation (no need to specify prompt).
-
-**Tips**:
-1. scribble has two modes, the merge mode regards all clicked areas as one object, and the split mode divides all clicked areas into different objects.
-2. If you want to detect multiple objects in one sentence with Grounding DINO, we recommend separating each name with a ., eg: cat.dog.chair.
-3. Sometimes the refresh of the output image is slow, please wait patiently for 1-2 seconds.
+5. **inpainting**: By combining Grounding DINO + Segment Anything + Stable Diffusion to achieve text exchange and replace the target object (need to specify text prompt and inpaint prompt) .
+6. **automatic**: By combining BLIP + Grounding DINO + Segment Anything to achieve non-interactive detection + segmentation (no need to specify prompt).
 
 ```bash
 python gradio_app.py
