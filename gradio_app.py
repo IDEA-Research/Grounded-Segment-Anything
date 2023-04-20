@@ -184,7 +184,7 @@ sam_predictor = None
 sam_automask_generator = None
 inpaint_pipeline = None
 
-def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode):
+def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode, scribble_mode):
 
     global blip_processor, blip_model, groundingdino_model, sam_predictor, sam_automask_generator, inpaint_pipeline
 
@@ -209,7 +209,7 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
     image_pil = image.convert("RGB")
     image = np.array(image_pil)
 
-    if task_type == 'scribble_seg':
+    if task_type == 'scribble':
         sam_predictor.set_image(image)
         scribble = np.array(scribble)
         scribble = HWC3(scribble.astype(np.uint8))
@@ -224,8 +224,11 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
         centers = ndimage.center_of_mass(scribble, labeled_array, range(1, num_features+1))
         centers = np.array(centers)
 
-        point_coords = torch.from_numpy(centers).unsqueeze(0).permute(1, 0, 2).to(device)
-        point_labels = torch.from_numpy(np.array([1] * len(centers))).unsqueeze(0).permute(1, 0).to(device)
+        point_coords = torch.from_numpy(centers).unsqueeze(0).to(device)
+        point_labels = torch.from_numpy(np.array([1] * len(centers))).unsqueeze(0).to(device)
+        if scribble_mode == 'split':
+            point_coords = point_coords.permute(1, 0, 2)
+            point_labels = point_labels.permute(1, 0)
         masks, _, _ = sam_predictor.predict_torch(
             point_coords=point_coords if len(point_coords) > 0 else None,
             point_labels=point_labels if len(point_coords) > 0 else None,
@@ -293,7 +296,7 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
     elif task_type == 'automask':
         full_img, res = show_anns(masks)
         return [full_img]
-    elif task_type == 'scribble_seg':
+    elif task_type == 'scribble':
         mask_image = Image.new('RGBA', size, color=(0, 0, 0, 0))
 
         mask_draw = ImageDraw.Draw(mask_image)
@@ -363,21 +366,22 @@ if __name__ == "__main__":
         with gr.Row():
             with gr.Column():
                 input_image = gr.Image(source='upload', type="pil", value="assets/demo1.jpg", tool="sketch")
-                task_type = gr.Dropdown(["scribble_seg", "automask", "det", "seg", "inpainting", "automatic"], value="automatic", label="task_type")
+                task_type = gr.Dropdown(["scribble", "automask", "det", "seg", "inpainting", "automatic"], value="automatic", label="task_type")
                 text_prompt = gr.Textbox(label="Text Prompt")
                 inpaint_prompt = gr.Textbox(label="Inpaint Prompt")
                 run_button = gr.Button(label="Run")
                 with gr.Accordion("Advanced options", open=False):
                     box_threshold = gr.Slider(
-                        label="Box Threshold", minimum=0.0, maximum=1.0, value=0.3, step=0.001
+                        label="Box Threshold", minimum=0.0, maximum=1.0, value=0.3, step=0.05
                     )
                     text_threshold = gr.Slider(
-                        label="Text Threshold", minimum=0.0, maximum=1.0, value=0.25, step=0.001
+                        label="Text Threshold", minimum=0.0, maximum=1.0, value=0.25, step=0.05
                     )
                     iou_threshold = gr.Slider(
-                        label="IOU Threshold", minimum=0.0, maximum=1.0, value=0.5, step=0.001
+                        label="IOU Threshold", minimum=0.0, maximum=1.0, value=0.5, step=0.05
                     )
                     inpaint_mode = gr.Dropdown(["merge", "first"], value="merge", label="inpaint_mode")
+                    scribble_mode = gr.Dropdown(["merge", "split"], value="split", label="scribble_mode")
 
             with gr.Column():
                 gallery = gr.Gallery(
@@ -385,7 +389,7 @@ if __name__ == "__main__":
                 ).style(preview=True, grid=2, object_fit="scale-down")
 
         run_button.click(fn=run_grounded_sam, inputs=[
-                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode], outputs=gallery)
+                        input_image, text_prompt, task_type, inpaint_prompt, box_threshold, text_threshold, iou_threshold, inpaint_mode, scribble_mode], outputs=gallery)
 
-
+    block.queue(concurrency_count=100)
     block.launch(server_name='0.0.0.0', server_port=args.port, debug=args.debug, share=args.share)
