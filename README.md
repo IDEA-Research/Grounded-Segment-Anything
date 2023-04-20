@@ -158,6 +158,12 @@ xhost +
 
 
 ### Install without Docker
+You should set the environment variable manually as follows if you want to build a local GPU environment for Grounded-SAM:
+```bash
+export AM_I_DOCKER=False
+export BUILD_WITH_CUDA=True
+export CUDA_HOME=/path/to/cuda-11.3/
+```
 
 Install Segment Anything:
 
@@ -509,6 +515,16 @@ python grounded_sam_visam.py \
 
 - [Segment Anything](https://github.com/facebookresearch/segment-anything)
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO)
+
+
+## Contributors
+
+Our project wouldn't be possible without the contributions of these amazing people! Thank you all for making this project better.
+
+<a href="https://github.com/IDEA-Research/Grounded-Segment-Anything/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=IDEA-Research/Grounded-Segment-Anything" />
+</a>
+
 
 ## Citation
 If you find this project helpful for your research, please consider citing the following BibTeX entry.
