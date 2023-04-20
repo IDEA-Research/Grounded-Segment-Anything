@@ -7,6 +7,7 @@ import json
 import torch
 import torchvision
 from PIL import Image, ImageDraw, ImageFont
+import nltk
 
 # Grounding DINO
 import GroundingDINO.groundingdino.datasets.transforms as T
@@ -55,18 +56,25 @@ def generate_caption(raw_image, device):
 
 
 def generate_tags(caption, split=',', max_tokens=100, model="gpt-3.5-turbo"):
-    prompt = [
-        {
-            'role': 'system',
-            'content': 'Extract the unique nouns in the caption. Remove all the adjectives. ' + \
-                       f'List the nouns in singular form. Split them by "{split} ". ' + \
-                       f'Caption: {caption}.'
-        }
-    ]
-    response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
-    reply = response['choices'][0]['message']['content']
-    # sometimes return with "noun: xxx, xxx, xxx"
-    tags = reply.split(':')[-1].strip()
+    lemma = nltk.wordnet.WordNetLemmatizer()
+    if openai_key:
+        prompt = [
+            {
+                'role': 'system',
+                'content': 'Extract the unique nouns in the caption. Remove all the adjectives. ' + \
+                           f'List the nouns in singular form. Split them by "{split} ". ' + \
+                           f'Caption: {caption}.'
+            }
+        ]
+        response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
+        reply = response['choices'][0]['message']['content']
+        # sometimes return with "noun: xxx, xxx, xxx"
+        tags = reply.split(':')[-1].strip()
+    else:
+        nltk.download(['punkt', 'averaged_perceptron_tagger', 'wordnet'])
+        tags_list = [word for (word, pos) in nltk.pos_tag(nltk.word_tokenize(caption)) if pos[0] == 'N']
+        tags_lemma = [lemma.lemmatize(w) for w in tags_list]
+        tags = ', '.join(map(str, tags_lemma))
     return tags
 
 
@@ -78,19 +86,20 @@ def check_caption(caption, pred_phrases, max_tokens=100, model="gpt-3.5-turbo"):
     object_num = ', '.join(object_num)
     print(f"Correct object number: {object_num}")
 
-    prompt = [
-        {
-            'role': 'system',
-            'content': 'Revise the number in the caption if it is wrong. ' + \
-                       f'Caption: {caption}. ' + \
-                       f'True object number: {object_num}. ' + \
-                       'Only give the revised caption: '
-        }
-    ]
-    response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
-    reply = response['choices'][0]['message']['content']
-    # sometimes return with "Caption: xxx, xxx, xxx"
-    caption = reply.split(':')[-1].strip()
+    if openai_key:
+        prompt = [
+            {
+                'role': 'system',
+                'content': 'Revise the number in the caption if it is wrong. ' + \
+                           f'Caption: {caption}. ' + \
+                           f'True object number: {object_num}. ' + \
+                           'Only give the revised caption: '
+            }
+        ]
+        response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
+        reply = response['choices'][0]['message']['content']
+        # sometimes return with "Caption: xxx, xxx, xxx"
+        caption = reply.split(':')[-1].strip()
     return caption
 
 
@@ -201,7 +210,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--input_image", type=str, required=True, help="path to image file")
     parser.add_argument("--split", default=",", type=str, help="split for text prompt")
-    parser.add_argument("--openai_key", type=str, required=True, help="key for chatgpt")
+    parser.add_argument("--openai_key", type=str, help="key for chatgpt")
     parser.add_argument("--openai_proxy", default=None, type=str, help="proxy for chatgpt")
     parser.add_argument(
         "--output_dir", "-o", type=str, default="outputs", required=True, help="output directory"

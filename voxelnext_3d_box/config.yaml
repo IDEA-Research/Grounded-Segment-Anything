@@ -1,0 +1,56 @@
+SAM_TYPE: "vit_h"
+SAM_CHECKPOINT: "sam_vit_h_4b8939.pth"
+
+POINT_CLOUD_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
+USED_FEATURE_LIST: ['x', 'y', 'z', 'intensity', 'timestamp']
+DATA_PROCESSOR:
+    - NAME: mask_points_and_boxes_outside_range
+      REMOVE_OUTSIDE_BOXES: True
+
+    - NAME: shuffle_points
+      SHUFFLE_ENABLED: {
+        'train': True,
+        'test': True
+      }
+
+    - NAME: transform_points_to_voxels
+      VOXEL_SIZE: [0.075, 0.075, 0.2]
+      MAX_POINTS_PER_VOXEL: 10
+      MAX_NUMBER_OF_VOXELS: {
+        'train': 120000,
+        'test': 160000
+      }
+
+VOXELNEXT_CHECKPOINT: "voxelnext_nuscenes_kernel1.pth"
+INPUT_CHANNELS: 5
+GRID_SIZE: [1440, 1440, 40]
+
+CLASS_NAMES: ['car','truck', 'construction_vehicle', 'bus', 'trailer',
+  'barrier', 'motorcycle', 'bicycle', 'pedestrian', 'traffic_cone']
+
+KERNEL_SIZE_HEAD: 1
+
+VOXEL_SIZE: [0.075, 0.075, 0.2]
+CLASS_NAMES_EACH_HEAD: [
+  ['car'],
+  ['truck', 'construction_vehicle'],
+  ['bus', 'trailer'],
+  ['barrier'],
+  ['motorcycle', 'bicycle'],
+  ['pedestrian', 'traffic_cone'],
+]
+
+SEPARATE_HEAD_CFG:
+    HEAD_ORDER: ['center', 'center_z', 'dim', 'rot', 'vel']
+    HEAD_DICT: {
+        'center': {'out_channels': 2, 'num_conv': 2},
+        'center_z': {'out_channels': 1, 'num_conv': 2},
+        'dim': {'out_channels': 3, 'num_conv': 2},
+        'rot': {'out_channels': 2, 'num_conv': 2},
+        'vel': {'out_channels': 2, 'num_conv': 2},
+    }
+
+POST_PROCESSING:
+    SCORE_THRESH: 0
+    POST_CENTER_LIMIT_RANGE: [-61.2, -61.2, -10.0, 61.2, 61.2, 10.0]
+    MAX_OBJ_PER_SAMPLE: 500

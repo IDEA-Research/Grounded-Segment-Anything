@@ -2,3 +2,9 @@
 [submodule "grounded-sam-osx"]
 	path = grounded-sam-osx
 	url = https://github.com/linjing7/grounded-sam-osx.git
+[submodule "VISAM"]
+	path = VISAM
+	url = https://github.com/BingfengYan/VISAM
+[submodule "Tag2Text"]
+	path = Tag2Text
+	url = https://github.com/xinyu1205/Tag2Text.git

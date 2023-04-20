@@ -16,14 +16,20 @@ The **core idea** behind this project is to **combine the strengths of different
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
 - [OSX](https://osx-ubody.github.io/) is a strong and efficient one-stage motion capture method to generate high quality 3D human mesh from monucular image. We also release a large-scale upper-body dataset UBody for a more accurate reconstrution in the upper-body scene.
 - [Stable-Diffusion](https://github.com/CompVis/stable-diffusion) is an amazing strong text-to-image diffusion model.
+- [Tag2Text](https://github.com/xinyu1205/Tag2Text) is an efficient and controllable vision-language model which can
+simultaneously output superior image captioning and image tagging.
 - [BLIP](https://github.com/salesforce/lavis) is a wonderful language-vision model for image understanding.
 - [Visual ChatGPT](https://github.com/microsoft/visual-chatgpt) is a wonderful tool that connects ChatGPT and a series of Visual Foundation Models to enable sending and receiving images during chatting.
+- [VoxelNeXt](https://github.com/dvlab-research/VoxelNeXt) is a clean, simple, and fully-sparse 3D object detector, which predicts objects directly upon sparse voxel features.
 
 
 **🔥 Highlighted Projects** 
 
 - Checkout the [Segment Everything Everywhere All at Once](https://github.com/UX-Decoder/Segment-Everything-Everywhere-All-At-Once) demo! It supports segmenting with various types of prompts (text, point, scribble, referring image, etc.) and any combination of prompts.
 - Checkout the [OpenSeeD](https://github.com/IDEA-Research/OpenSeeD) for the interactive segmentation with box input to generate mask.
+- Visual instruction tuning with GPT-4! Please check out the multimodal model **LLaVA**: [[Project Page](https://llava-vl.github.io/)] [[Paper](https://arxiv.org/abs/2304.08485)] [[Demo](https://llava.hliu.cc/)]  [[Data](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K)] [[Model](https://huggingface.co/liuhaotian/LLaVA-13b-delta-v0)]
+
+
 
 **🍉 The Supported Amazing Demos in this Project**
 
@@ -31,19 +37,13 @@ The **core idea** behind this project is to **combine the strengths of different
 - [GroundingDINO + Segment-Anything: Detect and Segment Everything with Text Prompt](#runningman-run-grounded-segment-anything-demo)
 - [GroundingDINO + Segment-Anything + Stable-Diffusion: Detect, Segment and Generate Anything with Text Prompts](#skier-run-grounded-segment-anything--inpainting-demo)
 - [Grounded-SAM + Stable-Diffusion Gradio APP](#golfing-run-grounded-segment-anything--inpainting-gradio-app)
+- [Grounded-SAM + Tag2Text: Automatically Labeling System with Superior Image Tagging!](#label-run-grounded-segment-anything--tag2text-demo)
 - [Grounded-SAM + BLIP: Automatically Labeling System!](#robot-run-grounded-segment-anything--blip-demo)
 - [Whisper + Grounded-SAM: Detect and Segment Everything with Speech!](#openmouth-run-grounded-segment-anything--whisper-demo)
 - [Grounded-SAM + Visual ChatGPT: Automatically Label & Generate Everything with ChatBot!](#speechballoon-run-chatbot-demo)
 - [Grounded-SAM + OSX: Text to 3D Whole-Body Mesh Recovery, Detect Anyone and Reconstruct his 3D Humen Mesh!](#mandancing-run-grounded-segment-anything--osx-demo)
 - [Interactive Fashion-Edit Playground: Click for Segmentation And Editing!](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace)
 - [Interactive Human-face Editing Playground: Click And Editing Human Face!](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace)
-
-<!-- - The combination of `Grounding DINO + SAM` enable to **detect and segment everything at any levels** with text inputs!
-- The combination of `BLIP + Grounding DINO + SAM` for **automatic labeling system**!
-- The combination of `Grounding DINO + SAM + Stable-diffusion` for **data-factory, generating new data**!
-- The combination of `Whisper + Grounding DINO + SAM` to **detect and segment anything with speech**!
-- The chatbot **for the above tools** with better reasoning!
-- The combination of `Grounding DINO + SAM + OSX` to **detect anyone and reconstruct his 3D human mesh**!   -->
 
 
 ## The Amazing Demo Preview (Continual Updating)
@@ -64,6 +64,14 @@ https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-
 
 **🔥 Grounded-SAM + Stable-Diffusion Inpainting: Data-Factory, Generating New Data**
 ![](./assets/grounded_sam_inpainting_demo.png)
+
+
+**🔥 Tag2Text + Grounded-SAM: Automatic Label System with Superior Image Tagging**
+
+Using Tag2Text to directly generate tags, and using Grounded-SAM for box and mask generating. Tag2Text has superior tagging and captioning capabilities. Here's the demo output comparison:
+
+![](./assets/automatic_label_output/demo9_tag2text.jpg)
+
 
 **🔥 BLIP + Grounded-SAM: Automatic Label System**
 
@@ -90,11 +98,16 @@ Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/I
 
   ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/231-hair-edit.png)
 
+**🔥 3D-Box via Segment Anything**
+We extend the scope to 3D world by combining Segment Anything and [VoxelNeXt](https://github.com/dvlab-research/VoxelNeXt). When we provide a prompt (e.g., a point / box), the result is not only 2D segmentation mask, but also 3D boxes.
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/sam-voxelnext.png)
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/image_boxes2.png)
 
 
 ## :bulb: Highlight Extension Projects
 - [Segment Everything Everywhere All at Once](https://github.com/UX-Decoder/Segment-Everything-Everywhere-All-At-Once) Support various types of prompts and any combination of prompts.
 - [Computer Vision in the Wild (CVinW) Readings](https://github.com/Computer-Vision-in-the-Wild/CVinW_Readings) for those who are interested in open-set tasks in computer vision.
+- Visual instruction tuning with GPT-4! Please check out the multimodal model **LLaVA**: [[Project Page](https://llava-vl.github.io/)] [[Paper](https://arxiv.org/abs/2304.08485)] [[Demo](https://llava.hliu.cc/)]  [[Data](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K)] [[Model](https://huggingface.co/liuhaotian/LLaVA-13b-delta-v0)]
 - [OpenSeeD](https://github.com/IDEA-Research/OpenSeeD): interactive segmentation with box input to generate mask.
 - [Zero-Shot Anomaly Detection](https://github.com/caoyunkang/GroundedSAM-zero-shot-anomaly-detection) by Yunkang Cao
 - [EditAnything: ControlNet + StableDiffusion based on the SAM segmentation mask](https://github.com/sail-sg/EditAnything) by Shanghua Gao and Pan Zhou
@@ -116,6 +129,10 @@ Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/I
 - [Zero-shot Scene Graph Generate with Grounded-SAM](https://github.com/showlab/Image2Paragraph) by JackWhite-rwx
 - [CLIP Surgery for Better Explainability with Enhancement in Open-Vocabulary Tasks](https://github.com/xmed-lab/CLIP_Surgery) by Eli-YiLi
 - [Panoptic-Segment-Anything: Zero-shot panoptic segmentation using SAM](https://github.com/segments-ai/panoptic-segment-anything) by segments-ai
+- [Caption-Anything: Generates Descriptive Captions for Any Object within an Image](https://github.com/ttengwang/Caption-Anything) by Teng Wang
+- [Segment-Anything-3D: Transferring Segmentation Information of 2D Images to 3D Space](https://github.com/Pointcept/SegmentAnything3D) by Yunhan Yang
+- [Expediting SAM without Fine-tuning](https://github.com/Expedit-LargeScale-Vision-Transformer/Expedit-SAM) by Weicong Liang and Yuhui Yuan
+- [Semantic Segment Anything: Providing Rich Sementic Category Annotations for SAM](https://github.com/fudan-zvg/Semantic-Segment-Anything) by Jiaqi Chen and Zeyu Yang and Li Zhang
 
 ## :open_book: Notebook Demo
 See our [notebook file](grounded_sam.ipynb) as an example.
@@ -141,6 +158,12 @@ xhost +
 
 
 ### Install without Docker
+You should set the environment variable manually as follows if you want to build a local GPU environment for Grounded-SAM:
+```bash
+export AM_I_DOCKER=False
+export BUILD_WITH_CUDA=True
+export CUDA_HOME=/path/to/cuda-11.3/
+```
 
 Install Segment Anything:
 
@@ -166,6 +189,13 @@ Install osx:
 ```bash
 git submodule update --init --recursive
 cd grounded-sam-osx && bash install.sh
+```
+
+Install Tag2Text:
+
+```bash
+git submodule update --init --recursive
+cd Tag2Text && pip install -r requirements.txt
 ```
 
 The following optional dependencies are necessary for mask post-processing, saving masks in COCO format, the example notebooks, and exporting the model in ONNX format. `jupyter` is also required to run the example notebooks.
@@ -261,6 +291,41 @@ python gradio_app.py
 ![](./assets/gradio_demo.png)
 
 
+## :label: Run Grounded-Segment-Anything + Tag2Text Demo
+Tag2Text achieves superior image tag recognition ability of [**3,429**](https://github.com/xinyu1205/Tag2Text/blob/main/data/tag_list.txt) commonly human-used categories.
+It is seamlessly linked to generate pseudo labels automatically as follows:
+1. Use Tag2Text to generate tags.
+2. Use Grounded-Segment-Anything to generate the boxes and masks.
+
+- Download the checkpoint for Tag2Text:
+```bash
+cd Tag2Text
+
+wget https://huggingface.co/spaces/xinyu1205/Tag2Text/resolve/main/tag2text_swin_14m.pth
+```
+
+- Run Demo
+```bash
+export CUDA_VISIBLE_DEVICES=0
+python automatic_label_tag2text_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --tag2text_checkpoint tag2text_swin_14m.pth \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --input_image assets/demo9.jpg \
+  --output_dir "outputs" \
+  --box_threshold 0.25 \
+  --text_threshold 0.2 \
+  --iou_threshold 0.5 \
+  --device "cuda"
+```
+
+- Tag2Text also provides powerful captioning capabilities, and the process with captions can refer to [BLIP](#robot-run-grounded-segment-anything--blip-demo).
+- The pseudo labels and model prediction visualization will be saved in `output_dir` as follows (right figure):
+
+![](./assets/automatic_label_output/demo9_tag2text.jpg)
+
+
 ## :robot: Run Grounded-Segment-Anything + BLIP Demo
 It is easy to generate pseudo labels automatically as follows:
 1. Use BLIP (or other caption models) to generate a caption.
@@ -285,6 +350,8 @@ python automatic_label_demo.py \
   --device "cuda"
 ```
 
+- When you don't have a paid Account for ChatGPT is also possible to use NLTK instead. Just don't include the ```openai_key``` Parameter when starting the Demo.
+  - The Script will automatically download the necessary NLTK Data.
 - The pseudo labels and model prediction visualization will be saved in `output_dir` as follows:
 
 ![](./assets/automatic_label_output_demo3.jpg)
@@ -423,10 +490,46 @@ python grounded_sam_osx_demo.py \
 | :---------------------------------------------------: |
 |               *A man with a sunglasses*               |
 
+
+## :man_dancing: Run Grounded-Segment-Anything + VISAM Demo
+
+- Download the checkpoint `motrv2_dancetrack.pth` from [here](https://drive.google.com/file/d/1EA4lndu2yQcVgBKR09KfMe5efbf631Th/view?usp=share_link) for MOTRv2:
+- See the more thing if you have other questions for the installation.
+
+- Run Demo
+
+```shell
+export CUDA_VISIBLE_DEVICES=0
+python grounded_sam_visam.py \
+  --meta_arch motr \
+  --dataset_file e2e_dance \
+  --with_box_refine \
+  --query_interaction_layer QIMv2 \
+  --num_queries 10 \
+  --det_db det_db_motrv2.json \
+  --use_checkpoint \
+  --mot_path your_data_path \
+  --resume motrv2_dancetrack.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --video_path DanceTrack/test/dancetrack0003 
+```
+|![](https://raw.githubusercontent.com/BingfengYan/MOTSAM/main/visam.gif)|
+
+
 ## :cupid: Acknowledgements
 
 - [Segment Anything](https://github.com/facebookresearch/segment-anything)
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO)
+
+
+## Contributors
+
+Our project wouldn't be possible without the contributions of these amazing people! Thank you all for making this project better.
+
+<a href="https://github.com/IDEA-Research/Grounded-Segment-Anything/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=IDEA-Research/Grounded-Segment-Anything" />
+</a>
+
 
 ## Citation
 If you find this project helpful for your research, please consider citing the following BibTeX entry.
