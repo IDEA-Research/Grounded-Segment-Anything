@@ -293,8 +293,8 @@ if __name__ == "__main__":
 
     # Currently ", " is better for detecting single tags
     # while ". " is a little worse in some case
-    text_prompt=res[0]
-    caption=res[2].replace(' |', ',')
+    text_prompt=res[0].replace(' |', ',')
+    caption=res[2]
 
     print(f"Caption: {caption}")
     print(f"Tags: {text_prompt}")
