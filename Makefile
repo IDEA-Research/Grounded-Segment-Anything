@@ -2,8 +2,16 @@
 # This solves https://github.com/IDEA-Research/Grounded-Segment-Anything/issues/53
 # and https://github.com/IDEA-Research/Grounded-Segment-Anything/issues/84
 # when running in Docker
-NVCC_VERSION := $(shell nvcc --version | grep -oP 'release \K[0-9.]+')
-USE_CUDA := $(shell echo "$(NVCC_VERSION) > 11" | bc -l)
+# Check if nvcc is installed
+NVCC := $(shell which nvcc)
+ifeq ($(NVCC),)
+	# NVCC not found
+	USE_CUDA := 0
+	NVCC_VERSION := "not installed"
+else
+	NVCC_VERSION := $(shell nvcc --version | grep -oP 'release \K[0-9.]+')
+	USE_CUDA := $(shell echo "$(NVCC_VERSION) > 11" | bc -l)
+endif
 
 # Add the list of supported ARCHs
 ifeq ($(USE_CUDA), 1)
