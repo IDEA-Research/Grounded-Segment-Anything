@@ -211,10 +211,8 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
 
     if task_type == 'scribble':
         sam_predictor.set_image(image)
+        scribble = scribble.convert("RGB")
         scribble = np.array(scribble)
-        scribble = HWC3(scribble.astype(np.uint8))
-        scribble = cv2.resize(
-            scribble, (int(size[0]/2), int(size[1]/2)), interpolation=cv2.INTER_LINEAR)
         scribble = scribble.transpose(2, 1, 0)[0]
 
         # 将连通域进行标记
@@ -224,7 +222,9 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
         centers = ndimage.center_of_mass(scribble, labeled_array, range(1, num_features+1))
         centers = np.array(centers)
 
-        point_coords = torch.from_numpy(centers).unsqueeze(0).to(device)
+        point_coords = torch.from_numpy(centers)
+        point_coords = sam_predictor.transform.apply_coords_torch(point_coords, image.shape[:2])
+        point_coords = point_coords.unsqueeze(0).to(device)
         point_labels = torch.from_numpy(np.array([1] * len(centers))).unsqueeze(0).to(device)
         if scribble_mode == 'split':
             point_coords = point_coords.permute(1, 0, 2)
