@@ -69,8 +69,8 @@ def get_extensions():
     # It solves https://github.com/IDEA-Research/Grounded-Segment-Anything/issues/53
     # and https://github.com/IDEA-Research/Grounded-Segment-Anything/issues/84 when running
     # inside a Docker container.
-    am_i_docker = os.environ.get('AM_I_DOCKER').casefold() in ['true', '1', 't']
-    use_cuda = os.environ.get('BUILD_WITH_CUDA').casefold() in ['true', '1', 't']
+    am_i_docker = os.environ.get('AM_I_DOCKER', '').casefold() in ['true', '1', 't']
+    use_cuda = os.environ.get('BUILD_WITH_CUDA', '').casefold() in ['true', '1', 't']
 
     extension = CppExtension
 
