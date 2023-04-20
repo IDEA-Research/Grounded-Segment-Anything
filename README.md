@@ -463,6 +463,16 @@ python grounded_sam_visam.py \
 - [Segment Anything](https://github.com/facebookresearch/segment-anything)
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO)
 
+
+## Contributors
+
+Our project wouldn't be possible without the contributions of these amazing people! Thank you all for making this project better.
+
+<a href="https://github.com/IDEA-Research/Grounded-Segment-Anything/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=IDEA-Research/Grounded-Segment-Anything" />
+</a>
+
+
 ## Citation
 If you find this project helpful for your research, please consider citing the following BibTeX entry.
 ```BibTex
