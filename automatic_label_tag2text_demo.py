@@ -244,10 +244,11 @@ if __name__ == "__main__":
     text_threshold = args.text_threshold
     iou_threshold = args.iou_threshold
     device = args.device
-
-    openai.api_key = openai_key
-    if openai_proxy:
-        openai.proxy = {"http": openai_proxy, "https": openai_proxy}
+    
+    # ChatGPT or nltk is required when using captions
+    # openai.api_key = openai_key
+    # if openai_proxy:
+        # openai.proxy = {"http": openai_proxy, "https": openai_proxy}
 
     # make dir
     os.makedirs(output_dir, exist_ok=True)
@@ -274,7 +275,7 @@ if __name__ == "__main__":
 
     specified_tags='None'
     # load model
-    tag2text_model = tag2text.tag2text_caption(pretrained="Tag2Text/pretrained/tag2text_swin_14m.pth",
+    tag2text_model = tag2text.tag2text_caption(pretrained=tag2text_checkpoint,
                                         image_size=384,
                                         vit='swin_b',
                                         delete_tag_index=delete_tag_index)
