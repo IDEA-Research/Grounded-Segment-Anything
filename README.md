@@ -147,6 +147,12 @@ xhost +
 
 
 ### Install without Docker
+You should set the environment variable manually as follows if you want to build a local GPU environment for Grounded-SAM:
+```bash
+export AM_I_DOCKER=False
+export BUILD_WITH_CUDA=True
+export CUDA_HOME=/path/to/cuda-11.3/
+```
 
 Install Segment Anything:
 
