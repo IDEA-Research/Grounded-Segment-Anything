@@ -16,6 +16,8 @@ The **core idea** behind this project is to **combine the strengths of different
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
 - [OSX](https://osx-ubody.github.io/) is a strong and efficient one-stage motion capture method to generate high quality 3D human mesh from monucular image. We also release a large-scale upper-body dataset UBody for a more accurate reconstrution in the upper-body scene.
 - [Stable-Diffusion](https://github.com/CompVis/stable-diffusion) is an amazing strong text-to-image diffusion model.
+- [Tag2Text](https://github.com/xinyu1205/Tag2Text) is an efficient and controllable vision-language model which can
+simultaneously output superior image captioning and image tagging.
 - [BLIP](https://github.com/salesforce/lavis) is a wonderful language-vision model for image understanding.
 - [Visual ChatGPT](https://github.com/microsoft/visual-chatgpt) is a wonderful tool that connects ChatGPT and a series of Visual Foundation Models to enable sending and receiving images during chatting.
 - [VoxelNeXt](https://github.com/dvlab-research/VoxelNeXt) is a clean, simple, and fully-sparse 3D object detector, which predicts objects directly upon sparse voxel features.
@@ -35,6 +37,7 @@ The **core idea** behind this project is to **combine the strengths of different
 - [GroundingDINO + Segment-Anything: Detect and Segment Everything with Text Prompt](#runningman-run-grounded-segment-anything-demo)
 - [GroundingDINO + Segment-Anything + Stable-Diffusion: Detect, Segment and Generate Anything with Text Prompts](#skier-run-grounded-segment-anything--inpainting-demo)
 - [Grounded-SAM + Stable-Diffusion Gradio APP](#golfing-run-grounded-segment-anything--inpainting-gradio-app)
+- [Grounded-SAM + Tag2Text: Automatically Labeling System with Superior Image Tagging!](#label-run-grounded-segment-anything--tag2text-demo)
 - [Grounded-SAM + BLIP: Automatically Labeling System!](#robot-run-grounded-segment-anything--blip-demo)
 - [Whisper + Grounded-SAM: Detect and Segment Everything with Speech!](#openmouth-run-grounded-segment-anything--whisper-demo)
 - [Grounded-SAM + Visual ChatGPT: Automatically Label & Generate Everything with ChatBot!](#speechballoon-run-chatbot-demo)
@@ -61,6 +64,14 @@ https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-
 
 **🔥 Grounded-SAM + Stable-Diffusion Inpainting: Data-Factory, Generating New Data**
 ![](./assets/grounded_sam_inpainting_demo.png)
+
+
+**🔥 Tag2Text + Grounded-SAM: Automatic Label System with Superior Image Tagging**
+
+Using Tag2Text to directly generate tags, and using Grounded-SAM for box and mask generating. Tag2Text has superior tagging and captioning capabilities. Here's the demo output comparison:
+
+![](./assets/automatic_label_output/demo9_tag2text.jpg)
+
 
 **🔥 BLIP + Grounded-SAM: Automatic Label System**
 
@@ -174,6 +185,13 @@ git submodule update --init --recursive
 cd grounded-sam-osx && bash install.sh
 ```
 
+Install Tag2Text:
+
+```bash
+git submodule update --init --recursive
+cd Tag2Text && pip install -r requirements.txt
+```
+
 The following optional dependencies are necessary for mask post-processing, saving masks in COCO format, the example notebooks, and exporting the model in ONNX format. `jupyter` is also required to run the example notebooks.
 
 ```
@@ -265,6 +283,41 @@ python gradio_app.py
 - The gradio_app visualization as follow:
 
 ![](./assets/gradio_demo.png)
+
+
+## :label: Run Grounded-Segment-Anything + Tag2Text Demo
+Tag2Text achieves superior image tag recognition ability of [**3,429**](https://github.com/xinyu1205/Tag2Text/blob/main/data/tag_list.txt) commonly human-used categories.
+It is seamlessly linked to generate pseudo labels automatically as follows:
+1. Use Tag2Text to generate tags.
+2. Use Grounded-Segment-Anything to generate the boxes and masks.
+
+- Download the checkpoint for Tag2Text:
+```bash
+cd Tag2Text
+
+wget https://huggingface.co/spaces/xinyu1205/Tag2Text/resolve/main/tag2text_swin_14m.pth
+```
+
+- Run Demo
+```bash
+export CUDA_VISIBLE_DEVICES=0
+python automatic_label_tag2text_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --tag2text_checkpoint tag2text_swin_14m.pth \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --input_image assets/demo9.jpg \
+  --output_dir "outputs" \
+  --box_threshold 0.25 \
+  --text_threshold 0.2 \
+  --iou_threshold 0.5 \
+  --device "cuda"
+```
+
+- Tag2Text also provides powerful captioning capabilities, and the process with captions can refer to [BLIP](#robot-run-grounded-segment-anything--blip-demo).
+- The pseudo labels and model prediction visualization will be saved in `output_dir` as follows (right figure):
+
+![](./assets/automatic_label_output/demo9_tag2text.jpg)
 
 
 ## :robot: Run Grounded-Segment-Anything + BLIP Demo
