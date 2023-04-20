@@ -281,6 +281,18 @@ python grounded_sam_inpainting_demo.py \
 ```
 
 ## :golfing: Run Grounded-Segment-Anything + Inpainting Gradio APP
+The following introduces the 6 task_type modes provided by Grounded-SAM:
+&emsp;&emsp;**scribble**: Segmentation is achieved through Segment Anything (https://github.com/facebookresearch/segment-anything) and mouse click interaction (you need to click on the object with the mouse, no need to specify the prompt).
+&emsp;&emsp;**automask**: Segment the entire image at once through Segment Anything (no need to specify a prompt).
+&emsp;&emsp;**det**: Realize detection through Grounding DINO (https://github.com/IDEA-Research/GroundingDINO) and text interaction (text prompt needs to be specified).
+&emsp;&emsp;**seg**: Realize text interaction by combining Grounding DINO and Segment Anything to realize detection + segmentation (need to specify text prompt).
+&emsp;&emsp;**inpainting**: By combining Grounding DINO + Segment Anything + Stable Diffusion (https://github.com/Stability-AI/StableDiffusion) to achieve text exchange and replace the target object (need to specify text prompt and inpaint prompt) .
+&emsp;&emsp;**automatic**: By combining BLIP (https://github.com/salesforce/BLIP) + Grounding DINO + Segment Anything to achieve non-interactive detection + segmentation (no need to specify prompt).
+
+**Tips**:
+&emsp;&emsp;scribble has two modes, the merge mode regards all clicked areas as one object, and the split mode divides all clicked areas into different objects.
+&emsp;&emsp;If you want to detect multiple objects in one sentence with Grounding DINO, we recommend separating each name with a ., eg: cat.dog.chair.
+&emsp;&emsp;Sometimes the refresh of the output image is slow, please wait patiently for 1-2 seconds.
 
 ```bash
 python gradio_app.py
