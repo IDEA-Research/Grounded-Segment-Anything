@@ -208,7 +208,7 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
 
     image_pil = image.convert("RGB")
     image = np.array(image_pil)
-    
+
     if task_type == 'scribble_seg':
         sam_predictor.set_image(image)
         scribble = np.array(scribble)
@@ -223,10 +223,9 @@ def run_grounded_sam(input_image, text_prompt, task_type, inpaint_prompt, box_th
         # 计算每个连通域的质心
         centers = ndimage.center_of_mass(scribble, labeled_array, range(1, num_features+1))
         centers = np.array(centers)
-        print(centers)
 
-        point_coords = torch.from_numpy(centers).unsqueeze(0).to(device)
-        point_labels = torch.from_numpy(np.array([1] * len(centers))).unsqueeze(0).to(device)
+        point_coords = torch.from_numpy(centers).unsqueeze(0).permute(1, 0, 2).to(device)
+        point_labels = torch.from_numpy(np.array([1] * len(centers))).unsqueeze(0).permute(1, 0).to(device)
         masks, _, _ = sam_predictor.predict_torch(
             point_coords=point_coords if len(point_coords) > 0 else None,
             point_labels=point_labels if len(point_coords) > 0 else None,
