@@ -281,6 +281,13 @@ python grounded_sam_inpainting_demo.py \
 ```
 
 ## :golfing: Run Grounded-Segment-Anything + Inpainting Gradio APP
+The following introduces the 6 task_type modes provided by Gradio APP:
+1. **scribble**: Segmentation is achieved through Segment Anything and mouse click interaction (you need to click on the object with the mouse, no need to specify the prompt).
+2. **automask**: Segment the entire image at once through Segment Anything (no need to specify a prompt).
+3. **det**: Realize detection through Grounding DINO and text interaction (text prompt needs to be specified).
+4. **seg**: Realize text interaction by combining Grounding DINO and Segment Anything to realize detection + segmentation (need to specify text prompt).
+5. **inpainting**: By combining Grounding DINO + Segment Anything + Stable Diffusion to achieve text exchange and replace the target object (need to specify text prompt and inpaint prompt) .
+6. **automatic**: By combining BLIP + Grounding DINO + Segment Anything to achieve non-interactive detection + segmentation (no need to specify prompt).
 
 ```bash
 python gradio_app.py
