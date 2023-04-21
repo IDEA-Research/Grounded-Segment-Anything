@@ -31,6 +31,7 @@ or cuda version spconv `pip install spconv-cu111` based on your cuda version. Pl
 Please try it via [seg_anything_and_3D.ipynb](seg_anything_and_3D.ipynb).
 We provide this example on nuScenes dataset. You can use other image-points pairs. 
 
+- The demo point for one frame is provided here [points_demo.npy](https://drive.google.com/file/d/1br0VDamameu7B1G1p4HEjj6LshGs5dHB/view?usp=share_link).
 - The point to image translation infos on nuScenes val can be download [here](https://drive.google.com/file/d/1nJqdfs0gMTIo4fjOwytSbM0fdBOJ4IGb/view?usp=share_link).
 - The weight in the demo is [voxelnext_nuscenes_kernel1.pth](https://drive.google.com/file/d/17mQRXXUsaD0dlRzAKep3MQjfj8ugDsp9/view?usp=share_link).
 - The nuScenes info file is [nuscenes_infos_10sweeps_val.pkl](https://drive.google.com/file/d/1Kaxtubzr1GofcoFz97S6qwAIG2wzhPo_/view?usp=share_link). This is generated from [OpenPCDet](https://github.com/open-mmlab/OpenPCDet) codebase.
