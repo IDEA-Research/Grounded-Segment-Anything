@@ -141,7 +141,7 @@ if __name__ == "__main__":
     text_prompt = args.text_prompt
     output_dir = args.output_dir
     box_threshold = args.box_threshold
-    text_threshold = args.box_threshold
+    text_threshold = args.text_threshold
     device = args.device
 
     # make dir
