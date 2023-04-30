@@ -134,6 +134,7 @@ We extend the scope to 3D world by combining Segment Anything and [VoxelNeXt](ht
 - [Segment-Anything-3D: Transferring Segmentation Information of 2D Images to 3D Space](https://github.com/Pointcept/SegmentAnything3D) by Yunhan Yang
 - [Expediting SAM without Fine-tuning](https://github.com/Expedit-LargeScale-Vision-Transformer/Expedit-SAM) by Weicong Liang and Yuhui Yuan
 - [Semantic Segment Anything: Providing Rich Sementic Category Annotations for SAM](https://github.com/fudan-zvg/Semantic-Segment-Anything) by Jiaqi Chen and Zeyu Yang and Li Zhang
+- [Enhance Everything: Combining SAM with Image Restoration and Enhancement Tasks](https://github.com/lixinustc/Enhance-Anything) by Xin Li
 
 ## :open_book: Notebook Demo
 See our [notebook file](grounded_sam.ipynb) as an example.
