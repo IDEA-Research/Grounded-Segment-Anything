@@ -322,7 +322,7 @@ wget https://huggingface.co/spaces/xinyu1205/Tag2Text/resolve/main/tag2text_swin
 export CUDA_VISIBLE_DEVICES=0
 python automatic_label_tag2text_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
-  --tag2text_checkpoint tag2text_swin_14m.pth \
+  --tag2text_checkpoint ./Tag2Text/tag2text_swin_14m.pth \
   --grounded_checkpoint groundingdino_swint_ogc.pth \
   --sam_checkpoint sam_vit_h_4b8939.pth \
   --input_image assets/demo9.jpg \
