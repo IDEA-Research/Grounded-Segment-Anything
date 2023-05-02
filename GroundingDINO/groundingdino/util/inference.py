@@ -154,7 +154,7 @@ class Model:
             caption=caption,
             box_threshold=box_threshold,
             text_threshold=text_threshold, 
-            device=self.model.device)
+            device=self.device)
         source_h, source_w, _ = image.shape
         detections = Model.post_process_result(
             source_h=source_h,
@@ -189,7 +189,7 @@ class Model:
         box_annotator = sv.BoxAnnotator()
         annotated_image = box_annotator.annotate(scene=image, detections=detections)
         """
-        caption = ", ".join(classes)
+        caption = ". ".join(classes)
         processed_image = Model.preprocess_image(image_bgr=image).to(self.device)
         boxes, logits, phrases = predict(
             model=self.model,
@@ -197,7 +197,7 @@ class Model:
             caption=caption,
             box_threshold=box_threshold,
             text_threshold=text_threshold,
-            device=self.model.device)
+            device=self.device)
         source_h, source_w, _ = image.shape
         detections = Model.post_process_result(
             source_h=source_h,

@@ -12,7 +12,8 @@ We are very willing to **help everyone share and promote new projects** based on
 The **core idea** behind this project is to **combine the strengths of different models in order to build a very powerful pipeline for solving complex problems**. And it's worth mentioning that this is a workflow for combining strong expert models, where **all parts can be used separately or in combination, and can be replaced with any similar but different models (like replacing Grounding DINO with GLIP or other detectors / replacing Stable-Diffusion with ControlNet or GLIGEN/ Combining with ChatGPT)**.
 
 **🍇 Updates**
-- **`2023/05/02`**: Release a better python API for GroundingDINO (annotate image less than 20 lines of code): please see [grounding_dino_demo.py](./grounding_dino_demo.py) (Credits to [Piotr Skalski](https://github.com/SkalskiP))
+- **`2023/05/02`**: Release a better python API for GroundingDINO (annotate image less than 20 lines of code): please see [grounding_dino_demo.py](./grounding_dino_demo.py)
+- **`2023/05/02`**: Release a more simple and elegant code for Grounded-SAM demo: please see [grounded_sam_simple_demo.py](./grounded_sam_simple_demo.py) 
 
 **🍊 Preliminary Works**
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it needs prompts (like boxes/points) to generate masks. 
@@ -298,8 +299,19 @@ python grounded_sam_demo.py \
 
 ![](./assets/grounded_sam_output_demo1.jpg)
 
-**More Examples**
-![](./assets/grounded_sam_demo3_demo4.png)
+**Run More Simple and Elegant Demo**
+```bash
+python grounded_sam_simple_demo.py
+```
+Note that you can update the hyper-params defined in [grounded_sam_simple_demo.py](./grounded_sam_simple_demo.py)
+
+The results will be saved as `groundingdino_annotated_image.jpg`:
+
+![](assets/groundingdino_annotated_image.jpg)
+
+and `grounded_sam_annotated_image.jpg`:
+
+![](assets/grounded_sam_annotated_image.jpg)
 
 ## :skier: Run Grounded-Segment-Anything + Inpainting Demo
 
