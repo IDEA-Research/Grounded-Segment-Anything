@@ -238,7 +238,7 @@ python grounding_dino_demo.py \
 
 ![](./assets/grounding_dino_output_demo1.jpg)
 
-- Running with Python:
+- Running with Python (Credits to [Piotr Skalski](https://github.com/SkalskiP)):
 ```python
 from groundingdino.util.inference import load_model, load_image, predict, annotate
 import cv2
