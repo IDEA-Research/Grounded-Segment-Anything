@@ -238,7 +238,15 @@ class Model:
         class_ids = []
         for phrase in phrases:
             try:
-                class_ids.append(classes.index(phrase))
+                # class_ids.append(classes.index(phrase))
+                class_ids.append(Model.find_index(phrase, classes))
             except ValueError:
                 class_ids.append(None)
         return np.array(class_ids)
+
+    @staticmethod
+    def find_index(string, lst):
+        for i, s in enumerate(lst):
+            if string.lower() in s.lower():
+                return i
+        return -1
