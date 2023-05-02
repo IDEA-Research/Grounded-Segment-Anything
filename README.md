@@ -60,6 +60,8 @@ https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-
 **🔥 Grounded-SAM: Semi-automatic Labeling System**
 ![](./assets/grounded_sam2.png)
 
+![](./assets/grounded_sam_new_demo_image.png)
+
 **Tips**
 - If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest seperating each name with `.` . An example: `cat . dog . chair .`
 
