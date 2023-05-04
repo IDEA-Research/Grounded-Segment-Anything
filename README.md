@@ -12,6 +12,7 @@ We are very willing to **help everyone share and promote new projects** based on
 The **core idea** behind this project is to **combine the strengths of different models in order to build a very powerful pipeline for solving complex problems**. And it's worth mentioning that this is a workflow for combining strong expert models, where **all parts can be used separately or in combination, and can be replaced with any similar but different models (like replacing Grounding DINO with GLIP or other detectors / replacing Stable-Diffusion with ControlNet or GLIGEN/ Combining with ChatGPT)**.
 
 **🍇 Updates**
+- **`2023/05/02`**: Release a simpler code for automatic labeling (combined with Tag2Text model): please see [automatic_label_simple_demo.py](./automatic_label_simple_demo.py)
 - **`2023/05/02`**: Release a better python API for GroundingDINO (annotate image less than 20 lines of code): please see [grounding_dino_demo.py](./grounding_dino_demo.py)
 - **`2023/05/02`**: Release a more simple and elegant code for Grounded-SAM demo: please see [grounded_sam_simple_demo.py](./grounded_sam_simple_demo.py) 
 
