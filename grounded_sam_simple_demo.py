@@ -4,6 +4,7 @@ import supervision as sv
 from typing import List
 
 import torch
+import torchvision
 
 from groundingdino.util.inference import Model
 from segment_anything import sam_model_registry, SamPredictor
@@ -27,10 +28,11 @@ sam_predictor = SamPredictor(sam)
 
 
 # Predict classes and hyper-param for GroundingDINO
-SOURCE_IMAGE_PATH = "./assets/demo7.jpg"
-CLASSES = ['horse', 'grasses', 'clouds', 'sky', "hill"]
-BOX_THRESHOLD = 0.35
+SOURCE_IMAGE_PATH = "./assets/demo2.jpg"
+CLASSES = ["The running dog"]
+BOX_THRESHOLD = 0.25
 TEXT_THRESHOLD = 0.25
+NMS_THRESHOLD = 0.8
 
 
 # load image
@@ -55,6 +57,20 @@ annotated_frame = box_annotator.annotate(scene=image.copy(), detections=detectio
 # save the annotated grounding dino image
 cv2.imwrite("groundingdino_annotated_image.jpg", annotated_frame)
 
+
+# NMS post process
+print(f"Before NMS: {len(detections.xyxy)} boxes")
+nms_idx = torchvision.ops.nms(
+    torch.from_numpy(detections.xyxy), 
+    torch.from_numpy(detections.confidence), 
+    NMS_THRESHOLD
+).numpy().tolist()
+
+detections.xyxy = detections.xyxy[nms_idx]
+detections.confidence = detections.confidence[nms_idx]
+detections.class_id = detections.class_id[nms_idx]
+
+print(f"After NMS: {len(detections.xyxy)} boxes")
 
 # Prompting SAM with detected boxes
 def segment(sam_predictor: SamPredictor, image: np.ndarray, xyxy: np.ndarray) -> np.ndarray:
