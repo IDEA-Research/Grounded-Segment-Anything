@@ -40,7 +40,7 @@ simultaneously output superior image captioning and image tagging.
 **🍉 The Supported Amazing Demos in this Project**
 
 - [GroundingDINO: Detect Everything with Text Prompt](#runner-run-grounding-dino-demo)
-- [GroundingDINO + Segment-Anything: Detect and Segment Everything with Text Prompt](#runningman-run-grounded-segment-anything-demo)
+- [GroundingDINO + Segment-Anything: Detect and Segment Everything with Text Prompt](#running_man-run-grounded-segment-anything-demo)
 - [GroundingDINO + Segment-Anything + Stable-Diffusion: Detect, Segment and Generate Anything with Text Prompts](#skier-run-grounded-segment-anything--inpainting-demo)
 - [Grounded-SAM + Stable-Diffusion Gradio APP](#golfing-run-grounded-segment-anything--inpainting-gradio-app)
 - [Grounded-SAM + Tag2Text: Automatically Labeling System with Superior Image Tagging!](#label-run-grounded-segment-anything--tag2text-demo)
