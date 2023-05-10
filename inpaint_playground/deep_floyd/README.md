@@ -114,9 +114,10 @@ export FORCE_MEM_EFFICIENT_ATTN=1
 ### Dream
 The `text-to-image` mode for DeepFloyd
 ```python
-export FORCE_MEM_EFFICIENT_ATTN=1 python dream.py
+export FORCE_MEM_EFFICIENT_ATTN=1 
+python dream.py
 ```
-It takes around `26GB` GPU memory usage for this demo.
+It takes around `26GB` GPU memory usage for this demo. You can download the following awesome generated images from [inpaint playground storage](https://github.com/IDEA-Research/detrex-storage/tree/main/assets/grounded_sam/inpaint_playground).
 
 <!-- <div style="text-align: center;">
     <img src="./example/dream1.jpg" style="margin:auto;" width="60%">
@@ -127,7 +128,7 @@ It takes around `26GB` GPU memory usage for this demo.
 |:----   |  :----: |
 | Underneath the galaxy sky, luminescent stars scatter across the vast expanse like diamond dust. Swirls of cosmic purple and blue nebulae coalesce, creating an ethereal canvas. A solitary tree silhouetted against the astral backdrop, roots burrowed deep into the earth, reaching towards the heavens. Leaves shimmer, reflecting the stellar light show. A lone figure, small against the celestial spectacle, contemplates their insignificance in the grandeur of the universe. The galaxy's reflection on a still, tranquil lake creates a stunning mirror image, tying the earth and cosmos together in a mesmerizing dance of light, space, and time. | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/inpaint_playground/dream1.jpg?raw=True) |
 |Beneath the vast sky, a mesmerizing seascape unfolds. The cerulean sea stretches out to infinity, its surface gently disturbed by the breath of the wind, creating delicate ripples. Sunlight dances on the water, transforming the ocean into a shimmering tapestry of light and shadow. A solitary sailboat navigates the expanse, its white sail billowing against the sapphire backdrop. Nearby, a lighthouse stands resolute on a rocky outcrop, its beacon piercing through the soft maritime mist. Shoreline meets the sea in a frothy embrace, while seagulls wheel overhead, their cries echoing the eternal song of the sea. The scent of salt and freedom fills the air, painting a picture of unbound exploration and serene beauty. | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/inpaint_playground/dream2.jpg?raw=True) |
+| In the heart of the wilderness, an enchanting forest reveals itself. Towering trees, their trunks sturdy and thick, reach skyward, their leafy canopies forming a natural cathedral. Verdant moss clings to bark, and tendrils of ivy climb ambitiously towards the sun-dappled treetops. The forest floor is a tapestry of fallen leaves, sprinkled with delicate wildflowers. The soft chatter of wildlife resonates, while a nearby brook babbles, its clear waters winking in the dappled light. Sunrays filter through the foliage, casting an emerald glow that dances on the woodland floor. Amidst the tranquility, the forest teems with life, whispering ancient secrets on the breeze. |![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/inpaint_playground/dream3.jpg?raw=True) |
 
 
-<!-- > Underneath the galaxy sky, luminescent stars scatter across the vast expanse like diamond dust. Swirls of cosmic purple and blue nebulae coalesce, creating an ethereal canvas. A solitary tree silhouetted against the astral backdrop, roots burrowed deep into the earth, reaching towards the heavens. Leaves shimmer, reflecting the stellar light show. A lone figure, small against the celestial spectacle, contemplates their insignificance in the grandeur of the universe. The galaxy's reflection on a still, tranquil lake creates a stunning mirror image, tying the earth and cosmos together in a mesmerizing dance of light, space, and time. -->
 

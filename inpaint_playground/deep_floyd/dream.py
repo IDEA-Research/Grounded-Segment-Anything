@@ -13,7 +13,11 @@ if_II = IFStageII('IF-II-L-v1.0', device=device, cache_dir=cache_dir)
 if_III = StableStageIII('stable-diffusion-x4-upscaler', device=device, cache_dir=cache_dir)
 t5 = T5Embedder(device=device, cache_dir=cache_dir)
 
-prompt = "Beneath the vast sky, a mesmerizing seascape unfolds. The cerulean sea stretches out to infinity, its surface gently disturbed by the breath of the wind, creating delicate ripples. Sunlight dances on the water, transforming the ocean into a shimmering tapestry of light and shadow. A solitary sailboat navigates the expanse, its white sail billowing against the sapphire backdrop. Nearby, a lighthouse stands resolute on a rocky outcrop, its beacon piercing through the soft maritime mist. Shoreline meets the sea in a frothy embrace, while seagulls wheel overhead, their cries echoing the eternal song of the sea. The scent of salt and freedom fills the air, painting a picture of unbound exploration and serene beauty."
+prompt = "In the heart of the wilderness, an enchanting forest reveals itself. \
+    Towering trees, their trunks sturdy and thick, reach skyward, their leafy canopies \
+    forming a natural cathedral. Verdant moss clings to bark, and tendrils of ivy climb ambitiously towards the sun-dappled treetops. \
+    The forest floor is a tapestry of fallen leaves, sprinkled with delicate wildflowers. The soft chatter of wildlife resonates, while a nearby brook babbles, its clear waters winking in the dappled light. \
+    Sunrays filter through the foliage, casting an emerald glow that dances on the woodland floor. Amidst the tranquility, the forest teems with life, whispering ancient secrets on the breeze."
 count = 1
 
 result = dream(
