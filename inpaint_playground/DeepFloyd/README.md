@@ -16,6 +16,13 @@ We've thoughtfully put together some important details for you to keep in mind w
   - [Style Transfer](#style-transfer)
 
 
+## TODO
+- [x] Add installation guide (Continual Updating)
+- [x] Test Text-to-Image model
+- [x] Test Style-Transfer model
+- [ ] Add Inpaint demo (seems not work well)
+- [ ] Add SAM inpaint and Grounded-SAM inpaint demo
+
 ## Installation
 ### Detailed installation guide
 There're more things you should take care for installing DeepFloyd despite of their official guide. You can install DeepFloyd as follows:
