@@ -131,4 +131,19 @@ It takes around `26GB` GPU memory usage for this demo. You can download the foll
 | In the heart of the wilderness, an enchanting forest reveals itself. Towering trees, their trunks sturdy and thick, reach skyward, their leafy canopies forming a natural cathedral. Verdant moss clings to bark, and tendrils of ivy climb ambitiously towards the sun-dappled treetops. The forest floor is a tapestry of fallen leaves, sprinkled with delicate wildflowers. The soft chatter of wildlife resonates, while a nearby brook babbles, its clear waters winking in the dappled light. Sunrays filter through the foliage, casting an emerald glow that dances on the woodland floor. Amidst the tranquility, the forest teems with life, whispering ancient secrets on the breeze. |![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/inpaint_playground/dream3.jpg?raw=True) |
 
 
+### Style Transfer
+Download the original image from [here](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/inpaint_playground/style_transfer/original.jpg), which is borrowed from DeepFloyd official image.
 
+<div style="text-align: center">
+<img src="https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/inpaint_playground/style_transfer/original.jpg?raw=True" width=50%>
+</div>
+
+```python
+export FORCE_MEM_EFFICIENT_ATTN=1 
+python style_transfer.py
+```
+
+Style | Transfer Image (W/O SuperResolution) |
+|  :----: |  :----: |
+| *colorful and cute kawaii art* | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/inpaint_playground/style_transfer/style_transfer_0.jpg?raw=True) |
+| *boho-chic textile patterns* | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/inpaint_playground/style_transfer/style_transfer_1.jpg?raw=True) |

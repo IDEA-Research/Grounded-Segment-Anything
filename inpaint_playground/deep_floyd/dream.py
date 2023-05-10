@@ -2,12 +2,9 @@ from deepfloyd_if.modules import IFStageI, IFStageII, StableStageIII
 from deepfloyd_if.modules.t5 import T5Embedder
 from deepfloyd_if.pipelines import dream
 
-# from huggingface_hub import login
-# login()
-
 # Run locally
-device = 'cuda:5'
-cache_dir = "/comp_robot/rentianhe/weights/IF"
+device = 'cuda'
+cache_dir = "/path/to/storage/IF"
 if_I = IFStageI('IF-I-L-v1.0', device=device, cache_dir=cache_dir)
 if_II = IFStageII('IF-II-L-v1.0', device=device, cache_dir=cache_dir)
 if_III = StableStageIII('stable-diffusion-x4-upscaler', device=device, cache_dir=cache_dir)
