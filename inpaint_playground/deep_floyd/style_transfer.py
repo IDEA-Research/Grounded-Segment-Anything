@@ -1,12 +1,12 @@
 from PIL import Image
 
-from deepfloyd_if.modules import IFStageI, IFStageII, StableStageIII
+from deepfloyd_if.modules import IFStageI, IFStageII
 from deepfloyd_if.modules.t5 import T5Embedder
 from deepfloyd_if.pipelines import style_transfer
 
 # Run locally
-device = 'cuda:5'
-cache_dir = "/comp_robot/rentianhe/weights/IF"
+device = 'cuda'
+cache_dir = "/path/to/storage/IF"
 if_I = IFStageI('IF-I-XL-v1.0', device=device, cache_dir=cache_dir)
 if_II = IFStageII('IF-II-L-v1.0', device=device, cache_dir=cache_dir)
 t5 = T5Embedder(device=device, cache_dir=cache_dir)
@@ -35,6 +35,9 @@ result = style_transfer(
         "support_noise_less_qsample_steps": 5,
     },
 )
-import pdb; pdb.set_trace()
-result['III'][0].save("./dream_figure.jpg")
+
+# save all the images generated in StageII
+for i, image in enumerate(result["II"]):
+    image.save("./style_transfer_{}.jpg".format(i))
+
 

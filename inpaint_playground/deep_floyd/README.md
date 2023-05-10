@@ -13,6 +13,7 @@ We've thoughtfully put together some important details for you to keep in mind w
 - [Requirements before running demo](#requirements-before-running-demos)
 - [DeepFloyd Demos](#deepfloyd-demos)
   - [Dream: Text to Image](#dream)
+  - [Style Transfer](#style-transfer)
 
 
 ## Installation
