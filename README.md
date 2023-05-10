@@ -23,8 +23,12 @@ The **core idea** behind this project is to **combine the strengths of different
 - [Grounded-Segment-Anything](#grounded-segment-anything)
   - [Preliminary Works](#preliminary-works)
   - [Highlighted Projects](#highlighted-projects)
+- [Installation](#installation)
+  - [Install with Docker](#install-with-docker)
+  - [Install locally](#install-without-docker)
 - [Grounded-SAM Playground](#grounded-sam-playground)
-  - [Installation](#hammerandwrench-installation)
+  - [GroundingDINO: Detect Everything](#groundingdino-detect-everything)
+
 
 ## Preliminary Works
 
@@ -87,10 +91,7 @@ We also list some awesome segment-anything extension projects here you may find 
 - [Semantic Segment Anything: Providing Rich Sementic Category Annotations for SAM](https://github.com/fudan-zvg/Semantic-Segment-Anything) by Jiaqi Chen and Zeyu Yang and Li Zhang
 - [Enhance Everything: Combining SAM with Image Restoration and Enhancement Tasks](https://github.com/lixinustc/Enhance-Anything) by Xin Li
 
-## Grounded-SAM Playground
-Let's start exploring our Grounding-SAM Playground
-
-### :hammer_and_wrench: Installation
+## Installation
 The code requires `python>=3.8`, as well as `pytorch>=1.7` and `torchvision>=0.8`. Please follow the instructions [here](https://pytorch.org/get-started/locally/) to install both PyTorch and TorchVision dependencies. Installing both PyTorch and TorchVision with CUDA support is strongly recommended.
 
 ### Install with Docker
@@ -162,6 +163,10 @@ pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
 ```
 
 More details can be found in [install segment anything](https://github.com/facebookresearch/segment-anything#installation) and [install GroundingDINO](https://github.com/IDEA-Research/GroundingDINO#install) and [install OSX](https://github.com/IDEA-Research/OSX)
+
+
+## Grounded-SAM Playground
+Let's start exploring our Grounding-SAM Playground
 
 ### GroundingDINO: Detect Everything
 
