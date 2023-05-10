@@ -23,7 +23,8 @@ The **core idea** behind this project is to **combine the strengths of different
 - [Grounded-Segment-Anything](#grounded-segment-anything)
   - [Preliminary Works](#preliminary-works)
   - [Highlighted Projects](#highlighted-projects)
-
+- [Grounded-SAM Playground](#grounded-sam-playground)
+  - [Installation](#hammerandwrench-installation)
 
 ## Preliminary Works
 
@@ -87,86 +88,9 @@ We also list some awesome segment-anything extension projects here you may find 
 - [Enhance Everything: Combining SAM with Image Restoration and Enhancement Tasks](https://github.com/lixinustc/Enhance-Anything) by Xin Li
 
 ## Grounded-SAM Playground
+Let's start exploring our Grounding-SAM Playground
 
-**🍉 The Supported Amazing Demos in this Project**
-
-- [GroundingDINO: Detect Everything with Text Prompt](#runner-run-grounding-dino-demo)
-- [GroundingDINO + Segment-Anything: Detect and Segment Everything with Text Prompt](#running_man-run-grounded-segment-anything-demo)
-- [GroundingDINO + Segment-Anything + Stable-Diffusion: Detect, Segment and Generate Anything with Text Prompts](#skier-run-grounded-segment-anything--inpainting-demo)
-- [Grounded-SAM + Stable-Diffusion Gradio APP](#golfing-run-grounded-segment-anything--inpainting-gradio-app)
-- [Grounded-SAM + Tag2Text: Automatically Labeling System with Superior Image Tagging!](#label-run-grounded-segment-anything--tag2text-demo)
-- [Grounded-SAM + BLIP: Automatically Labeling System!](#robot-run-grounded-segment-anything--blip-demo)
-- [Whisper + Grounded-SAM: Detect and Segment Everything with Speech!](#openmouth-run-grounded-segment-anything--whisper-demo)
-- [Grounded-SAM + Visual ChatGPT: Automatically Label & Generate Everything with ChatBot!](#speechballoon-run-chatbot-demo)
-- [Grounded-SAM + OSX: Text to 3D Whole-Body Mesh Recovery, Detect Anyone and Reconstruct his 3D Humen Mesh!](#mandancing-run-grounded-segment-anything--osx-demo)
-- [Interactive Fashion-Edit Playground: Click for Segmentation And Editing!](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace)
-- [Interactive Human-face Editing Playground: Click And Editing Human Face!](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace)
-
-
-## The Amazing Demo Preview (Continual Updating)
-
-**🔥 ChatBot for our project is built**
-
-https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-9b7b-517aa1432123.mp4
-
-**🔥 🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
-
-![](assets/acoustics/gsam_whisper_inpainting_demo.png)
-
-**🔥 Grounded-SAM: Semi-automatic Labeling System**
-![](./assets/grounded_sam2.png)
-
-![](./assets/grounded_sam_new_demo_image.png)
-
-**Tips**
-- If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest seperating each name with `.` . An example: `cat . dog . chair .`
-
-**🔥 Grounded-SAM + Stable-Diffusion Inpainting: Data-Factory, Generating New Data**
-![](./assets/grounded_sam_inpainting_demo.png)
-
-
-**🔥 Tag2Text + Grounded-SAM: Automatic Label System with Superior Image Tagging**
-
-Using Tag2Text to directly generate tags, and using Grounded-SAM for box and mask generating. Tag2Text has superior tagging and captioning capabilities. Here's the demo output comparison:
-
-![](./assets/automatic_label_output/demo9_tag2text.jpg)
-
-
-**🔥 BLIP + Grounded-SAM: Automatic Label System**
-
-Using BLIP to generate caption, extracting tags with ChatGPT, and using Grounded-SAM for box and mask generating. Here's the demo output:
-
-![](./assets/automatic_label_output_demo3.jpg)
-
-**🔥 Grounded-SAM+OSX: Promptable 3D Whole-Body Human Mesh Recovery**
-
-Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/IDEA-Research/OSX) to estimate the SMPLX parameters and reconstruct 3D whole-body (body, face and hand) human mesh. Here's a demo:
-
-<p align="middle">
-<img src="assets/osx/grouned_sam_osx_demo.gif">
-<br>
-</p>
-
-**🔥 Interactive Editing**
-- Release the interactive fashion-edit playground in [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). Run in the notebook, just click for annotating points for further segmentation. Enjoy it! 
-
-
-  <img src="https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/interactive-fashion-edit.png" width="500" height="260"/><img src="https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/interactive-mark.gif" width="250" height="250"/>
-
-- Release human-face-edit branch [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). We'll keep updating this branch with more interesting features. Here are some examples:
-
-  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/231-hair-edit.png)
-
-**🔥 3D-Box via Segment Anything**
-We extend the scope to 3D world by combining Segment Anything and [VoxelNeXt](https://github.com/dvlab-research/VoxelNeXt). When we provide a prompt (e.g., a point / box), the result is not only 2D segmentation mask, but also 3D boxes.
-  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/sam-voxelnext.png)
-  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/image_boxes2.png)
-
-
-## :open_book: Notebook Demo
-See our [notebook file](grounded_sam.ipynb) as an example.
-
-## :hammer_and_wrench: Installation
+### :hammer_and_wrench: Installation
 The code requires `python>=3.8`, as well as `pytorch>=1.7` and `torchvision>=0.8`. Please follow the instructions [here](https://pytorch.org/get-started/locally/) to install both PyTorch and TorchVision dependencies. Installing both PyTorch and TorchVision with CUDA support is strongly recommended.
 
 ### Install with Docker
@@ -238,6 +162,87 @@ pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
 ```
 
 More details can be found in [install segment anything](https://github.com/facebookresearch/segment-anything#installation) and [install GroundingDINO](https://github.com/IDEA-Research/GroundingDINO#install) and [install OSX](https://github.com/IDEA-Research/OSX)
+
+### GroundingDINO: Detect Everything
+
+<!-- **🍉 The Supported Amazing Demos in this Project**
+
+- [GroundingDINO: Detect Everything with Text Prompt](#runner-run-grounding-dino-demo)
+- [GroundingDINO + Segment-Anything: Detect and Segment Everything with Text Prompt](#running_man-run-grounded-segment-anything-demo)
+- [GroundingDINO + Segment-Anything + Stable-Diffusion: Detect, Segment and Generate Anything with Text Prompts](#skier-run-grounded-segment-anything--inpainting-demo)
+- [Grounded-SAM + Stable-Diffusion Gradio APP](#golfing-run-grounded-segment-anything--inpainting-gradio-app)
+- [Grounded-SAM + Tag2Text: Automatically Labeling System with Superior Image Tagging!](#label-run-grounded-segment-anything--tag2text-demo)
+- [Grounded-SAM + BLIP: Automatically Labeling System!](#robot-run-grounded-segment-anything--blip-demo)
+- [Whisper + Grounded-SAM: Detect and Segment Everything with Speech!](#openmouth-run-grounded-segment-anything--whisper-demo)
+- [Grounded-SAM + Visual ChatGPT: Automatically Label & Generate Everything with ChatBot!](#speechballoon-run-chatbot-demo)
+- [Grounded-SAM + OSX: Text to 3D Whole-Body Mesh Recovery, Detect Anyone and Reconstruct his 3D Humen Mesh!](#mandancing-run-grounded-segment-anything--osx-demo)
+- [Interactive Fashion-Edit Playground: Click for Segmentation And Editing!](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace)
+- [Interactive Human-face Editing Playground: Click And Editing Human Face!](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace) -->
+
+
+## The Amazing Demo Preview (Continual Updating)
+
+**🔥 ChatBot for our project is built**
+
+https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-9b7b-517aa1432123.mp4
+
+**🔥 🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
+
+![](assets/acoustics/gsam_whisper_inpainting_demo.png)
+
+**🔥 Grounded-SAM: Semi-automatic Labeling System**
+![](./assets/grounded_sam2.png)
+
+![](./assets/grounded_sam_new_demo_image.png)
+
+**Tips**
+- If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest seperating each name with `.` . An example: `cat . dog . chair .`
+
+**🔥 Grounded-SAM + Stable-Diffusion Inpainting: Data-Factory, Generating New Data**
+![](./assets/grounded_sam_inpainting_demo.png)
+
+
+**🔥 Tag2Text + Grounded-SAM: Automatic Label System with Superior Image Tagging**
+
+Using Tag2Text to directly generate tags, and using Grounded-SAM for box and mask generating. Tag2Text has superior tagging and captioning capabilities. Here's the demo output comparison:
+
+![](./assets/automatic_label_output/demo9_tag2text.jpg)
+
+
+**🔥 BLIP + Grounded-SAM: Automatic Label System**
+
+Using BLIP to generate caption, extracting tags with ChatGPT, and using Grounded-SAM for box and mask generating. Here's the demo output:
+
+![](./assets/automatic_label_output_demo3.jpg)
+
+**🔥 Grounded-SAM+OSX: Promptable 3D Whole-Body Human Mesh Recovery**
+
+Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/IDEA-Research/OSX) to estimate the SMPLX parameters and reconstruct 3D whole-body (body, face and hand) human mesh. Here's a demo:
+
+<p align="middle">
+<img src="assets/osx/grouned_sam_osx_demo.gif">
+<br>
+</p>
+
+**🔥 Interactive Editing**
+- Release the interactive fashion-edit playground in [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). Run in the notebook, just click for annotating points for further segmentation. Enjoy it! 
+
+
+  <img src="https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/interactive-fashion-edit.png" width="500" height="260"/><img src="https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/interactive-mark.gif" width="250" height="250"/>
+
+- Release human-face-edit branch [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). We'll keep updating this branch with more interesting features. Here are some examples:
+
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/231-hair-edit.png)
+
+**🔥 3D-Box via Segment Anything**
+We extend the scope to 3D world by combining Segment Anything and [VoxelNeXt](https://github.com/dvlab-research/VoxelNeXt). When we provide a prompt (e.g., a point / box), the result is not only 2D segmentation mask, but also 3D boxes.
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/sam-voxelnext.png)
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/image_boxes2.png)
+
+
+## :open_book: Notebook Demo
+See our [notebook file](grounded_sam.ipynb) as an example.
+
 
 
 ## :runner: Run Grounding DINO Demo
