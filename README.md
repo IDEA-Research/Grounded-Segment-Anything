@@ -17,6 +17,23 @@ The **core idea** behind this project is to **combine the strengths of different
 - **`2023/05/02`**: Release a better python API for GroundingDINO (annotate image less than 20 lines of code): please see [grounding_dino_demo.py](./grounding_dino_demo.py)
 - **`2023/05/02`**: Release a more simple and elegant code for Grounded-SAM demo: please see [grounded_sam_simple_demo.py](./grounded_sam_simple_demo.py) 
 
+
+## Table of Contents
+- [Grounded-Segment-Anything](#grounded-segment-anything)
+
+
+## Preliminary Works
+
+Here we provide some background knowledge that you may need to know before trying the demos.
+
+<div align="center">
+
+| Title | Intro | Description | Links |
+|:----:|:----:|:----:|:----:|
+| [Segment-Anything](https://arxiv.org/abs/2304.02643) | ![](https://github.com/facebookresearch/segment-anything/blob/main/assets/model_diagram.png?raw=true) | A strong foundation model aims to segment everything in an image, which needs prompts (as boxes/points/text) to generate masks | [[GitHub](https://github.com/facebookresearch/segment-anything)] <br> [[Project Page](https://segment-anything.com/)] <br> [[Online Demo](https://segment-anything.com/demo)] |
+
+</div>
+
 **🍊 Preliminary Works**
 - [Segment Anything](https://github.com/facebookresearch/segment-anything) is a strong segmentation model. But it needs prompts (like boxes/points) to generate masks. 
 - [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) is a strong zero-shot detector which is capable of to generate high quality boxes and labels with free-form text. 
