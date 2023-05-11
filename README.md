@@ -29,6 +29,7 @@ The **core idea** behind this project is to **combine the strengths of different
   - [Install with Docker](#install-with-docker)
   - [Install locally](#install-without-docker)
 - [Grounded-SAM Playground](#grounded-sam-playground)
+  - [Step-by-Step Notebook Demo](#open_book-step-by-step-notebook-demo)
   - [GroundingDINO: Detect Everything with Text Prompt](#running_man-groundingdino-detect-everything-with-text-prompt)
   - [Grounded-SAM: Detect and Segment Everything with Text Prompt](#running_man-grounded-sam-detect-and-segment-everything-with-text-prompt)
   - [Grounded-SAM with Inpainting: Detect, Segment and Generate Everything with Text Prompt](#skier-grounded-sam-with-inpainting-detect-segment-and-generate-everything-with-text-prompt)
@@ -182,6 +183,13 @@ More details can be found in [install segment anything](https://github.com/faceb
 ## Grounded-SAM Playground
 Let's start exploring our Grounding-SAM Playground and we will release more interesting demos in the future, stay tuned!
 
+## :open_book: Step-by-Step Notebook Demo
+Here we list some notebook demo provided in this project:
+- [grounded_sam.ipynb](grounded_sam.ipynb)
+- [grounded_sam_colab_demo.ipynb](grounded_sam_colab_demo.ipynb)
+- [grounded_sam_3d_box.ipynb](grounded_sam_3d_box)
+
+
 ### :running_man: GroundingDINO: Detect Everything with Text Prompt
 
 :grapes: [[arXiv Paper](https://arxiv.org/abs/2303.05499)] &nbsp; :rose:[[Try the Colab Demo](https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/zero-shot-object-detection-with-grounding-dino.ipynb)] &nbsp; :sunflower: [[Try Huggingface Demo](https://huggingface.co/spaces/ShilongLiu/Grounding_DINO_demo)] &nbsp; :mushroom: [[Automated Dataset Annotation and Evaluation](https://youtu.be/C4NqaRBz_Kw)]
@@ -232,6 +240,9 @@ cv2.imwrite("annotated_image.jpg", annotated_frame)
 
 </details>
 <br>
+
+**Tips**
+- If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest seperating each name with `.` . An example: `cat . dog . chair .`
 
 **Step 3: Check the annotated image**
 
@@ -308,24 +319,6 @@ The annotated results will be saved as `./groundingdino_annotated_image.jpg` and
 
 </div>
 
-<!-- ## The Amazing Demo Preview (Continual Updating)
-
-**🔥 🔈Speak to edit🎨: Whisper + ChatGPT + Grounded-SAM + SD**
-
-![](assets/acoustics/gsam_whisper_inpainting_demo.png)
-
-**🔥 Grounded-SAM: Semi-automatic Labeling System**
-![](./assets/grounded_sam2.png)
-
-![](./assets/grounded_sam_new_demo_image.png)
-
-**Tips**
-- If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest seperating each name with `.` . An example: `cat . dog . chair .`
-
-
-
-<!-- ## :open_book: Notebook Demo
-See our [notebook file](grounded_sam.ipynb) as an example. -->
 
 ### :skier: Grounded-SAM with Inpainting: Detect, Segment and Generate Everything with Text Prompt
 
