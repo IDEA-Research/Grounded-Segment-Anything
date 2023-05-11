@@ -29,6 +29,10 @@ The **core idea** behind this project is to **combine the strengths of different
 - [Grounded-SAM Playground](#grounded-sam-playground)
   - [GroundingDINO: Detect Everything with Text Prompt](#running_man-groundingdino-detect-everything-with-text-prompt)
   - [Grounded-SAM: Detect and Segment Everything with Text Prompt](#running_man-grounded-sam-detect-and-segment-everything-with-text-prompt)
+  - [Grounded-SAM with Inpainting: Detect, Segment and Generate Everything with Text Prompt](#skier-grounded-sam-with-inpainting-detect-segment-and-generate-everything-with-text-prompt)
+  - [Grounded-SAM and Inpaint Gradio APP](#golfing-grounded-sam-and-inpaint-gradio-app)
+  - [Grounded-SAM with Tag2Text for Automatic Labeling](#label-grounded-sam-with-tag2text-for-automatic-labeling)
+  - [Grounded-SAM with BLIP & ChatGPT for Automatic Labeling](#robot-grounded-sam-with-blip-for-automatic-labeling)
 
 
 ## Preliminary Works
@@ -298,10 +302,7 @@ The annotated results will be saved as `./groundingdino_annotated_image.jpg` and
 
 <!-- **🍉 The Supported Amazing Demos in this Project**
 
-- [GroundingDINO: Detect Everything with Text Prompt](#runner-run-grounding-dino-demo)
-- [GroundingDINO + Segment-Anything: Detect and Segment Everything with Text Prompt](#running_man-run-grounded-segment-anything-demo)
-- [GroundingDINO + Segment-Anything + Stable-Diffusion: Detect, Segment and Generate Anything with Text Prompts](#skier-run-grounded-segment-anything--inpainting-demo)
-- [Grounded-SAM + Stable-Diffusion Gradio APP](#golfing-run-grounded-segment-anything--inpainting-gradio-app)
+
 - [Grounded-SAM + Tag2Text: Automatically Labeling System with Superior Image Tagging!](#label-run-grounded-segment-anything--tag2text-demo)
 - [Grounded-SAM + BLIP: Automatically Labeling System!](#robot-run-grounded-segment-anything--blip-demo)
 - [Whisper + Grounded-SAM: Detect and Segment Everything with Speech!](#openmouth-run-grounded-segment-anything--whisper-demo)
@@ -374,7 +375,18 @@ We extend the scope to 3D world by combining Segment Anything and [VoxelNeXt](ht
 <!-- ## :open_book: Notebook Demo
 See our [notebook file](grounded_sam.ipynb) as an example. -->
 
-## :skier: Run Grounded-Segment-Anything + Inpainting Demo
+### :skier: Grounded-SAM with Inpainting: Detect, Segment and Generate Everything with Text Prompt
+
+**Step 1: Download the pretrained weights**
+
+```bash
+cd Grounded-Segment-Anything
+
+wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+```
+
+**Step 2: Running grounded-sam inpainting demo**
 
 ```bash
 CUDA_VISIBLE_DEVICES=0
@@ -391,8 +403,23 @@ python grounded_sam_inpainting_demo.py \
   --device "cuda"
 ```
 
-## :golfing: Run Grounded-Segment-Anything + Inpainting Gradio APP
-The following introduces the 6 task_type modes provided by Gradio APP:
+The annotated and inpaint image will be saved in `./outputs`
+
+**Step 3: Check the results**
+
+
+<div align="center">
+
+| Input Image | Det Prompt | Annotated Image | Inpaint Prompt | Inpaint Image |
+|:---:|:---:|:---:|:---:|:---:|
+|![](./assets/inpaint_demo.jpg) | `Bench` | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/grounded_sam_inpaint/grounded_sam_output.jpg?raw=true) | `A sofa, high quality, detailed` | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/grounded_sam_inpaint/grounded_sam_inpainting_output.jpg?raw=true) |
+
+</div>
+
+### :golfing: Grounded-SAM and Inpaint Gradio APP
+
+We support 6 tasks in the local Gradio APP：
+
 1. **scribble**: Segmentation is achieved through Segment Anything and mouse click interaction (you need to click on the object with the mouse, no need to specify the prompt).
 2. **automask**: Segment the entire image at once through Segment Anything (no need to specify a prompt).
 3. **det**: Realize detection through Grounding DINO and text interaction (text prompt needs to be specified).
@@ -409,20 +436,34 @@ python gradio_app.py
 ![](./assets/gradio_demo.png)
 
 
-## :label: Run Grounded-Segment-Anything + Tag2Text Demo
+## :label: Grounded-SAM with Tag2Text for Automatic Labeling
 Tag2Text achieves superior image tag recognition ability of [**3,429**](https://github.com/xinyu1205/Tag2Text/blob/main/data/tag_list.txt) commonly human-used categories.
 It is seamlessly linked to generate pseudo labels automatically as follows:
 1. Use Tag2Text to generate tags.
 2. Use Grounded-Segment-Anything to generate the boxes and masks.
 
-- Download the checkpoint for Tag2Text:
-```bash
-cd Tag2Text
 
+**Step 1: Init submodule and download the pretrained checkpoint**
+
+- Init submodule:
+
+```bash
+cd Grounded-Segment-Anything
+git submodule init
+git submodule update
+```
+
+- Download pretrained weights for `GroundingDINO`, `SAM` and `Tag2Text`:
+
+```bash
+wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+
+cd Tag2Text
 wget https://huggingface.co/spaces/xinyu1205/Tag2Text/resolve/main/tag2text_swin_14m.pth
 ```
 
-- Run Demo
+**Step 2: Runing the demo**
 ```bash
 export CUDA_VISIBLE_DEVICES=0
 python automatic_label_tag2text_demo.py \
@@ -444,7 +485,7 @@ python automatic_label_tag2text_demo.py \
 ![](./assets/automatic_label_output/demo9_tag2text.jpg)
 
 
-## :robot: Run Grounded-Segment-Anything + BLIP Demo
+## :robot: Grounded-SAM with BLIP for Automatic Labeling
 It is easy to generate pseudo labels automatically as follows:
 1. Use BLIP (or other caption models) to generate a caption.
 2. Extract tags from the caption. We use ChatGPT to handle the potential complicated sentences. 
@@ -475,7 +516,7 @@ python automatic_label_demo.py \
 ![](./assets/automatic_label_output_demo3.jpg)
 
 
-## :open_mouth: Run Grounded-Segment-Anything + Whisper Demo
+## :open_mouth: Grounded-SAM with Whisper: Detect and Segment Anything with Audio
 Detect and segment anything with speech!
 
 **Install Whisper**
@@ -552,7 +593,10 @@ python grounded_sam_whisper_inpainting_demo.py \
 
 ![](./assets/acoustics/gsam_whisper_inpainting_pipeline.png)
 
-## :speech_balloon: Run ChatBot Demo
+## :speech_balloon: Grounded-SAM ChatBot Demo
+
+https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-9b7b-517aa1432123.mp4
+
 Following [Visual ChatGPT](https://github.com/microsoft/visual-chatgpt), we add a ChatBot for our project. Currently, it supports:
 1. "Descripe the image."
 2. "Detect the dog (and the cat) in the image."
