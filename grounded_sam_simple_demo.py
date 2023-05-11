@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import supervision as sv
-from typing import List
 
 import torch
 import torchvision
