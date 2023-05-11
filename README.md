@@ -27,7 +27,8 @@ The **core idea** behind this project is to **combine the strengths of different
   - [Install with Docker](#install-with-docker)
   - [Install locally](#install-without-docker)
 - [Grounded-SAM Playground](#grounded-sam-playground)
-  - [GroundingDINO: Detect Everything](#groundingdino-detect-everything)
+  - [GroundingDINO: Detect Everything with Text Prompt](#running_man-groundingdino-detect-everything-with-text-prompt)
+  - [Grounded-SAM: Detect and Segment Everything with Text Prompt](#running_man-grounded-sam-detect-and-segment-everything-with-text-prompt)
 
 
 ## Preliminary Works
@@ -166,13 +167,13 @@ More details can be found in [install segment anything](https://github.com/faceb
 
 
 ## Grounded-SAM Playground
-Let's start exploring our Grounding-SAM Playground
+Let's start exploring our Grounding-SAM Playground and we will release more interesting demos in the future, stay tuned!
 
-### GroundingDINO: Detect Everything
+### :running_man: GroundingDINO: Detect Everything with Text Prompt
 
 :grapes: [[arXiv Paper](https://arxiv.org/abs/2303.05499)] &nbsp; :rose:[[Try the Colab Demo](https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/zero-shot-object-detection-with-grounding-dino.ipynb)] &nbsp; :sunflower: [[Try Huggingface Demo](https://huggingface.co/spaces/ShilongLiu/Grounding_DINO_demo)] &nbsp; :mushroom: [[Automated Dataset Annotation and Evaluation](https://youtu.be/C4NqaRBz_Kw)]
 
-Here's the **step-by-step** tutorial on running GroundingDINO demo:
+Here's the step-by-step tutorial on running `GroundingDINO` demo:
 
 **Step 1: Download the pretrained weights**
 
@@ -233,6 +234,68 @@ The annotated image will be saved as `./annotated_image.jpg`.
 </div>
 
 
+### :running_man: Grounded-SAM: Detect and Segment Everything with Text Prompt
+
+Here's the step-by-step tutorial on running `Grounded-SAM` demo:
+
+**Step 1: Download the pretrained weights**
+
+```bash
+cd Grounded-Segment-Anything
+
+wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+```
+
+We provide two versions of Grounded-SAM demo here:
+- [grounded_sam_demo.py](./grounded_sam_demo.py): our original implementation for Grounded-SAM.
+- [grounded_sam_simple_demo.py](./grounded_sam_simple_demo.py) our updated more elegant version for Grounded-SAM.
+
+**Step 2: Running original grounded-sam demo**
+
+```python
+export CUDA_VISIBLE_DEVICES=0
+python grounded_sam_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --input_image assets/demo1.jpg \
+  --output_dir "outputs" \
+  --box_threshold 0.3 \
+  --text_threshold 0.25 \
+  --text_prompt "bear" \
+  --device "cuda"
+```
+
+The annotated results will be saved in `./outputs` as follows
+
+<div align="center">
+
+| Input Image | Annotated Image | Generated Mask |
+|:----:|:----:|:----:|
+| ![](./assets/demo1.jpg) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/grounded_sam/original_grounded_sam_demo1.jpg?raw=true) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/grounded_sam/mask.jpg?raw=true) |
+
+</div>
+
+**Step 3: Runing the updated grounded-sam demo (optional)**
+Note that this demo is almost same as the original demo, but **with more elegant code**.
+
+```python
+python grounded_sam_simple_demo.py
+```
+
+The annotated results will be saved as `./groundingdino_annotated_image.jpg` and `./grounded_sam_annotated_image.jpg`
+
+<div align="center">
+
+| Text Prompt | Input Image | GroundingDINO Annotated Image | Grounded-SAM Annotated Image |
+|:----:|:----:|:----:|:----:|
+| `The running dog` | ![](./assets/demo2.jpg) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/grounded_sam/groundingdino_annotated_image_demo2.jpg?raw=true) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/grounded_sam/grounded_sam_annotated_image_demo2.jpg?raw=true) |
+| `Horse. Clouds. Grasses. Sky. Hill` | ![](./assets/demo7.jpg) | ![](assets/groundingdino_annotated_image.jpg) | ![](assets/grounded_sam_annotated_image.jpg) |
+
+</div>
+
+
 <!-- **🍉 The Supported Amazing Demos in this Project**
 
 - [GroundingDINO: Detect Everything with Text Prompt](#runner-run-grounding-dino-demo)
@@ -248,7 +311,7 @@ The annotated image will be saved as `./annotated_image.jpg`.
 - [Interactive Human-face Editing Playground: Click And Editing Human Face!](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace) -->
 
 
-## The Amazing Demo Preview (Continual Updating)
+<!-- ## The Amazing Demo Preview (Continual Updating)
 
 **🔥 ChatBot for our project is built**
 
@@ -305,109 +368,11 @@ Using Grounded-SAM for box and mask generating, using [OSX](https://github.com/I
 **🔥 3D-Box via Segment Anything**
 We extend the scope to 3D world by combining Segment Anything and [VoxelNeXt](https://github.com/dvlab-research/VoxelNeXt). When we provide a prompt (e.g., a point / box), the result is not only 2D segmentation mask, but also 3D boxes.
   ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/sam-voxelnext.png)
-  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/image_boxes2.png)
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/image_boxes2.png) -->
 
 
-## :open_book: Notebook Demo
-See our [notebook file](grounded_sam.ipynb) as an example.
-
-
-
-## :runner: Run Grounding DINO Demo
-- Download the checkpoint for Grounding Dino:
-```bash
-cd Grounded-Segment-Anything
-
-wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
-```
-
-- Run demo
-```bash
-export CUDA_VISIBLE_DEVICES=0
-python grounding_dino_demo.py \
-  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
-  --grounded_checkpoint groundingdino_swint_ogc.pth \
-  --input_image assets/demo1.jpg \
-  --output_dir "outputs" \
-  --box_threshold 0.3 \
-  --text_threshold 0.25 \
-  --text_prompt "bear" \
-  --device "cuda"
-```
-- The model prediction visualization will be saved in `output_dir` as follow:
-
-![](./assets/grounding_dino_output_demo1.jpg)
-
-- Running with Python (Credits to [Piotr Skalski](https://github.com/SkalskiP)):
-```python
-from groundingdino.util.inference import load_model, load_image, predict, annotate
-import cv2
-
-model = load_model("GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py", "./groundingdino_swint_ogc.pth")
-IMAGE_PATH = "assets/demo1.jpg"
-TEXT_PROMPT = "bear."
-BOX_TRESHOLD = 0.35
-TEXT_TRESHOLD = 0.25
-
-image_source, image = load_image(IMAGE_PATH)
-
-boxes, logits, phrases = predict(
-    model=model,
-    image=image,
-    caption=TEXT_PROMPT,
-    box_threshold=BOX_TRESHOLD,
-    text_threshold=TEXT_TRESHOLD
-)
-
-annotated_frame = annotate(image_source=image_source, boxes=boxes, logits=logits, phrases=phrases)
-cv2.imwrite("annotated_image.jpg", annotated_frame)
-```
-
-The results will be shown as:
-
-![](./assets/annotated_image.jpg)
-
-## :running_man: Run Grounded-Segment-Anything Demo
-- Download the checkpoint for Segment Anything and Grounding Dino:
-```bash
-cd Grounded-Segment-Anything
-
-wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
-wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
-```
-
-- Run Demo
-```bash
-export CUDA_VISIBLE_DEVICES=0
-python grounded_sam_demo.py \
-  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
-  --grounded_checkpoint groundingdino_swint_ogc.pth \
-  --sam_checkpoint sam_vit_h_4b8939.pth \
-  --input_image assets/demo1.jpg \
-  --output_dir "outputs" \
-  --box_threshold 0.3 \
-  --text_threshold 0.25 \
-  --text_prompt "bear" \
-  --device "cuda"
-```
-
-- The model prediction visualization will be saved in `output_dir` as follow:
-
-![](./assets/grounded_sam_output_demo1.jpg)
-
-**Run More Simple and Elegant Demo**
-```bash
-python grounded_sam_simple_demo.py
-```
-Note that you can update the hyper-params defined in [grounded_sam_simple_demo.py](./grounded_sam_simple_demo.py)
-
-The results will be saved as `groundingdino_annotated_image.jpg`:
-
-![](assets/groundingdino_annotated_image.jpg)
-
-and `grounded_sam_annotated_image.jpg`:
-
-![](assets/grounded_sam_annotated_image.jpg)
+<!-- ## :open_book: Notebook Demo
+See our [notebook file](grounded_sam.ipynb) as an example. -->
 
 ## :skier: Run Grounded-Segment-Anything + Inpainting Demo
 
