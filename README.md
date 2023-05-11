@@ -170,6 +170,69 @@ Let's start exploring our Grounding-SAM Playground
 
 ### GroundingDINO: Detect Everything
 
+:grapes: [[arXiv Paper](https://arxiv.org/abs/2303.05499)] &nbsp; :rose:[[Try the Colab Demo](https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/zero-shot-object-detection-with-grounding-dino.ipynb)] &nbsp; :sunflower: [[Try Huggingface Demo](https://huggingface.co/spaces/ShilongLiu/Grounding_DINO_demo)] &nbsp; :mushroom: [[Automated Dataset Annotation and Evaluation](https://youtu.be/C4NqaRBz_Kw)]
+
+Here's the **step-by-step** tutorial on running GroundingDINO demo:
+
+**Step 1: Download the pretrained weights**
+
+```bash
+cd Grounded-Segment-Anything
+
+# download the pretrained groundingdino-swin-tiny model
+wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+```
+
+**Step 2: Running the demo**
+
+```bash
+python grounding_dino_demo.py
+```
+
+<details>
+<summary> <b> Running with Python (same as demo but you can run it anywhere after installing GroundingDINO) </b> </summary>
+
+```python
+from groundingdino.util.inference import load_model, load_image, predict, annotate
+import cv2
+
+model = load_model("GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py", "./groundingdino_swint_ogc.pth")
+IMAGE_PATH = "assets/demo1.jpg"
+TEXT_PROMPT = "bear."
+BOX_TRESHOLD = 0.35
+TEXT_TRESHOLD = 0.25
+
+image_source, image = load_image(IMAGE_PATH)
+
+boxes, logits, phrases = predict(
+    model=model,
+    image=image,
+    caption=TEXT_PROMPT,
+    box_threshold=BOX_TRESHOLD,
+    text_threshold=TEXT_TRESHOLD
+)
+
+annotated_frame = annotate(image_source=image_source, boxes=boxes, logits=logits, phrases=phrases)
+cv2.imwrite("annotated_image.jpg", annotated_frame)
+```
+
+</details>
+<br>
+
+**Step 3: Check the annotated image**
+
+The annotated image will be saved as `./annotated_image.jpg`.
+
+<div align="center">
+
+| Text Prompt | Demo Image | Annotated Image |
+|:----:|:----:|:----:|
+| `Bear.` | ![](./assets/demo1.jpg)  | ![](./assets/annotated_image.jpg) |
+| `Horse. Clouds. Grasses. Sky. Hill` | ![](./assets/demo7.jpg)  | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/grounding_dino/groundingdino_demo7.jpg?raw=true)
+
+</div>
+
+
 <!-- **🍉 The Supported Amazing Demos in this Project**
 
 - [GroundingDINO: Detect Everything with Text Prompt](#runner-run-grounding-dino-demo)
