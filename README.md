@@ -33,6 +33,12 @@ The **core idea** behind this project is to **combine the strengths of different
   - [Grounded-SAM and Inpaint Gradio APP](#golfing-grounded-sam-and-inpaint-gradio-app)
   - [Grounded-SAM with Tag2Text for Automatic Labeling](#label-grounded-sam-with-tag2text-for-automatic-labeling)
   - [Grounded-SAM with BLIP & ChatGPT for Automatic Labeling](#robot-grounded-sam-with-blip-for-automatic-labeling)
+  - [Grounded-SAM with Whisper: Detect and Segment Anything with Audio](#open_mouth-grounded-sam-with-whisper-detect-and-segment-anything-with-audio)
+  - [Grounded-SAM ChatBot with Visual ChatGPT](#speech_balloon-grounded-sam-chatbot-demo)
+  - [Grounded-SAM with OSX for 3D Whole-Body Mesh Recovery](#man_dancing-run-grounded-segment-anything--osx-demo)
+  - [Grounded-SAM with VISAM for Tracking and Segment Anything](#man_dancing-run-grounded-segment-anything--visam-demo)
+  - [Interactive Fashion-Edit Playground: Click for Segmentation And Editing](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace)
+  - [Interactive Human-face Editing Playground: Click And Editing Human Face](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace)
 
 
 ## Preliminary Works
@@ -299,19 +305,6 @@ The annotated results will be saved as `./groundingdino_annotated_image.jpg` and
 
 </div>
 
-
-<!-- **🍉 The Supported Amazing Demos in this Project**
-
-
-- [Grounded-SAM + Tag2Text: Automatically Labeling System with Superior Image Tagging!](#label-run-grounded-segment-anything--tag2text-demo)
-- [Grounded-SAM + BLIP: Automatically Labeling System!](#robot-run-grounded-segment-anything--blip-demo)
-- [Whisper + Grounded-SAM: Detect and Segment Everything with Speech!](#openmouth-run-grounded-segment-anything--whisper-demo)
-- [Grounded-SAM + Visual ChatGPT: Automatically Label & Generate Everything with ChatBot!](#speechballoon-run-chatbot-demo)
-- [Grounded-SAM + OSX: Text to 3D Whole-Body Mesh Recovery, Detect Anyone and Reconstruct his 3D Humen Mesh!](#mandancing-run-grounded-segment-anything--osx-demo)
-- [Interactive Fashion-Edit Playground: Click for Segmentation And Editing!](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace)
-- [Interactive Human-face Editing Playground: Click And Editing Human Face!](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace) -->
-
-
 <!-- ## The Amazing Demo Preview (Continual Updating)
 
 **🔥 ChatBot for our project is built**
@@ -436,7 +429,7 @@ python gradio_app.py
 ![](./assets/gradio_demo.png)
 
 
-## :label: Grounded-SAM with Tag2Text for Automatic Labeling
+### :label: Grounded-SAM with Tag2Text for Automatic Labeling
 Tag2Text achieves superior image tag recognition ability of [**3,429**](https://github.com/xinyu1205/Tag2Text/blob/main/data/tag_list.txt) commonly human-used categories.
 It is seamlessly linked to generate pseudo labels automatically as follows:
 1. Use Tag2Text to generate tags.
@@ -485,7 +478,7 @@ python automatic_label_tag2text_demo.py \
 ![](./assets/automatic_label_output/demo9_tag2text.jpg)
 
 
-## :robot: Grounded-SAM with BLIP for Automatic Labeling
+### :robot: Grounded-SAM with BLIP for Automatic Labeling
 It is easy to generate pseudo labels automatically as follows:
 1. Use BLIP (or other caption models) to generate a caption.
 2. Extract tags from the caption. We use ChatGPT to handle the potential complicated sentences. 
@@ -516,7 +509,7 @@ python automatic_label_demo.py \
 ![](./assets/automatic_label_output_demo3.jpg)
 
 
-## :open_mouth: Grounded-SAM with Whisper: Detect and Segment Anything with Audio
+### :open_mouth: Grounded-SAM with Whisper: Detect and Segment Anything with Audio
 Detect and segment anything with speech!
 
 **Install Whisper**
@@ -593,7 +586,7 @@ python grounded_sam_whisper_inpainting_demo.py \
 
 ![](./assets/acoustics/gsam_whisper_inpainting_pipeline.png)
 
-## :speech_balloon: Grounded-SAM ChatBot Demo
+### :speech_balloon: Grounded-SAM ChatBot Demo
 
 https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-9b7b-517aa1432123.mp4
 
@@ -616,7 +609,7 @@ export CUDA_VISIBLE_DEVICES=0
 python chatbot.py 
 ```
 
-## :man_dancing: Run Grounded-Segment-Anything + OSX Demo
+### :man_dancing: Run Grounded-Segment-Anything + OSX Demo
 
 - Download the checkpoint `osx_l_wo_decoder.pth.tar` from [here](https://drive.google.com/drive/folders/1x7MZbB6eAlrq5PKC9MaeIm4GqkBpokow?usp=share_link) for OSX:
 - Download the human model files and place it into `grounded-sam-osx/utils/human_model_files` following the instruction of [OSX](https://github.com/IDEA-Research/OSX).
@@ -676,6 +669,24 @@ python grounded_sam_visam.py \
   --video_path DanceTrack/test/dancetrack0003 
 ```
 |![](https://raw.githubusercontent.com/BingfengYan/MOTSAM/main/visam.gif)|
+
+
+### Interactive Editing
+- Release the interactive fashion-edit playground in [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). Run in the notebook, just click for annotating points for further segmentation. Enjoy it! 
+
+
+  <img src="https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/interactive-fashion-edit.png" width="500" height="260"/><img src="https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/interactive-mark.gif" width="250" height="250"/>
+
+- Release human-face-edit branch [here](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/humanFace). We'll keep updating this branch with more interesting features. Here are some examples:
+
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/humanFace/assets/231-hair-edit.png)
+
+## 3D-Box via Segment Anything
+We extend the scope to 3D world by combining Segment Anything and [VoxelNeXt](https://github.com/dvlab-research/VoxelNeXt). When we provide a prompt (e.g., a point / box), the result is not only 2D segmentation mask, but also 3D boxes.
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/sam-voxelnext.png)
+  ![](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/voxelnext_3d_box/images/image_boxes2.png)
+
+
 
 
 ## :cupid: Acknowledgements
