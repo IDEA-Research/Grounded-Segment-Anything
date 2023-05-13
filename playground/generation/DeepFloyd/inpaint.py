@@ -19,7 +19,6 @@ mask_image = download_image(mask_url).resize((512, 512))
 
 # convert mask_image to torch.Tensor to avoid bug
 mask_image = ToTensor()(mask_image).unsqueeze(0)  # (1, 3, 512, 512)
-# import pdb; pdb.set_trace()
 
 # Run locally
 device = 'cuda:5'
@@ -28,7 +27,6 @@ if_I = IFStageI('IF-I-L-v1.0', device=device, cache_dir=cache_dir)
 if_II = IFStageII('IF-II-L-v1.0', device=device, cache_dir=cache_dir)
 if_III = StableStageIII('stable-diffusion-x4-upscaler', device=device, cache_dir=cache_dir)
 t5 = T5Embedder(device=device, cache_dir=cache_dir)
-# result['III'][0].save("./test.jpg")
 result = inpainting(
     t5=t5, if_I=if_I,
     if_II=if_II,
@@ -55,7 +53,6 @@ result = inpainting(
         "sample_timestep_respacing": "75",
     },
 )
-import pdb; pdb.set_trace()
 if_I.show(result['I'], 2, 3)
 if_I.show(result['II'], 2, 6)
 if_I.show(result['III'], 2, 14)

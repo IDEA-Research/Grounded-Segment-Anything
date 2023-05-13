@@ -35,3 +35,15 @@ python paint_by_example.py
 | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/paint_by_example/input_image.png?raw=true) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/paint_by_example/mask.png?raw=true) | <div style="text-align: center"> <img src="https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/paint_by_example/example_image.jpg?raw=true" width=55%></div> | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/paint_by_example/paint_by_example_demo.jpg?raw=true) |
 
 </div>
+
+### PaintByExample with SAM
+
+In this demo, we did inpaint task by:
+1. Generate mask by SAM with prompt (box or point)
+2. Inpaint with mask and example image
+
+```python
+cd playground/generation/PaintByExample
+python sam_paint_by_example.py
+```
+**Notes:** We set a more `num_inference_steps` to get higher quality image.
