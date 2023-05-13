@@ -8,6 +8,9 @@
 
 ## Table of Contents
 - [Installation](#installation)
+- [Paint-By-Example Demos](#paint-by-example-demos)
+  - [Diffuser Demo](#paintbyexample-diffuser-demos)
+  - [PaintByExample with SAM](#paintbyexample-with-sam)
 
 
 ## Installation
