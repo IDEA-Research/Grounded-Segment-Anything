@@ -17,8 +17,6 @@ The **core idea** behind this project is to **combine the strengths of different
 - **`2023/05/11`**: We decide to share more interesting demo in [playground](./playground/) and we've already tested the [DeepFloyd](./playground/generation/DeepFloyd/) for image generation and style transfering and share some notes about using IF.
 - **`2023/05/05`**: Release a simpler code for automatic labeling (combined with Tag2Text model): please see [automatic_label_simple_demo.py](./automatic_label_simple_demo.py)
 - **`2023/05/03`**: Checkout the [Automated Dataset Annotation and Evaluation with GroundingDINO and SAM](https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/automated-dataset-annotation-and-evaluation-with-grounding-dino-and-sam.ipynb) which is an amazing tutorial on automatic labeling! Thanks a lot for [Piotr Skalski](https://github.com/SkalskiP) and [Robotflow](https://github.com/roboflow/notebooks)!
-<!-- - **`2023/05/02`**: Release a better python API for GroundingDINO (annotate image less than 20 lines of code): please see [grounding_dino_demo.py](./grounding_dino_demo.py)
-- **`2023/05/02`**: Release a more simple and elegant code for Grounded-SAM demo: please see [grounded_sam_simple_demo.py](./grounded_sam_simple_demo.py)  -->
 
 
 ## Table of Contents
@@ -43,6 +41,8 @@ The **core idea** behind this project is to **combine the strengths of different
   - [Interactive Fashion-Edit Playground: Click for Segmentation And Editing](#dancers-interactive-editing)
   - [Interactive Human-face Editing Playground: Click And Editing Human Face](#dancers-interactive-editing)
   - [3D Box Via Segment Anything](#camera-3d-box-via-segment-anything)
+  - [Playground: More Interesting and Imaginative Demos](./playground/)
+    - [DeepFloyd: Image Generation with Text Prompt](./playground/generation/DeepFloyd/)
 
 
 ## Preliminary Works
