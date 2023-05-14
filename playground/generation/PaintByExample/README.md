@@ -19,6 +19,12 @@
   - [PaintByExample with SAM](#paintbyexample-with-sam)
 
 
+## TODO
+- [x] PaintByExample Diffuser Demo
+- [x] PaintByExample with SAM
+- [ ] PaintByExample with GroundingDINO
+- [ ] PaintByExample with Grounded-SAM
+
 ## Installation
 We're using PaintByExample with diffusers, install diffusers as follows:
 ```bash

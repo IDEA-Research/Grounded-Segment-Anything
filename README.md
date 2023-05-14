@@ -14,6 +14,7 @@ We are very willing to **help everyone share and promote new projects** based on
 The **core idea** behind this project is to **combine the strengths of different models in order to build a very powerful pipeline for solving complex problems**. And it's worth mentioning that this is a workflow for combining strong expert models, where **all parts can be used separately or in combination, and can be replaced with any similar but different models (like replacing Grounding DINO with GLIP or other detectors / replacing Stable-Diffusion with ControlNet or GLIGEN/ Combining with ChatGPT)**.
 
 **🍇 Updates**
+- **`2023/05/14`**: Release [PaintByExample](./playground/generation/PaintByExample/) demo with SAM.
 - **`2023/05/11`**: We decide to share more interesting demo in [playground](./playground/) and we've already tested the [DeepFloyd](./playground/generation/DeepFloyd/) for image generation and style transfering and share some notes about using IF.
 - **`2023/05/05`**: Release a simpler code for automatic labeling (combined with Tag2Text model): please see [automatic_label_simple_demo.py](./automatic_label_simple_demo.py)
 - **`2023/05/03`**: Checkout the [Automated Dataset Annotation and Evaluation with GroundingDINO and SAM](https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/automated-dataset-annotation-and-evaluation-with-grounding-dino-and-sam.ipynb) which is an amazing tutorial on automatic labeling! Thanks a lot for [Piotr Skalski](https://github.com/SkalskiP) and [Robotflow](https://github.com/roboflow/notebooks)!
@@ -43,6 +44,7 @@ The **core idea** behind this project is to **combine the strengths of different
   - [3D Box Via Segment Anything](#camera-3d-box-via-segment-anything)
   - [Playground: More Interesting and Imaginative Demos](./playground/)
     - [DeepFloyd: Image Generation with Text Prompt](./playground/generation/DeepFloyd/)
+    - [PaintByExample: Exemplar-based Image Editing with Diffusion Models](./playground/generation/PaintByExample/)
 
 
 ## Preliminary Works
