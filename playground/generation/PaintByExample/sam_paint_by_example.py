@@ -20,7 +20,8 @@ def download_image(url):
 
 img_url = "https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/paint_by_example/input_image.png?raw=true"
 # example_url = "https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/paint_by_example/pomeranian_example.jpg?raw=True"
-example_url = "https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/paint_by_example/example_image.jpg?raw=true"
+# example_url = "https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/paint_by_example/example_image.jpg?raw=true"
+example_url = "https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/paint_by_example/labrador_example.jpg?raw=true"
 
 init_image = download_image(img_url).resize((512, 512))
 example_image = download_image(example_url).resize((512, 512))
@@ -53,7 +54,7 @@ pipe = pipe.to(DEVICE)
 Step 3: Get masks with SAM by prompt (box or point) and inpaint the mask region by example image.
 """
 
-input_point = np.array([[256, 256]])
+input_point = np.array([[350, 256]])
 input_label = np.array([1])  # positive label
 
 masks, _, _ = sam_predictor.predict(
