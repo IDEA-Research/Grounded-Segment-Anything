@@ -59,4 +59,29 @@ with the highly organized code lama-cleaner, this demo can be done in about 20 l
 
 ### LaMa with SAM
 
+```bash
+cd playground/LaMa
+python sam_lama.py
+```
+
+**Tips** 
+To make it better for inpaint, we should **dilate the mask first** to make it a bit larger to cover the whole region (Thanks a lot for [Inpaint-Anything](https://github.com/geekyutao/Inpaint-Anything) and [Tao Yu](https://github.com/geekyutao) for this)
+
+
+The `original mask` and `dilated mask` are shown as follows:
+
+<div align="center">
+
+| Mask | Dilated Mask |
+|:---:|:---:|
+| ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/lama/sam_demo_mask.png?raw=true) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/lama/dilated_mask.png?raw=true) |
+
+</div>
+
+
+And the inpaint result will be saved as `sam_lama_demo.jpg`:
+
+| Input Image | SAM Output | Dilated Mask | LaMa Inpaint |
+|:---:|:---:|:---:|:---:|
+| ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/paint_by_example/input_image.png?raw=true) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/paint_by_example/demo_with_point_prompt.png?raw=true) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/lama/dilated_mask.png?raw=true) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/lama/sam_lama_demo.jpg?raw=true) |
 
