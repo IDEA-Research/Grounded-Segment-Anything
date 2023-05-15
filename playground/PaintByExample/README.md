@@ -38,7 +38,7 @@ Here we provide the demos for `PaintByExample`
 
 ### PaintByExample Diffuser Demos
 ```python
-cd playground/generation/PaintByExample
+cd playground/PaintByExample
 python paint_by_example.py
 ```
 **Notes:** set `cache_dir` to save the pretrained weights to specific folder. The paint result will be save as `paint_by_example_demo.jpg`:
@@ -59,7 +59,7 @@ In this demo, we did inpaint task by:
 2. Inpaint with mask and example image
 
 ```python
-cd playground/generation/PaintByExample
+cd playground/PaintByExample
 python sam_paint_by_example.py
 ```
 **Notes:** We set a more `num_inference_steps` (like 200 to 500) to get higher quality image. And we've found that the mask region can influence a lot on the final result (like a panda can not be well inpainted with a region like dog). It needed to have more test on it.

@@ -138,9 +138,6 @@ if __name__ == "__main__":
     inpaint_prompt = args.inpaint_prompt
     output_dir = args.output_dir
     cache_dir=args.cache_dir
-    # if not os.path.exists(cache_dir):
-    #     print(f"create your cache dir:{cache_dir}")
-    #     os.mkdir(cache_dir)
     box_threshold = args.box_threshold
     text_threshold = args.text_threshold
     inpaint_mode = args.inpaint_mode

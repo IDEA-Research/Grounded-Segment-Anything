@@ -122,6 +122,8 @@ export FORCE_MEM_EFFICIENT_ATTN=1
 ### Dream
 The `text-to-image` mode for DeepFloyd
 ```python
+cd playground/DeepFloyd
+
 export FORCE_MEM_EFFICIENT_ATTN=1 
 python dream.py
 ```
@@ -147,6 +149,8 @@ Download the original image from [here](https://github.com/IDEA-Research/detrex-
 </div>
 
 ```python
+cd playground/DeepFloyd
+
 export FORCE_MEM_EFFICIENT_ATTN=1 
 python style_transfer.py
 ```
