@@ -15,3 +15,5 @@ We will try more interesting **base models** and **build more fun demos** in the
 - [LaMa: Resolution-robust Large Mask Inpainting with Fourier Convolutions](./LaMa/)
   - [LaMa Demo](./LaMa/lama_inpaint_demo.py)
   - [LaMa with SAM](./LaMa/sam_lama.py)
+- [RePaint: Inpainting using Denoising Diffusion Probabilistic Models](./RePaint/)
+  - [RePaint Demo](./RePaint/repaint.py)
