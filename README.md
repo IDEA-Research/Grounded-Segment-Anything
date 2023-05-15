@@ -43,8 +43,8 @@ The **core idea** behind this project is to **combine the strengths of different
   - [Interactive Human-face Editing Playground: Click And Editing Human Face](#dancers-interactive-editing)
   - [3D Box Via Segment Anything](#camera-3d-box-via-segment-anything)
   - [Playground: More Interesting and Imaginative Demos](./playground/)
-    - [DeepFloyd: Image Generation with Text Prompt](./playground/generation/DeepFloyd/)
-    - [PaintByExample: Exemplar-based Image Editing with Diffusion Models](./playground/generation/PaintByExample/)
+    - [DeepFloyd: Image Generation with Text Prompt](./playground/DeepFloyd/)
+    - [PaintByExample: Exemplar-based Image Editing with Diffusion Models](./playground/PaintByExample/)
 
 
 ## Preliminary Works

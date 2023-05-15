@@ -6,9 +6,9 @@ We will try more interesting **base models** and **build more fun demos** in the
 - **Keep complete usage notes** and some pitfalls to reduce the burden on users.
 
 ## Table of Contents
-- [DeepFloyd: Text-to-Image Generation](./generation/DeepFloyd/)
-  - [Dream: Text-to-Image Generation](./generation/DeepFloyd/dream.py)
-  - [Style Transfer](./generation/DeepFloyd/style_transfer.py)
-- [Paint By Example](./generation/PaintByExample/)
-  - [Diffuser Demo](./generation/PaintByExample/paint_by_example.py)
-  - [PaintByExample with SAM](./generation/PaintByExample/sam_paint_by_example.py)
+- [DeepFloyd: Text-to-Image Generation](./DeepFloyd/)
+  - [Dream: Text-to-Image Generation](./DeepFloyd/dream.py)
+  - [Style Transfer](./DeepFloyd/style_transfer.py)
+- [Paint By Example](./PaintByExample/)
+  - [Diffuser Demo](./PaintByExample/paint_by_example.py)
+  - [PaintByExample with SAM](./PaintByExample/sam_paint_by_example.py)
