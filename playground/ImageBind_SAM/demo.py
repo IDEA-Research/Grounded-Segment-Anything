@@ -87,7 +87,7 @@ This is the audio retrival result
 
 # get highest similar mask with threshold
 # result[0] shape: [113, 1]
-threshold = 0.02
+threshold = 0.025
 index = get_indices_of_values_above_threshold(vision_audio_result[0], threshold)
 
 segmentation_masks = []
