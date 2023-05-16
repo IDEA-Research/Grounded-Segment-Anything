@@ -14,6 +14,7 @@ We are very willing to **help everyone share and promote new projects** based on
 The **core idea** behind this project is to **combine the strengths of different models in order to build a very powerful pipeline for solving complex problems**. And it's worth mentioning that this is a workflow for combining strong expert models, where **all parts can be used separately or in combination, and can be replaced with any similar but different models (like replacing Grounding DINO with GLIP or other detectors / replacing Stable-Diffusion with ControlNet or GLIGEN/ Combining with ChatGPT)**.
 
 **🍇 Updates**
+- **`2023/05/16`**: Release [ImageBind-SAM](./playground/ImageBind_SAM/) simple demo which aims to segment with different modalities.
 - **`2023/05/15`**: Release [LaMa](./playground/LaMa/) and [RePaint](./playground/RePaint/) demo, thanks for nice tips by [Tao Yu](https://github.com/geekyutao).
 - **`2023/05/14`**: Release [PaintByExample](./playground/PaintByExample/) demo with SAM.
 - **`2023/05/11`**: We decide to share more interesting demo in [playground](./playground/) and we've already tested the [DeepFloyd](./playground/DeepFloyd/) for image generation and style transfering and share some notes about using IF.
@@ -48,6 +49,7 @@ The **core idea** behind this project is to **combine the strengths of different
     - [PaintByExample: Exemplar-based Image Editing with Diffusion Models](./playground/PaintByExample/)
     - [LaMa: Resolution-robust Large Mask Inpainting with Fourier Convolutions](./playground/LaMa/)
     - [RePaint: Inpainting using Denoising Diffusion Probabilistic Models](./playground/RePaint/)
+    - [ImageBind with SAM: Segment with Different Modalities](./playground/ImageBind_SAM/)
 
 
 ## Preliminary Works
