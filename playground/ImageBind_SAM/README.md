@@ -42,7 +42,7 @@ We implement `Text Seg` and `Audio Seg` in this demo, the generate masks will be
 
 | Input Model | Modality | Generate Mask |
 |:----:|:----:|:----:|
-| ![](./.assets/car_image.jpg) | [car audio](./.assets/car_audio.wav) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/imagebind_sam/audio_sam_merged_mask.jpg?raw=true) |
+| ![](./.assets/car_image.jpg) | [car audio](./.assets/car_audio.wav) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/imagebind_sam/audio_sam_merged_mask_new.jpg?raw=true) |
 | ![](./.assets/car_image.jpg) | "A car" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/imagebind_sam/text_sam_merged_mask.jpg?raw=true) |
 
 </div>
