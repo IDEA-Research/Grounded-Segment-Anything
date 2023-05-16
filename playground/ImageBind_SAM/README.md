@@ -46,3 +46,5 @@ We implement `Text Seg` and `Audio Seg` in this demo, the generate masks will be
 | ![](./.assets/car_image.jpg) | "A car" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/imagebind_sam/text_sam_merged_mask.jpg?raw=true) |
 
 </div>
+
+By setting different threshold may influence a lot on the final results.
