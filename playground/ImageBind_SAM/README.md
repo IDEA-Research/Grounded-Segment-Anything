@@ -11,6 +11,7 @@ This basic idea is followed with [IEA: Image Editing Anything](https://github.co
 
 ## Table of contents
 - [Installation](#installation)
+- [ImageBind-SAM Demo](#run-the-demo)
 
 
 ## Installation
