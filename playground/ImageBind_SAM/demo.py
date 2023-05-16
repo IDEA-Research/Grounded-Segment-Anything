@@ -24,7 +24,7 @@ Step 1: Instantiate model
 """
 # Segment Anything
 mask_generator = SamAutomaticMaskGenerator(
-    build_sam(checkpoint="/comp_robot/rentianhe/code/Grounded-Segment-Anything/sam_vit_h_4b8939.pth").to(device),
+    build_sam(checkpoint=".checkpoints/sam_vit_h_4b8939.pth").to(device),
     points_per_side=16,
 )
 
@@ -55,9 +55,9 @@ for mask in tqdm(masks):
 """
 Step 4: Run ImageBind model to get similarity between cropped image and different modalities
 """
-def retriev(elements, text_list):
+def retriev_vision_and_text(elements, text_list):
     inputs = {
-        ModalityType.VISION: data.load_and_transform_vision_data(elements, device),
+        ModalityType.VISION: data.load_and_transform_vision_data_from_pil_image(elements, device),
         ModalityType.TEXT: data.load_and_transform_text(text_list, device),
     }
     with torch.no_grad():
@@ -67,7 +67,7 @@ def retriev(elements, text_list):
 
 def retriev_vision_and_audio(elements, audio_list):
     inputs = {
-        ModalityType.VISION: data.load_and_transform_vision_data(elements, device),
+        ModalityType.VISION: data.load_and_transform_vision_data_from_pil_image(elements, device),
         ModalityType.AUDIO: data.load_and_transform_audio_data(audio_list, device),
     }
     with torch.no_grad():
@@ -75,15 +75,21 @@ def retriev_vision_and_audio(elements, audio_list):
     vision_audio = torch.softmax(embeddings[ModalityType.VISION] @ embeddings[ModalityType.AUDIO].T, dim=0),
     return vision_audio 
 
-result = retriev_vision_and_audio(cropped_boxes, [".assets/car_audio.wav"])
+vision_audio_result = retriev_vision_and_audio(cropped_boxes, [".assets/car_audio.wav"])
+vision_text_result = retriev_vision_and_text(cropped_boxes, ["A car"] )
 
-# get highest similar mask with threshold
-threshold = 0.026
-index = get_indices_of_values_above_threshold(result[0], threshold)
 
 """
 Step 5: Merge the top similarity masks to get the final mask and save the merged mask
+
+This is the audio retrival result
 """
+
+# get highest similar mask with threshold
+# result[0] shape: [113, 1]
+threshold = 0.02
+index = get_indices_of_values_above_threshold(vision_audio_result[0], threshold)
+
 segmentation_masks = []
 for seg_idx in index:
     segmentation_mask_image = Image.fromarray(masks[seg_idx]["segmentation"].astype('uint8') * 255)
@@ -99,6 +105,29 @@ for segmentation_mask_image in segmentation_masks:
 
 # return Image.alpha_composite(original_image.convert('RGBA'), overlay_image) 
 mask_image = overlay_image.convert("RGB")
-mask_image.save("./merged_mask.jpg")
+mask_image.save("./audio_sam_merged_mask.jpg")
 
+"""
+Image / Text mask
+"""
+# get highest similar mask with threshold
+# result[0] shape: [113, 1]
+threshold = 0.05
+index = get_indices_of_values_above_threshold(vision_text_result[0], threshold)
 
+segmentation_masks = []
+for seg_idx in index:
+    segmentation_mask_image = Image.fromarray(masks[seg_idx]["segmentation"].astype('uint8') * 255)
+    segmentation_masks.append(segmentation_mask_image)
+
+original_image = Image.open(image_path)
+overlay_image = Image.new('RGBA', image.size, (0, 0, 0, 255))
+overlay_color = (255, 255, 255, 0)
+
+draw = ImageDraw.Draw(overlay_image)
+for segmentation_mask_image in segmentation_masks:
+    draw.bitmap((0, 0), segmentation_mask_image, fill=overlay_color)
+
+# return Image.alpha_composite(original_image.convert('RGBA'), overlay_image) 
+mask_image = overlay_image.convert("RGB")
+mask_image.save("./text_sam_merged_mask.jpg")
