@@ -15,13 +15,12 @@ The **core idea** behind this project is to **combine the strengths of different
 
 **🍇 Updates**
 - **`2023/06/01`** Our Grounded-SAM has been accepted to present a **demo** at **ICCV 2023**! See you in Paris!
-- Chech out the great re-implementation of [DragGAN](https://github.com/Zeqiang-Lai/DragGAN) by Shanghai AI Lab.
 - **`2023/05/23`**: Support `Image-Referring-Segment`, `Audio-Referring-Segment` and `Text-Referring-Segment` in [ImageBind-SAM](./playground/ImageBind_SAM/).
 - **`2023/05/16`**: Release [ImageBind-SAM](./playground/ImageBind_SAM/) simple demo which aims to segment with different modalities.
 - **`2023/05/15`**: Release [LaMa](./playground/LaMa/) and [RePaint](./playground/RePaint/) demo, thanks for nice tips by [Tao Yu](https://github.com/geekyutao).
 - **`2023/05/14`**: Release [PaintByExample](./playground/PaintByExample/) demo with SAM.
 - **`2023/05/11`**: We decide to share more interesting demo in [playground](./playground/) and we've already tested the [DeepFloyd](./playground/DeepFloyd/) for image generation and style transfering and share some notes about using IF.
-- **`2023/05/05`**: Release a simpler code for automatic labeling (combined with Tag2Text model): please see [automatic_label_simple_demo.py](./automatic_label_simple_demo.py)
+- **`2023/05/05`**: Release a simpler code for automatic labeling (combined with `Tag2Text` model): please see [automatic_label_simple_demo.py](./automatic_label_simple_demo.py)
 - **`2023/05/03`**: Checkout the [Automated Dataset Annotation and Evaluation with GroundingDINO and SAM](https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/automated-dataset-annotation-and-evaluation-with-grounding-dino-and-sam.ipynb) which is an amazing tutorial on automatic labeling! Thanks a lot for [Piotr Skalski](https://github.com/SkalskiP) and [Roboflow](https://github.com/roboflow/notebooks)!
 
 
@@ -115,6 +114,7 @@ We also list some awesome segment-anything extension projects here you may find 
 - [Expediting SAM without Fine-tuning](https://github.com/Expedit-LargeScale-Vision-Transformer/Expedit-SAM) by Weicong Liang and Yuhui Yuan
 - [Semantic Segment Anything: Providing Rich Sementic Category Annotations for SAM](https://github.com/fudan-zvg/Semantic-Segment-Anything) by Jiaqi Chen and Zeyu Yang and Li Zhang
 - [Enhance Everything: Combining SAM with Image Restoration and Enhancement Tasks](https://github.com/lixinustc/Enhance-Anything) by Xin Li
+- [DragGAN](https://github.com/Zeqiang-Lai/DragGAN) by Shanghai AI Lab.
 
 ## Installation
 The code requires `python>=3.8`, as well as `pytorch>=1.7` and `torchvision>=0.8`. Please follow the instructions [here](https://pytorch.org/get-started/locally/) to install both PyTorch and TorchVision dependencies. Installing both PyTorch and TorchVision with CUDA support is strongly recommended.
