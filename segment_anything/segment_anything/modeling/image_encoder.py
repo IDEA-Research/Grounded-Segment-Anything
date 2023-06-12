@@ -108,12 +108,15 @@ class ImageEncoderViT(nn.Module):
         if self.pos_embed is not None:
             x = x + self.pos_embed
 
+        interm_embeddings=[]
         for blk in self.blocks:
             x = blk(x)
+            if blk.window_size == 0:
+                interm_embeddings.append(x)
 
         x = self.neck(x.permute(0, 3, 1, 2))
 
-        return x
+        return x, interm_embeddings
 
 
 class Block(nn.Module):
@@ -144,8 +147,8 @@ class Block(nn.Module):
             rel_pos_zero_init (bool): If True, zero initialize relative positional parameters.
             window_size (int): Window size for window attention blocks. If it equals 0, then
                 use global attention.
-            input_size (int or None): Input resolution for calculating the relative positional
-                parameter size.
+            input_size (tuple(int, int) or None): Input resolution for calculating the relative
+                positional parameter size.
         """
         super().__init__()
         self.norm1 = norm_layer(dim)
@@ -198,11 +201,11 @@ class Attention(nn.Module):
         Args:
             dim (int): Number of input channels.
             num_heads (int): Number of attention heads.
-            qkv_bias (bool:  If True, add a learnable bias to query, key, value.
+            qkv_bias (bool):  If True, add a learnable bias to query, key, value.
             rel_pos (bool): If True, add relative positional embeddings to the attention map.
             rel_pos_zero_init (bool): If True, zero initialize relative positional parameters.
-            input_size (int or None): Input resolution for calculating the relative positional
-                parameter size.
+            input_size (tuple(int, int) or None): Input resolution for calculating the relative
+                positional parameter size.
         """
         super().__init__()
         self.num_heads = num_heads
@@ -270,7 +273,7 @@ def window_unpartition(
     """
     Window unpartition into original sequences and removing padding.
     Args:
-        x (tensor): input tokens with [B * num_windows, window_size, window_size, C].
+        windows (tensor): input tokens with [B * num_windows, window_size, window_size, C].
         window_size (int): window size.
         pad_hw (Tuple): padded height and width (Hp, Wp).
         hw (Tuple): original height and width (H, W) before padding.
@@ -380,7 +383,7 @@ class PatchEmbed(nn.Module):
             stride (Tuple): stride of the projection layer.
             padding (Tuple): padding size of the projection layer.
             in_chans (int): Number of input image channels.
-            embed_dim (int):  embed_dim (int): Patch embedding dimension.
+            embed_dim (int): Patch embedding dimension.
         """
         super().__init__()
 

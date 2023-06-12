@@ -15,7 +15,11 @@ from GroundingDINO.groundingdino.util.slconfig import SLConfig
 from GroundingDINO.groundingdino.util.utils import clean_state_dict, get_phrases_from_posmap
 
 # segment anything
-from segment_anything import build_sam, SamPredictor 
+from segment_anything import (
+    build_sam,
+    build_sam_hq,
+    SamPredictor
+)
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -136,7 +140,13 @@ if __name__ == "__main__":
         "--grounded_checkpoint", type=str, required=True, help="path to checkpoint file"
     )
     parser.add_argument(
-        "--sam_checkpoint", type=str, required=True, help="path to checkpoint file"
+        "--sam_checkpoint", type=str, required=False, help="path to sam checkpoint file"
+    )
+    parser.add_argument(
+        "--sam_hq_checkpoint", type=str, default=None, help="path to sam-hq checkpoint file"
+    )
+    parser.add_argument(
+        "--use_sam_hq", action="store_true", help="using sam-hq for prediction"
     )
     parser.add_argument("--input_image", type=str, required=True, help="path to image file")
     parser.add_argument("--text_prompt", type=str, required=True, help="text prompt")
@@ -154,6 +164,8 @@ if __name__ == "__main__":
     config_file = args.config  # change the path of the model config file
     grounded_checkpoint = args.grounded_checkpoint  # change the path of the model
     sam_checkpoint = args.sam_checkpoint
+    sam_hq_checkpoint = args.sam_hq_checkpoint
+    use_sam_hq = args.use_sam_hq
     image_path = args.input_image
     text_prompt = args.text_prompt
     output_dir = args.output_dir
@@ -177,7 +189,10 @@ if __name__ == "__main__":
     )
 
     # initialize SAM
-    predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint).to(device))
+    if use_sam_hq:
+        predictor = SamPredictor(build_sam_hq(checkpoint=sam_hq_checkpoint).to(device))
+    else:
+        predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint).to(device))
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     predictor.set_image(image)
