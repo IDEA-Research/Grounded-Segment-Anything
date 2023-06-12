@@ -345,6 +345,7 @@ The annotated results will be saved in `./outputs` as follows
 </div>
 
 **Step 4: Runing the updated grounded-sam demo (optional)**
+
 Note that this demo is almost same as the original demo, but **with more elegant code**.
 
 ```python
