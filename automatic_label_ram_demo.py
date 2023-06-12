@@ -117,15 +117,15 @@ def load_model(model_config_path, model_checkpoint_path, device):
     return model
 
 
-def get_grounding_output(model, image, tags_chinese, box_threshold, text_threshold,device="cpu"):
-    tags_chinese = tags_chinese.lower()
-    tags_chinese = tags_chinese.strip()
-    if not tags_chinese.endswith("."):
-        tags_chinese = tags_chinese + "."
+def get_grounding_output(model, image, caption, box_threshold, text_threshold,device="cpu"):
+    caption = caption.lower()
+    caption = caption.strip()
+    if not caption.endswith("."):
+        caption = caption + "."
     model = model.to(device)
     image = image.to(device)
     with torch.no_grad():
-        outputs = model(image[None], tags_chineses=[tags_chinese])
+        outputs = model(image[None], captions=[caption])
     logits = outputs["pred_logits"].cpu().sigmoid()[0]  # (nq, 256)
     boxes = outputs["pred_boxes"].cpu()[0]  # (nq, 4)
     logits.shape[0]
@@ -140,7 +140,7 @@ def get_grounding_output(model, image, tags_chinese, box_threshold, text_thresho
 
     # get phrase
     tokenlizer = model.tokenizer
-    tokenized = tokenlizer(tags_chinese)
+    tokenized = tokenlizer(caption)
     # build pred
     pred_phrases = []
     scores = []
