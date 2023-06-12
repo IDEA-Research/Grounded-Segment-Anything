@@ -7,7 +7,7 @@
 import numpy as np
 import torch
 
-from segment_anything.modeling import Sam
+from .modeling import Sam
 
 from typing import Optional, Tuple
 
@@ -49,10 +49,12 @@ class SamPredictor:
             "RGB",
             "BGR",
         ], f"image_format must be in ['RGB', 'BGR'], is {image_format}."
+        # import pdb;pdb.set_trace()
         if image_format != self.model.image_format:
             image = image[..., ::-1]
 
         # Transform the image to the form expected by the model
+        # import pdb;pdb.set_trace()
         input_image = self.transform.apply_image(image)
         input_image_torch = torch.as_tensor(input_image, device=self.device)
         input_image_torch = input_image_torch.permute(2, 0, 1).contiguous()[None, :, :, :]
@@ -86,7 +88,7 @@ class SamPredictor:
         self.original_size = original_image_size
         self.input_size = tuple(transformed_image.shape[-2:])
         input_image = self.model.preprocess(transformed_image)
-        self.features = self.model.image_encoder(input_image)
+        self.features, self.interm_features = self.model.image_encoder(input_image)
         self.is_image_set = True
 
     def predict(
@@ -97,7 +99,8 @@ class SamPredictor:
         mask_input: Optional[np.ndarray] = None,
         multimask_output: bool = True,
         return_logits: bool = False,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        hq_token_only: bool =False,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         Predict masks for the given input prompts, using the currently set image.
 
@@ -158,12 +161,13 @@ class SamPredictor:
             mask_input_torch,
             multimask_output,
             return_logits=return_logits,
+            hq_token_only=hq_token_only,
         )
 
-        masks = masks[0].detach().cpu().numpy()
-        iou_predictions = iou_predictions[0].detach().cpu().numpy()
-        low_res_masks = low_res_masks[0].detach().cpu().numpy()
-        return masks, iou_predictions, low_res_masks
+        masks_np = masks[0].detach().cpu().numpy()
+        iou_predictions_np = iou_predictions[0].detach().cpu().numpy()
+        low_res_masks_np = low_res_masks[0].detach().cpu().numpy()
+        return masks_np, iou_predictions_np, low_res_masks_np
 
     @torch.no_grad()
     def predict_torch(
@@ -174,6 +178,7 @@ class SamPredictor:
         mask_input: Optional[torch.Tensor] = None,
         multimask_output: bool = True,
         return_logits: bool = False,
+        hq_token_only: bool =False,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Predict masks for the given input prompts, using the currently set image.
@@ -186,7 +191,7 @@ class SamPredictor:
           point_labels (torch.Tensor or None): A BxN array of labels for the
             point prompts. 1 indicates a foreground point and 0 indicates a
             background point.
-          box (np.ndarray or None): A Bx4 array given a box prompt to the
+          boxes (np.ndarray or None): A Bx4 array given a box prompt to the
             model, in XYXY format.
           mask_input (np.ndarray): A low resolution mask input to the model, typically
             coming from a previous prediction iteration. Has form Bx1xHxW, where
@@ -232,6 +237,8 @@ class SamPredictor:
             sparse_prompt_embeddings=sparse_embeddings,
             dense_prompt_embeddings=dense_embeddings,
             multimask_output=multimask_output,
+            hq_token_only=hq_token_only,
+            interm_embeddings=self.interm_features,
         )
 
         # Upscale the masks to the original image resolution

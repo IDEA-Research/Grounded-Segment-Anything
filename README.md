@@ -14,13 +14,11 @@ We are very willing to **help everyone share and promote new projects** based on
 The **core idea** behind this project is to **combine the strengths of different models in order to build a very powerful pipeline for solving complex problems**. And it's worth mentioning that this is a workflow for combining strong expert models, where **all parts can be used separately or in combination, and can be replaced with any similar but different models (like replacing Grounding DINO with GLIP or other detectors / replacing Stable-Diffusion with ControlNet or GLIGEN/ Combining with ChatGPT)**.
 
 **🍇 Updates**
+- **`2023/06/13`** Support [SAM-HQ](https://github.com/SysCV/sam-hq) in [Grounded-SAM Demo](#running_man-grounded-sam-detect-and-segment-everything-with-text-prompt) for higher quality prediction.
+- **`2023/06/12`** Support [RAM-Grounded-SAM](#label-grounded-sam-with-ram-or-tag2text-for-automatic-labeling) for strong automatic labeling pipeline! Thanks for [Recognize-Anything](https://github.com/xinyu1205/Recognize_Anything-Tag2Text).
 - **`2023/06/01`** Our Grounded-SAM has been accepted to present a **demo** at **ICCV 2023**! See you in Paris!
 - **`2023/05/23`**: Support `Image-Referring-Segment`, `Audio-Referring-Segment` and `Text-Referring-Segment` in [ImageBind-SAM](./playground/ImageBind_SAM/).
 - **`2023/05/16`**: Release [ImageBind-SAM](./playground/ImageBind_SAM/) simple demo which aims to segment with different modalities.
-- **`2023/05/15`**: Release [LaMa](./playground/LaMa/) and [RePaint](./playground/RePaint/) demo, thanks for nice tips by [Tao Yu](https://github.com/geekyutao).
-- **`2023/05/14`**: Release [PaintByExample](./playground/PaintByExample/) demo with SAM.
-- **`2023/05/11`**: We decide to share more interesting demo in [playground](./playground/) and we've already tested the [DeepFloyd](./playground/DeepFloyd/) for image generation and style transfering and share some notes about using IF.
-- **`2023/05/05`**: Release a simpler code for automatic labeling (combined with `Tag2Text` model): please see [automatic_label_simple_demo.py](./automatic_label_simple_demo.py)
 - **`2023/05/03`**: Checkout the [Automated Dataset Annotation and Evaluation with GroundingDINO and SAM](https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/automated-dataset-annotation-and-evaluation-with-grounding-dino-and-sam.ipynb) which is an amazing tutorial on automatic labeling! Thanks a lot for [Piotr Skalski](https://github.com/SkalskiP) and [Roboflow](https://github.com/roboflow/notebooks)!
 
 
@@ -312,7 +310,41 @@ The annotated results will be saved in `./outputs` as follows
 
 </div>
 
-**Step 3: Runing the updated grounded-sam demo (optional)**
+**Step 3: Runing grounded-sam demo with sam-hq**
+- Download the demo image
+```bash
+wget https://github.com/IDEA-Research/detrex-storage/releases/download/grounded-sam-storage/sam_hq_demo_image.png
+```
+
+- Download SAM-HQ checkpoint [here](https://github.com/SysCV/sam-hq#model-checkpoints)
+
+- Running grounded-sam-hq demo as follows:
+```python
+export CUDA_VISIBLE_DEVICES=0
+python grounded_sam_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_hq_checkpoint ./sam_hq_vit_h.pth \  # path to sam-hq checkpoint
+  --use_sam_hq \  # set to use sam-hq model
+  --input_image sam_hq_demo_image.png \
+  --output_dir "outputs" \
+  --box_threshold 0.3 \
+  --text_threshold 0.25 \
+  --text_prompt "chair." \
+  --device "cuda"
+```
+
+The annotated results will be saved in `./outputs` as follows
+
+<div align="center">
+
+| Input Image | SAM Output | SAM-HQ Output |
+|:----:|:----:|:----:|
+| ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/sam_hq/sam_hq_demo.png?raw=true) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/sam_hq/sam_output.jpg?raw=true) | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/sam_hq/sam_hq_output.jpg?raw=true) |
+
+</div>
+
+**Step 4: Runing the updated grounded-sam demo (optional)**
 Note that this demo is almost same as the original demo, but **with more elegant code**.
 
 ```python
@@ -329,7 +361,6 @@ The annotated results will be saved as `./groundingdino_annotated_image.jpg` and
 | `Horse. Clouds. Grasses. Sky. Hill` | ![](./assets/demo7.jpg) | ![](assets/groundingdino_annotated_image.jpg) | ![](assets/grounded_sam_annotated_image.jpg) |
 
 </div>
-
 
 ### :skier: Grounded-SAM with Inpainting: Detect, Segment and Generate Everything with Text Prompt
 
