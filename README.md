@@ -392,7 +392,7 @@ python gradio_app.py
 ![](./assets/gradio_demo.png)
 
 
-### :label: Grounded-SAM with Recognize Anything or Tag2Text for Automatic Labeling
+### :label: Grounded-SAM with RAM or Tag2Text for Automatic Labeling
 [**The Recognize Anything Model (RAM) and Tag2Text**](https://github.com/xinyu1205/Recognize_Anything-Tag2Text) exhibits **exceptional recognition abilities**, in terms of **both accuracy and scope**.
 
 It is seamlessly linked to generate pseudo labels automatically as follows:
@@ -421,7 +421,24 @@ wget https://huggingface.co/spaces/xinyu1205/Tag2Text/resolve/main/ram_swin_larg
 wget https://huggingface.co/spaces/xinyu1205/Tag2Text/resolve/main/tag2text_swin_14m.pth
 ```
 
-**Step 2: Runing the demo**
+**Step 2: Runing the demo with RAM**
+```bash
+export CUDA_VISIBLE_DEVICES=0
+python automatic_label_ram_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --ram_checkpoint ./Tag2Text/ram_swin_large_14m.pth \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --input_image assets/demo9.jpg \
+  --output_dir "outputs" \
+  --box_threshold 0.25 \
+  --text_threshold 0.2 \
+  --iou_threshold 0.5 \
+  --device "cuda"
+```
+
+
+**Step 2: or Runing the demo with Tag2Text**
 ```bash
 export CUDA_VISIBLE_DEVICES=0
 python automatic_label_tag2text_demo.py \
