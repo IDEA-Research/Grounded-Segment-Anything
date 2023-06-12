@@ -21,14 +21,14 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Tag2Text
+# Recognize Anything Model & Tag2Text
 import sys
 sys.path.append('Tag2Text')
 from Tag2Text.models import tag2text
-from Tag2Text import inference_tag2text
+from Tag2Text import inference_ram
 import torchvision.transforms as TS
 
-# ChatGPT or nltk is required when using captions
+# ChatGPT or nltk is required when using tags_chineses
 # import openai
 # import nltk
 
@@ -47,26 +47,26 @@ def load_image(image_path):
     return image_pil, image
 
 
-def generate_caption(raw_image, device):
-    # unconditional image captioning
+def generate_tags_chinese(raw_image, device):
+    # unconditional image tags_chineseing
     if device == "cuda":
         inputs = processor(raw_image, return_tensors="pt").to("cuda", torch.float16)
     else:
         inputs = processor(raw_image, return_tensors="pt")
     out = blip_model.generate(**inputs)
-    caption = processor.decode(out[0], skip_special_tokens=True)
-    return caption
+    tags_chinese = processor.decode(out[0], skip_special_tokens=True)
+    return tags_chinese
 
 
-def generate_tags(caption, split=',', max_tokens=100, model="gpt-3.5-turbo"):
+def generate_tags(tags_chinese, split=',', max_tokens=100, model="gpt-3.5-turbo"):
     lemma = nltk.wordnet.WordNetLemmatizer()
     if openai_key:
         prompt = [
             {
                 'role': 'system',
-                'content': 'Extract the unique nouns in the caption. Remove all the adjectives. ' + \
+                'content': 'Extract the unique nouns in the tags_chinese. Remove all the adjectives. ' + \
                            f'List the nouns in singular form. Split them by "{split} ". ' + \
-                           f'Caption: {caption}.'
+                           f'tags_chinese: {tags_chinese}.'
             }
         ]
         response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
@@ -75,13 +75,13 @@ def generate_tags(caption, split=',', max_tokens=100, model="gpt-3.5-turbo"):
         tags = reply.split(':')[-1].strip()
     else:
         nltk.download(['punkt', 'averaged_perceptron_tagger', 'wordnet'])
-        tags_list = [word for (word, pos) in nltk.pos_tag(nltk.word_tokenize(caption)) if pos[0] == 'N']
+        tags_list = [word for (word, pos) in nltk.pos_tag(nltk.word_tokenize(tags_chinese)) if pos[0] == 'N']
         tags_lemma = [lemma.lemmatize(w) for w in tags_list]
         tags = ', '.join(map(str, tags_lemma))
     return tags
 
 
-def check_caption(caption, pred_phrases, max_tokens=100, model="gpt-3.5-turbo"):
+def check_tags_chinese(tags_chinese, pred_phrases, max_tokens=100, model="gpt-3.5-turbo"):
     object_list = [obj.split('(')[0] for obj in pred_phrases]
     object_num = []
     for obj in set(object_list):
@@ -93,17 +93,17 @@ def check_caption(caption, pred_phrases, max_tokens=100, model="gpt-3.5-turbo"):
         prompt = [
             {
                 'role': 'system',
-                'content': 'Revise the number in the caption if it is wrong. ' + \
-                           f'Caption: {caption}. ' + \
+                'content': 'Revise the number in the tags_chinese if it is wrong. ' + \
+                           f'tags_chinese: {tags_chinese}. ' + \
                            f'True object number: {object_num}. ' + \
-                           'Only give the revised caption: '
+                           'Only give the revised tags_chinese: '
             }
         ]
         response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
         reply = response['choices'][0]['message']['content']
-        # sometimes return with "Caption: xxx, xxx, xxx"
-        caption = reply.split(':')[-1].strip()
-    return caption
+        # sometimes return with "tags_chinese: xxx, xxx, xxx"
+        tags_chinese = reply.split(':')[-1].strip()
+    return tags_chinese
 
 
 def load_model(model_config_path, model_checkpoint_path, device):
@@ -117,15 +117,15 @@ def load_model(model_config_path, model_checkpoint_path, device):
     return model
 
 
-def get_grounding_output(model, image, caption, box_threshold, text_threshold,device="cpu"):
-    caption = caption.lower()
-    caption = caption.strip()
-    if not caption.endswith("."):
-        caption = caption + "."
+def get_grounding_output(model, image, tags_chinese, box_threshold, text_threshold,device="cpu"):
+    tags_chinese = tags_chinese.lower()
+    tags_chinese = tags_chinese.strip()
+    if not tags_chinese.endswith("."):
+        tags_chinese = tags_chinese + "."
     model = model.to(device)
     image = image.to(device)
     with torch.no_grad():
-        outputs = model(image[None], captions=[caption])
+        outputs = model(image[None], tags_chineses=[tags_chinese])
     logits = outputs["pred_logits"].cpu().sigmoid()[0]  # (nq, 256)
     boxes = outputs["pred_boxes"].cpu()[0]  # (nq, 4)
     logits.shape[0]
@@ -140,7 +140,7 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold,de
 
     # get phrase
     tokenlizer = model.tokenizer
-    tokenized = tokenlizer(caption)
+    tokenized = tokenlizer(tags_chinese)
     # build pred
     pred_phrases = []
     scores = []
@@ -169,7 +169,7 @@ def show_box(box, ax, label):
     ax.text(x0, y0, label)
 
 
-def save_mask_data(output_dir, caption, mask_list, box_list, label_list):
+def save_mask_data(output_dir, tags_chinese, mask_list, box_list, label_list):
     value = 0  # 0 for background
 
     mask_img = torch.zeros(mask_list.shape[-2:])
@@ -181,7 +181,7 @@ def save_mask_data(output_dir, caption, mask_list, box_list, label_list):
     plt.savefig(os.path.join(output_dir, 'mask.jpg'), bbox_inches="tight", dpi=300, pad_inches=0.0)
 
     json_data = {
-        'caption': caption,
+        'tags_chinese': tags_chinese,
         'mask':[{
             'value': value,
             'label': 'background'
@@ -206,7 +206,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser("Grounded-Segment-Anything Demo", add_help=True)
     parser.add_argument("--config", type=str, required=True, help="path to config file")
     parser.add_argument(
-        "--tag2text_checkpoint", type=str, required=True, help="path to checkpoint file"
+        "--ram_checkpoint", type=str, required=True, help="path to checkpoint file"
     )
     parser.add_argument(
         "--grounded_checkpoint", type=str, required=True, help="path to checkpoint file"
@@ -231,7 +231,7 @@ if __name__ == "__main__":
 
     # cfg
     config_file = args.config  # change the path of the model config file
-    tag2text_checkpoint = args.tag2text_checkpoint  # change the path of the model
+    ram_checkpoint = args.ram_checkpoint  # change the path of the model
     grounded_checkpoint = args.grounded_checkpoint  # change the path of the model
     sam_checkpoint = args.sam_checkpoint
     image_path = args.input_image
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     iou_threshold = args.iou_threshold
     device = args.device
     
-    # ChatGPT or nltk is required when using captions
+    # ChatGPT or nltk is required when using tags_chineses
     # openai.api_key = openai_key
     # if openai_proxy:
         # openai.proxy = {"http": openai_proxy, "https": openai_proxy}
@@ -259,7 +259,7 @@ if __name__ == "__main__":
     # visualize raw image
     image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
 
-    # initialize Tag2Text
+    # initialize Recognize Anything Model
     normalize = TS.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
     transform = TS.Compose([
@@ -267,40 +267,32 @@ if __name__ == "__main__":
                     TS.ToTensor(), normalize
                 ])
     
-    # filter out attributes and action categories which are difficult to grounding
-    delete_tag_index = []
-    for i in range(3012, 3429):
-        delete_tag_index.append(i)
-
-    specified_tags='None'
     # load model
-    tag2text_model = tag2text.tag2text_caption(pretrained=tag2text_checkpoint,
+    ram_model = tag2text.ram(pretrained=ram_checkpoint,
                                         image_size=384,
-                                        vit='swin_b',
-                                        delete_tag_index=delete_tag_index)
+                                        vit='swin_l')
     # threshold for tagging
     # we reduce the threshold to obtain more tags
-    tag2text_model.threshold = 0.64 
-    tag2text_model.eval()
+    ram_model.eval()
 
-    tag2text_model = tag2text_model.to(device)
+    ram_model = ram_model.to(device)
     raw_image = image_pil.resize(
                     (384, 384))
     raw_image  = transform(raw_image).unsqueeze(0).to(device)
 
-    res = inference_tag2text.inference(raw_image , tag2text_model, specified_tags)
+    res = inference_ram.inference(raw_image , ram_model)
 
     # Currently ", " is better for detecting single tags
     # while ". " is a little worse in some case
-    text_prompt=res[0].replace(' |', ',')
-    caption=res[2]
+    tags=res[0].replace(' |', ',')
+    tags_chinese=res[1].replace(' |', ',')
 
-    print(f"Caption: {caption}")
-    print(f"Tags: {text_prompt}")
+    print("Image Tags: ", res[0])
+    print("图像标签: ", res[1])
 
     # run grounding dino model
     boxes_filt, scores, pred_phrases = get_grounding_output(
-        model, image, text_prompt, box_threshold, text_threshold, device=device
+        model, image, tags, box_threshold, text_threshold, device=device
     )
 
     # initialize SAM
@@ -323,8 +315,8 @@ if __name__ == "__main__":
     boxes_filt = boxes_filt[nms_idx]
     pred_phrases = [pred_phrases[idx] for idx in nms_idx]
     print(f"After NMS: {boxes_filt.shape[0]} boxes")
-    caption = check_caption(caption, pred_phrases)
-    print(f"Revise caption with number: {caption}")
+    tags_chinese = check_tags_chinese(tags_chinese, pred_phrases)
+    print(f"Revise tags_chinese with number: {tags_chinese}")
 
     transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)
 
@@ -343,11 +335,11 @@ if __name__ == "__main__":
     for box, label in zip(boxes_filt, pred_phrases):
         show_box(box.numpy(), plt.gca(), label)
 
-    plt.title('Tag2Text-Captioning: ' + caption + '\n' + 'Tag2Text-Tagging' + text_prompt + '\n')
+    plt.title('RAM-tags' + tags + '\n' + 'RAM-tags_chineseing: ' + tags_chinese + '\n')
     plt.axis('off')
     plt.savefig(
         os.path.join(output_dir, "automatic_label_output.jpg"), 
         bbox_inches="tight", dpi=300, pad_inches=0.0
     )
 
-    save_mask_data(output_dir, caption, masks, boxes_filt, pred_phrases)
+    save_mask_data(output_dir, tags_chinese, masks, boxes_filt, pred_phrases)
