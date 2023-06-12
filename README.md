@@ -37,7 +37,7 @@ The **core idea** behind this project is to **combine the strengths of different
   - [Grounded-SAM: Detect and Segment Everything with Text Prompt](#running_man-grounded-sam-detect-and-segment-everything-with-text-prompt)
   - [Grounded-SAM with Inpainting: Detect, Segment and Generate Everything with Text Prompt](#skier-grounded-sam-with-inpainting-detect-segment-and-generate-everything-with-text-prompt)
   - [Grounded-SAM and Inpaint Gradio APP](#golfing-grounded-sam-and-inpaint-gradio-app)
-  - [Grounded-SAM with Recognize_Anything and Tag2Text for Automatic Labeling](#label-grounded-sam-with-tag2text-for-automatic-labeling)
+  - [Grounded-SAM with RAM or Tag2Text for Automatic Labeling](#label-grounded-sam-with-ram-or-tag2text-for-automatic-labeling)
   - [Grounded-SAM with BLIP & ChatGPT for Automatic Labeling](#robot-grounded-sam-with-blip-for-automatic-labeling)
   - [Grounded-SAM with Whisper: Detect and Segment Anything with Audio](#open_mouth-grounded-sam-with-whisper-detect-and-segment-anything-with-audio)
   - [Grounded-SAM ChatBot with Visual ChatGPT](#speech_balloon-grounded-sam-chatbot-demo)
@@ -438,7 +438,7 @@ python automatic_label_ram_demo.py \
 ```
 
 
-**Step 2: or Runing the demo with Tag2Text**
+**Step 2: Or Runing the demo with Tag2Text**
 ```bash
 export CUDA_VISIBLE_DEVICES=0
 python automatic_label_tag2text_demo.py \
@@ -457,7 +457,7 @@ python automatic_label_tag2text_demo.py \
 - Tag2Text also provides powerful captioning capabilities, and the process with captions can refer to [BLIP](#robot-run-grounded-segment-anything--blip-demo).
 - The pseudo labels and model prediction visualization will be saved in `output_dir` as follows (right figure):
 
-![](./assets/automatic_label_output/demo9_tag2text.jpg)
+![](./assets/automatic_label_output/demo9_tag2text_ram.jpg)
 
 
 ### :robot: Grounded-SAM with BLIP for Automatic Labeling
