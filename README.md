@@ -175,7 +175,7 @@ git submodule update --init --recursive
 cd grounded-sam-osx && bash install.sh
 ```
 
-Install Recognize_Anything & Tag2Text:
+Install RAM & Tag2Text:
 
 ```bash
 git submodule update --init --recursive
