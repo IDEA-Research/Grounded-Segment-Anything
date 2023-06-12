@@ -138,9 +138,6 @@ if __name__ == "__main__":
     inpaint_prompt = args.inpaint_prompt
     output_dir = args.output_dir
     cache_dir=args.cache_dir
-    # if not os.path.exists(cache_dir):
-    #     print(f"create your cache dir:{cache_dir}")
-    #     os.mkdir(cache_dir)
     box_threshold = args.box_threshold
     text_threshold = args.text_threshold
     inpaint_mode = args.inpaint_mode
@@ -186,6 +183,16 @@ if __name__ == "__main__":
 
     # masks: [1, 1, 512, 512]
 
+    # draw output image
+    plt.figure(figsize=(10, 10))
+    plt.imshow(image)
+    for mask in masks:
+        show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
+    for box, label in zip(boxes_filt, pred_phrases):
+        show_box(box.numpy(), plt.gca(), label)
+    plt.axis('off')
+    plt.savefig(os.path.join(output_dir, "grounded_sam_output.jpg"), bbox_inches="tight")
+
     # inpainting pipeline
     if inpaint_mode == 'merge':
         masks = torch.sum(masks, dim=0).unsqueeze(0)
@@ -206,13 +213,4 @@ if __name__ == "__main__":
     image = image.resize(size)
     image.save(os.path.join(output_dir, "grounded_sam_inpainting_output.jpg"))
 
-    # draw output image
-    # plt.figure(figsize=(10, 10))
-    # plt.imshow(image)
-    # for mask in masks:
-    #     show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
-    # for box, label in zip(boxes_filt, pred_phrases):
-    #     show_box(box.numpy(), plt.gca(), label)
-    # plt.axis('off')
-    # plt.savefig(os.path.join(output_dir, "grounded_sam_output.jpg"), bbox_inches="tight")
 
