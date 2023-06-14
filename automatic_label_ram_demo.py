@@ -1,22 +1,24 @@
 import argparse
 import os
-import copy
 
 import numpy as np
 import json
 import torch
 import torchvision
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 
 # Grounding DINO
 import GroundingDINO.groundingdino.datasets.transforms as T
 from GroundingDINO.groundingdino.models import build_model
-from GroundingDINO.groundingdino.util import box_ops
 from GroundingDINO.groundingdino.util.slconfig import SLConfig
 from GroundingDINO.groundingdino.util.utils import clean_state_dict, get_phrases_from_posmap
 
 # segment anything
-from segment_anything import build_sam, SamPredictor 
+from segment_anything import (
+    build_sam,
+    build_sam_hq,
+    SamPredictor
+) 
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -45,40 +47,6 @@ def load_image(image_path):
     )
     image, _ = transform(image_pil, None)  # 3, h, w
     return image_pil, image
-
-
-def generate_tags_chinese(raw_image, device):
-    # unconditional image tags_chineseing
-    if device == "cuda":
-        inputs = processor(raw_image, return_tensors="pt").to("cuda", torch.float16)
-    else:
-        inputs = processor(raw_image, return_tensors="pt")
-    out = blip_model.generate(**inputs)
-    tags_chinese = processor.decode(out[0], skip_special_tokens=True)
-    return tags_chinese
-
-
-def generate_tags(tags_chinese, split=',', max_tokens=100, model="gpt-3.5-turbo"):
-    lemma = nltk.wordnet.WordNetLemmatizer()
-    if openai_key:
-        prompt = [
-            {
-                'role': 'system',
-                'content': 'Extract the unique nouns in the tags_chinese. Remove all the adjectives. ' + \
-                           f'List the nouns in singular form. Split them by "{split} ". ' + \
-                           f'tags_chinese: {tags_chinese}.'
-            }
-        ]
-        response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
-        reply = response['choices'][0]['message']['content']
-        # sometimes return with "noun: xxx, xxx, xxx"
-        tags = reply.split(':')[-1].strip()
-    else:
-        nltk.download(['punkt', 'averaged_perceptron_tagger', 'wordnet'])
-        tags_list = [word for (word, pos) in nltk.pos_tag(nltk.word_tokenize(tags_chinese)) if pos[0] == 'N']
-        tags_lemma = [lemma.lemmatize(w) for w in tags_list]
-        tags = ', '.join(map(str, tags_lemma))
-    return tags
 
 
 def check_tags_chinese(tags_chinese, pred_phrases, max_tokens=100, model="gpt-3.5-turbo"):
@@ -214,6 +182,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--sam_checkpoint", type=str, required=True, help="path to checkpoint file"
     )
+    parser.add_argument(
+        "--sam_hq_checkpoint", type=str, default=None, help="path to sam-hq checkpoint file"
+    )
+    parser.add_argument(
+        "--use_sam_hq", action="store_true", help="using sam-hq for prediction"
+    )
     parser.add_argument("--input_image", type=str, required=True, help="path to image file")
     parser.add_argument("--split", default=",", type=str, help="split for text prompt")
     parser.add_argument("--openai_key", type=str, help="key for chatgpt")
@@ -234,6 +208,8 @@ if __name__ == "__main__":
     ram_checkpoint = args.ram_checkpoint  # change the path of the model
     grounded_checkpoint = args.grounded_checkpoint  # change the path of the model
     sam_checkpoint = args.sam_checkpoint
+    sam_hq_checkpoint = args.sam_hq_checkpoint
+    use_sam_hq = args.use_sam_hq
     image_path = args.input_image
     split = args.split
     openai_key = args.openai_key
@@ -296,7 +272,11 @@ if __name__ == "__main__":
     )
 
     # initialize SAM
-    predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint).to(device))
+    if use_sam_hq:
+        print("Initialize SAM-HQ Predictor")
+        predictor = SamPredictor(build_sam_hq(checkpoint=sam_hq_checkpoint).to(device))
+    else:
+        predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint).to(device))
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     predictor.set_image(image)
@@ -335,7 +315,7 @@ if __name__ == "__main__":
     for box, label in zip(boxes_filt, pred_phrases):
         show_box(box.numpy(), plt.gca(), label)
 
-    plt.title('RAM-tags' + tags + '\n' + 'RAM-tags_chineseing: ' + tags_chinese + '\n')
+    # plt.title('RAM-tags' + tags + '\n' + 'RAM-tags_chineseing: ' + tags_chinese + '\n')
     plt.axis('off')
     plt.savefig(
         os.path.join(output_dir, "automatic_label_output.jpg"), 
