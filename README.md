@@ -9,7 +9,7 @@ We are very willing to **help everyone share and promote new projects** based on
 
 ![](./assets/grounded_sam_new_demo_image.png)
 
-![](./assets/ram_grounded_sam.png)
+![](./assets/ram_grounded_sam_new.png)
 
 **🍄 Why Building this Project?**
 
