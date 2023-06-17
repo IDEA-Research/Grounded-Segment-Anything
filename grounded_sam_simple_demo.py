@@ -23,6 +23,7 @@ grounding_dino_model = Model(model_config_path=GROUNDING_DINO_CONFIG_PATH, model
 
 # Building SAM Model and SAM Predictor
 sam = sam_model_registry[SAM_ENCODER_VERSION](checkpoint=SAM_CHECKPOINT_PATH)
+sam.to(device=DEVICE)
 sam_predictor = SamPredictor(sam)
 
 
