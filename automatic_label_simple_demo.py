@@ -10,11 +10,10 @@ from groundingdino.util.inference import Model
 from segment_anything import sam_model_registry, SamPredictor
 
 # Tag2Text
-import sys
-sys.path.append('Tag2Text')
-from Tag2Text.models import tag2text
-# from Tag2Text import inference
-from Tag2Text import inference_ram
+# from ram.models import tag2text_caption
+from ram.models import ram
+# from ram import inference_tag2text
+from ram import inference_ram
 import torchvision
 import torchvision.transforms as TS
 
@@ -63,7 +62,7 @@ DELETE_TAG_INDEX = []  # filter out attributes and action which are difficult to
 for idx in range(3012, 3429):
     DELETE_TAG_INDEX.append(idx)
 
-# tag2text_model = tag2text.tag2text_caption(
+# tag2text_model = tag2text_caption(
 #     pretrained=TAG2TEXT_CHECKPOINT_PATH,
 #     image_size=384,
 #     vit='swin_b',
@@ -75,7 +74,7 @@ for idx in range(3012, 3429):
 # tag2text_model.eval()
 # tag2text_model = tag2text_model.to(DEVICE)
 
-ram_model = tag2text.ram(pretrained=RAM_CHECKPOINT_PATH,
+ram_model = ram(pretrained=RAM_CHECKPOINT_PATH,
                                         image_size=384,
                                         vit='swin_l')
 ram_model.eval()
@@ -89,8 +88,8 @@ image_pillow = image_pillow.resize((384, 384))
 image_pillow = transform(image_pillow).unsqueeze(0).to(DEVICE)
 
 specified_tags='None'
-# res = inference.inference(image_pillow , tag2text_model, specified_tags)
-res = inference_ram.inference(image_pillow , ram_model)
+# res = inference_tag2text(image_pillow , tag2text_model, specified_tags)
+res = inference_ram(image_pillow , ram_model)
 
 # Currently ", " is better for detecting single tags
 # while ". " is a little worse in some case

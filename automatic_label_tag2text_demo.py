@@ -22,10 +22,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Tag2Text
-import sys
-sys.path.append('Tag2Text')
-from Tag2Text.models import tag2text
-from Tag2Text import inference_tag2text
+from ram.models import tag2text_caption
+from ram import inference_tag2text
 import torchvision.transforms as TS
 
 # ChatGPT or nltk is required when using captions
@@ -274,7 +272,7 @@ if __name__ == "__main__":
 
     specified_tags='None'
     # load model
-    tag2text_model = tag2text.tag2text_caption(pretrained=tag2text_checkpoint,
+    tag2text_model = tag2text_caption(pretrained=tag2text_checkpoint,
                                         image_size=384,
                                         vit='swin_b',
                                         delete_tag_index=delete_tag_index)
@@ -288,7 +286,7 @@ if __name__ == "__main__":
                     (384, 384))
     raw_image  = transform(raw_image).unsqueeze(0).to(device)
 
-    res = inference_tag2text.inference(raw_image , tag2text_model, specified_tags)
+    res = inference_tag2text(raw_image , tag2text_model, specified_tags)
 
     # Currently ", " is better for detecting single tags
     # while ". " is a little worse in some case
