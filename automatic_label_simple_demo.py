@@ -29,7 +29,7 @@ SAM_ENCODER_VERSION = "vit_h"
 SAM_CHECKPOINT_PATH = "./sam_vit_h_4b8939.pth"
 
 TAG2TEXT_CHECKPOINT_PATH = "./tag2text_swin_14m.pth"
-RAM_CHECKPOINT_PATH = "./Tag2Text/ram_swin_large_14m.pth"
+RAM_CHECKPOINT_PATH = "./ram_swin_large_14m.pth"
 
 TAG2TEXT_THRESHOLD = 0.64
 BOX_THRESHOLD = 0.2

@@ -182,8 +182,9 @@ cd grounded-sam-osx && bash install.sh
 Install RAM & Tag2Text:
 
 ```bash
-git submodule update --init --recursive
-cd Tag2Text && pip install -r requirements.txt
+git clone https://github.com/xinyu1205/recognize-anything.git
+pip install -r ./recognize-anything/requirements.txt
+pip install -e ./recognize-anything/
 ```
 
 The following optional dependencies are necessary for mask post-processing, saving masks in COCO format, the example notebooks, and exporting the model in ONNX format. `jupyter` is also required to run the example notebooks.
@@ -454,7 +455,6 @@ git submodule update
 wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
 wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 
-cd Tag2Text
 wget https://huggingface.co/spaces/xinyu1205/Tag2Text/resolve/main/ram_swin_large_14m.pth
 wget https://huggingface.co/spaces/xinyu1205/Tag2Text/resolve/main/tag2text_swin_14m.pth
 ```
@@ -464,7 +464,7 @@ wget https://huggingface.co/spaces/xinyu1205/Tag2Text/resolve/main/tag2text_swin
 export CUDA_VISIBLE_DEVICES=0
 python automatic_label_ram_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
-  --ram_checkpoint ./Tag2Text/ram_swin_large_14m.pth \
+  --ram_checkpoint ram_swin_large_14m.pth \
   --grounded_checkpoint groundingdino_swint_ogc.pth \
   --sam_checkpoint sam_vit_h_4b8939.pth \
   --input_image assets/demo9.jpg \
@@ -481,7 +481,7 @@ python automatic_label_ram_demo.py \
 export CUDA_VISIBLE_DEVICES=0
 python automatic_label_tag2text_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
-  --tag2text_checkpoint ./Tag2Text/tag2text_swin_14m.pth \
+  --tag2text_checkpoint tag2text_swin_14m.pth \
   --grounded_checkpoint groundingdino_swint_ogc.pth \
   --sam_checkpoint sam_vit_h_4b8939.pth \
   --input_image assets/demo9.jpg \
