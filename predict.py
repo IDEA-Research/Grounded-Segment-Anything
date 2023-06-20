@@ -36,10 +36,7 @@ from GroundingDINO.groundingdino.util.utils import (
 # segment anything
 from segment_anything import build_sam, build_sam_hq, SamPredictor
 
-import sys
-
-sys.path.append("Tag2Text")
-from models.tag2text import ram
+from ram.models import ram
 
 
 class ModelOutput(BaseModel):
