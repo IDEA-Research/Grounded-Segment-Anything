@@ -5,6 +5,3 @@
 [submodule "VISAM"]
 	path = VISAM
 	url = https://github.com/BingfengYan/VISAM
-[submodule "Tag2Text"]
-	path = Tag2Text
-	url = https://github.com/xinyu1205/Tag2Text.git
