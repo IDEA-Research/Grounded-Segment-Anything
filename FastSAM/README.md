@@ -1,11 +1,16 @@
-## Grounded-Fast-SAM
+## Grounded-FastSAM
 
 Combining [Grounding-DINO](https://github.com/IDEA-Research/GroundingDINO) and [Fast-SAM](https://github.com/CASIA-IVA-Lab/FastSAM) for faster zero-shot detect and segment anything.
 
 
 ### Contents
 - [Installation](#installation)
+- [Run Grounded-Fast-SAM Demo](#run-grounded-fast-sam-demo)
 
+### Catelog
+- [x] Support Grounded-FastSAM
+- [ ] Support better visualization for Grounded-FastSAM
+- [ ] Support RAM-Grounded-FastSAM for faster automatic labelling
 
 ### Installation
 
@@ -36,4 +41,5 @@ python FastSAM/grounded_fast_sam.py --model_path "./FastSAM-x.pt" --img_path "as
 </div>
 
 
+**Note**: Due to the post process of FastSAM, only one box can be annotated at a time, if there're multiple box prompts, we simply save multiple annotate images to `./output` now, which will be modified in the future release.
 
