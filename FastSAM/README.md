@@ -13,5 +13,27 @@ Combining [Grounding-DINO](https://github.com/IDEA-Research/GroundingDINO) and [
 
 - Install [Fast-SAM](https://github.com/CASIA-IVA-Lab/FastSAM#installation)
 
+### Run Grounded-Fast-SAM Demo
+
+- Firstly, download the pretrained Fast-SAM weight [here](https://github.com/CASIA-IVA-Lab/FastSAM#model-checkpoints)
+
+- Run the demo with the following script:
+
+```bash
+cd Grounded-Segment-Anything
+
+python FastSAM/grounded_fast_sam.py --model_path "./FastSAM-x.pt" --img_path "assets/demo4.jpg" --text "the black dog." --output "./output/"
+```
+
+- And the results will be saved in `./output/` as:
+
+<div style="text-align: center">
+
+| Input | Text | Output |
+|:---:|:---:|:---:|
+|![](/assets/demo4.jpg) | "The black dog." | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/fast_sam/demo4_0_caption_the%20black%20dog.jpg?raw=true) |
+
+</div>
+
 
 

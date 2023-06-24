@@ -9,7 +9,7 @@ import ast
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--model_path", type=str, default="/comp_robot/rentianhe/code/Grounded-Segment-Anything/FastSAM/FastSAM-x.pt", help="model"
+        "--model_path", type=str, default="./FastSAM/FastSAM-x.pt", help="model"
     )
     parser.add_argument(
         "--img_path", type=str, default="./images/dogs.jpg", help="path to image file"
@@ -115,9 +115,7 @@ def main(args):
     ori_h = ori_img.shape[0]
     ori_w = ori_img.shape[1]
 
-    # x = box_convert(boxes=boxes, in_fmt="cxcywh", out_fmt="xyxy").cpu().numpy().tolist()
-    # import pdb; pdb.set_trace()
-
+    # Save each frame due to the post process from FastSAM
     boxes = boxes * torch.Tensor([ori_w, ori_h, ori_w, ori_h])
     print(f"Detected Boxes: {len(boxes)}")
     boxes = box_convert(boxes=boxes, in_fmt="cxcywh", out_fmt="xyxy").cpu().numpy().tolist()
