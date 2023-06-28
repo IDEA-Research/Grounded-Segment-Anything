@@ -8,7 +8,7 @@ We're going to combine [Grounding-DINO](https://github.com/IDEA-Research/Groundi
 ### Table of Contents
 - [Installation](#installation)
 - [Efficient SAM Series](#efficient-sams)
-- [Run Grounded-FastSAM Demo](#run-grounded-fast-sam-demo)
+- [Run Grounded-FastSAM Demo](#run-grounded-fastsam-demo)
 - [Run Grounded-MobileSAM Demo](#run-grounded-mobilesam-demo)
 
 
