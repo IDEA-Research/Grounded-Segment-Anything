@@ -17,7 +17,7 @@ We are very willing to **help everyone share and promote new projects** based on
 The **core idea** behind this project is to **combine the strengths of different models in order to build a very powerful pipeline for solving complex problems**. And it's worth mentioning that this is a workflow for combining strong expert models, where **all parts can be used separately or in combination, and can be replaced with any similar but different models (like replacing Grounding DINO with GLIP or other detectors / replacing Stable-Diffusion with ControlNet or GLIGEN/ Combining with ChatGPT)**.
 
 **🍇 Updates**
-- **`2023/06/24`** Combining Grounding-DINO with [FastSAM](https://github.com/CASIA-IVA-Lab/FastSAM) in [Grounded-FastSAM](./FastSAM/) for faster annotating.
+- **`2023/06/28`** Combining Grounding-DINO with Efficient SAM variants including [FastSAM](https://github.com/CASIA-IVA-Lab/FastSAM) and [MobileSAM](https://github.com/ChaoningZhang/MobileSAM) in [EfficientSAM](./EfficientSAM/) for faster annotating, thanks a lot for their great work!
 - **`2023/06/20`** By combining **Grounding-DINO-L** with **SAM-ViT-H**, Grounded-SAM has won **the first place** in [Segmentation in the Wild](https://eval.ai/web/challenges/challenge-page/1931/overview) competition zero-shot track on [CVPR 2023 workshop](https://computer-vision-in-the-wild.github.io/cvpr-2023/), surpassing the second place about **4 mAP**.
 - **`2023/06/16`** Release [RAM-Grounded-SAM Replicate Online Demo](https://replicate.com/cjwbw/ram-grounded-sam). Thanks a lot to [Chenxi](https://chenxwh.github.io/) for providing this nice demo 🌹.
 - **`2023/06/14`** Support [RAM-Grounded-SAM & SAM-HQ](./automatic_label_ram_demo.py) and update [Simple Automatic Label Demo](./automatic_label_ram_demo.py) to support [RAM](https://github.com/xinyu1205/Recognize_Anything-Tag2Text), setting up a strong automatic annotation pipeline.
@@ -57,7 +57,9 @@ The **core idea** behind this project is to **combine the strengths of different
     - [LaMa: Resolution-robust Large Mask Inpainting with Fourier Convolutions](./playground/LaMa/)
     - [RePaint: Inpainting using Denoising Diffusion Probabilistic Models](./playground/RePaint/)
     - [ImageBind with SAM: Segment with Different Modalities](./playground/ImageBind_SAM/)
-  - [Grounded-FastSAM for faster labelling](./FastSAM/)
+  - [Efficient SAM Series for faster labelling](./EfficientSAM/)
+    - [Grounded-FastSAM Demo](./EfficientSAM/grounded_fast_sam.py)
+    - [Grounded-MobileSAM Demo](./EfficientSAM/grounded_mobile_sam.py)
 
 
 ## Preliminary Works
