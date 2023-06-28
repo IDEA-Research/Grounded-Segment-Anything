@@ -58,8 +58,8 @@ The **core idea** behind this project is to **combine the strengths of different
     - [RePaint: Inpainting using Denoising Diffusion Probabilistic Models](./playground/RePaint/)
     - [ImageBind with SAM: Segment with Different Modalities](./playground/ImageBind_SAM/)
   - [Efficient SAM Series for faster labelling](./EfficientSAM/)
-    - [Grounded-FastSAM Demo](./EfficientSAM/grounded_fast_sam.py)
-    - [Grounded-MobileSAM Demo](./EfficientSAM/grounded_mobile_sam.py)
+    - [Grounded-FastSAM Demo](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/main/EfficientSAM#run-grounded-fastsam-demo)
+    - [Grounded-MobileSAM Demo](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/main/EfficientSAM#run-grounded-mobilesam-demo)
 
 
 ## Preliminary Works
