@@ -57,7 +57,7 @@ The **core idea** behind this project is to **combine the strengths of different
     - [LaMa: Resolution-robust Large Mask Inpainting with Fourier Convolutions](./playground/LaMa/)
     - [RePaint: Inpainting using Denoising Diffusion Probabilistic Models](./playground/RePaint/)
     - [ImageBind with SAM: Segment with Different Modalities](./playground/ImageBind_SAM/)
-  - [Grounded-FastSAM for faster labelling](./FastSAM/)
+  - [Efficient SAM Series for faster labelling](./EfficientSAM/)
 
 
 ## Preliminary Works

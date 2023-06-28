@@ -1,4 +1,4 @@
-## Grounded-FastSAM
+## Efficient SAM Series
 
 Combining [Grounding-DINO](https://github.com/IDEA-Research/GroundingDINO) and [Fast-SAM](https://github.com/CASIA-IVA-Lab/FastSAM) for faster zero-shot detect and segment anything.
 
@@ -27,7 +27,7 @@ Combining [Grounding-DINO](https://github.com/IDEA-Research/GroundingDINO) and [
 ```bash
 cd Grounded-Segment-Anything
 
-python FastSAM/grounded_fast_sam.py --model_path "./FastSAM-x.pt" --img_path "assets/demo4.jpg" --text "the black dog." --output "./output/"
+python EfficientSAM/grounded_fast_sam.py --model_path "./FastSAM-x.pt" --img_path "assets/demo4.jpg" --text "the black dog." --output "./output/"
 ```
 
 - And the results will be saved in `./output/` as:
