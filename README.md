@@ -638,7 +638,7 @@ python chatbot.py
 ### :man_dancing: Run Grounded-Segment-Anything + OSX Demo
 
 <p align="middle">
-<img src="assets/osx/grounded_sam_osx_demo.gif">
+<img src="assets/osx/grouned_sam_osx_demo.gif">
 <br>
 </p>
 
