@@ -6,7 +6,7 @@
 
 We plan to create a very interesting demo by combining [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) and [Segment Anything](https://github.com/facebookresearch/segment-anything) which aims to detect and segment Anything with text inputs! And we will continue to improve it and create more interesting demos based on this foundation.
 
-We are very willing to **help everyone share and promote new projects** based on Segment-Anything, Please checkout here for more amazing demos and works in the community: [Highlight Extension Projects](#highlighted-projects). You can submit a new issue (with `project` tag) or a new pull request to add new project's links. 
+We are very willing to **help everyone share and promote new projects** based on Segment-Anything, Please check out here for more amazing demos and works in the community: [Highlight Extension Projects](#highlighted-projects). You can submit a new issue (with `project` tag) or a new pull request to add new project's links. 
 
 ![](./assets/grounded_sam_new_demo_image.png)
 
@@ -121,7 +121,7 @@ We also list some awesome segment-anything extension projects here you may find 
 - [Caption-Anything: Generates Descriptive Captions for Any Object within an Image](https://github.com/ttengwang/Caption-Anything) by Teng Wang
 - [Segment-Anything-3D: Transferring Segmentation Information of 2D Images to 3D Space](https://github.com/Pointcept/SegmentAnything3D) by Yunhan Yang
 - [Expediting SAM without Fine-tuning](https://github.com/Expedit-LargeScale-Vision-Transformer/Expedit-SAM) by Weicong Liang and Yuhui Yuan
-- [Semantic Segment Anything: Providing Rich Sementic Category Annotations for SAM](https://github.com/fudan-zvg/Semantic-Segment-Anything) by Jiaqi Chen and Zeyu Yang and Li Zhang
+- [Semantic Segment Anything: Providing Rich Semantic Category Annotations for SAM](https://github.com/fudan-zvg/Semantic-Segment-Anything) by Jiaqi Chen and Zeyu Yang and Li Zhang
 - [Enhance Everything: Combining SAM with Image Restoration and Enhancement Tasks](https://github.com/lixinustc/Enhance-Anything) by Xin Li
 - [DragGAN](https://github.com/Zeqiang-Lai/DragGAN) by Shanghai AI Lab.
 
@@ -240,8 +240,8 @@ import cv2
 model = load_model("GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py", "./groundingdino_swint_ogc.pth")
 IMAGE_PATH = "assets/demo1.jpg"
 TEXT_PROMPT = "bear."
-BOX_TRESHOLD = 0.35
-TEXT_TRESHOLD = 0.25
+BOX_THRESHOLD = 0.35
+TEXT_THRESHOLD = 0.25
 
 image_source, image = load_image(IMAGE_PATH)
 
@@ -249,8 +249,8 @@ boxes, logits, phrases = predict(
     model=model,
     image=image,
     caption=TEXT_PROMPT,
-    box_threshold=BOX_TRESHOLD,
-    text_threshold=TEXT_TRESHOLD
+    box_threshold=BOX_THRESHOLD,
+    text_threshold=TEXT_THRESHOLD
 )
 
 annotated_frame = annotate(image_source=image_source, boxes=boxes, logits=logits, phrases=phrases)
@@ -261,7 +261,7 @@ cv2.imwrite("annotated_image.jpg", annotated_frame)
 <br>
 
 **Tips**
-- If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest seperating each name with `.` . An example: `cat . dog . chair .`
+- If you want to detect multiple objects in one sentence with [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO), we suggest separating each name with `.` . An example: `cat . dog . chair .`
 
 **Step 3: Check the annotated image**
 
@@ -320,7 +320,7 @@ The annotated results will be saved in `./outputs` as follows
 
 </div>
 
-**Step 3: Runing grounded-sam demo with sam-hq**
+**Step 3: Running grounded-sam demo with sam-hq**
 - Download the demo image
 ```bash
 wget https://github.com/IDEA-Research/detrex-storage/releases/download/grounded-sam-storage/sam_hq_demo_image.png
@@ -354,7 +354,7 @@ The annotated results will be saved in `./outputs` as follows
 
 </div>
 
-**Step 4: Runing the updated grounded-sam demo (optional)**
+**Step 4: Running the updated grounded-sam demo (optional)**
 
 Note that this demo is almost same as the original demo, but **with more elegant code**.
 
@@ -429,7 +429,7 @@ We support 6 tasks in the local Gradio APP：
 python gradio_app.py
 ```
 
-- The gradio_app visualization as follow:
+- The gradio_app visualization as follows:
 
 ![](./assets/gradio_demo.png)
 
@@ -463,7 +463,7 @@ wget https://huggingface.co/spaces/xinyu1205/Tag2Text/resolve/main/ram_swin_larg
 wget https://huggingface.co/spaces/xinyu1205/Tag2Text/resolve/main/tag2text_swin_14m.pth
 ```
 
-**Step 2: Runing the demo with RAM**
+**Step 2: Running the demo with RAM**
 ```bash
 export CUDA_VISIBLE_DEVICES=0
 python automatic_label_ram_demo.py \
@@ -480,7 +480,7 @@ python automatic_label_ram_demo.py \
 ```
 
 
-**Step 2: Or Runing the demo with Tag2Text**
+**Step 2: Or Running the demo with Tag2Text**
 ```bash
 export CUDA_VISIBLE_DEVICES=0
 python automatic_label_tag2text_demo.py \
@@ -617,7 +617,7 @@ python grounded_sam_whisper_inpainting_demo.py \
 https://user-images.githubusercontent.com/24236723/231955561-2ae4ec1a-c75f-4cc5-9b7b-517aa1432123.mp4
 
 Following [Visual ChatGPT](https://github.com/microsoft/visual-chatgpt), we add a ChatBot for our project. Currently, it supports:
-1. "Descripe the image."
+1. "Describe the image."
 2. "Detect the dog (and the cat) in the image."
 3. "Segment anything in the image."
 4. "Segment the dog (and the cat) in the image."
@@ -638,7 +638,7 @@ python chatbot.py
 ### :man_dancing: Run Grounded-Segment-Anything + OSX Demo
 
 <p align="middle">
-<img src="assets/osx/grouned_sam_osx_demo.gif">
+<img src="assets/osx/grounded_sam_osx_demo.gif">
 <br>
 </p>
 
@@ -663,11 +663,11 @@ python grounded_sam_osx_demo.py \
   --device "cuda"
 ```
 
-- The model prediction visualization will be saved in `output_dir` as follow:
+- The model prediction visualization will be saved in `output_dir` as follows:
 
 <img src="assets/osx/grounded_sam_osx_output.jpg" style="zoom: 49%;" />
 
-- We also support promptable 3D whole-body mesh recovery. For example, you can track someone with with a text prompt  and estimate his 3D pose and shape :
+- We also support promptable 3D whole-body mesh recovery. For example, you can track someone with a text prompt  and estimate his 3D pose and shape :
 
 | ![space-1.jpg](assets/osx/grounded_sam_osx_output1.jpg) |
 | :---------------------------------------------------: |
