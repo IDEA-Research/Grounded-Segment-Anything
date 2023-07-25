@@ -10,6 +10,7 @@ We're going to combine [Grounding-DINO](https://github.com/IDEA-Research/Groundi
 - [Efficient SAM Series](#efficient-sams)
 - [Run Grounded-FastSAM Demo](#run-grounded-fastsam-demo)
 - [Run Grounded-MobileSAM Demo](#run-grounded-mobilesam-demo)
+- [Run Grounded-LightHQSAM Demo](#run-grounded-light-hqsam-demo)
 
 
 ### Installation
@@ -28,7 +29,7 @@ Here's the list of Efficient SAM variants:
 |:----:|:----:|:----:|:----:|
 | [FastSAM](https://arxiv.org/pdf/2306.12156.pdf) | ![](https://github.com/CASIA-IVA-Lab/FastSAM/blob/main/assets/Overview.png) | The Fast Segment Anything Model(FastSAM) is a CNN Segment Anything Model trained by only 2% of the SA-1B dataset published by SAM authors. The FastSAM achieve a comparable performance with the SAM method at 50× higher run-time speed. | [[Github](https://github.com/CASIA-IVA-Lab/FastSAM)]  [[Demo](https://huggingface.co/spaces/An-619/FastSAM)] |
 | [MobileSAM](https://arxiv.org/pdf/2306.14289.pdf) | ![](https://github.com/ChaoningZhang/MobileSAM/blob/master/assets/model_diagram.jpg?raw=true) | MobileSAM performs on par with the original SAM (at least visually) and keeps exactly the same pipeline as the original SAM except for a change on the image encoder. Specifically, we replace the original heavyweight ViT-H encoder (632M) with a much smaller Tiny-ViT (5M). On a single GPU, MobileSAM runs around 12ms per image: 8ms on the image encoder and 4ms on the mask decoder. | [[Github](https://github.com/ChaoningZhang/MobileSAM)] |
-
+| [Light-HQSAM](https://arxiv.org/pdf/2306.01567.pdf) | ![](https://github.com/SysCV/sam-hq/blob/main/figs/sam-hf-framework.png?raw=true) | Light HQ-SAM is based on the tiny vit image encoder provided by MobileSAM. We design a learnable High-Quality Output Token, which is injected into SAM's mask decoder and is responsible for predicting the high-quality mask. Instead of only applying it on mask-decoder features, we first fuse them with ViT features for improved mask details. Refer to [Light HQ-SAM vs. MobileSAM](https://github.com/SysCV/sam-hq#light-hq-sam-vs-mobilesam-on-coco) for more details. | [[Github](https://github.com/SysCV/sam-hq)] |
 
 </div>
 
@@ -78,5 +79,28 @@ python EfficientSAM/grounded_mobile_sam.py
 | Input | Text | Output |
 |:---:|:---:|:---:|
 |![](/assets/demo2.jpg) | "The running dog" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/mobile_sam/grounded_mobile_sam_annotated_image.jpg?raw=true) |
+
+</div>
+
+
+### Run Grounded-Light-HQSAM Demo
+
+- Firstly, download the pretrained Light-HQSAM weight [here](https://github.com/SysCV/sam-hq#model-checkpoints)
+
+- Run the demo with the following script:
+
+```bash
+cd Grounded-Segment-Anything
+
+python EfficientSAM/grounded_light_hqsam.py
+```
+
+- And the result will be saved as `./gronded_light_hqsam_anontated_image.jpg` as:
+
+<div style="text-align: center">
+
+| Input | Text | Output |
+|:---:|:---:|:---:|
+|![](/EfficientSAM/LightHQSAM/example_light_hqsam.png) | "Bench" | ![](/EfficientSAM/LightHQSAM/grounded_light_hqsam_annotated_image.jpg) |
 
 </div>
