@@ -26,6 +26,9 @@ def parse_args():
     parser.add_argument(
         "--OUT_FILE_SEG", type=str, default="grounded_mobile_sam_annotated_image.jpg", help="the output filename"
     )
+    parser.add_argument(
+        "--OUT_FILE_BIN_MASK", type=str, default="grounded_mobile_sam_bin_mask.jpg", help="the output filename"
+    )
     parser.add_argument("--BOX_THRESHOLD", type=float, default=0.25, help="")
     parser.add_argument("--TEXT_THRESHOLD", type=float, default=0.25, help="")
     parser.add_argument("--NMS_THRESHOLD", type=float, default=0.8, help="")
@@ -121,7 +124,9 @@ def main(args):
       image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB),
       xyxy=detections.xyxy
   )
-  print(type(detections.mask))
+
+  binary_mask = detections.mask[0].astype(np.uint8)*255
+  cv2.imwrite(args.OUT_FILE_BIN_MASK, binary_mask)
 
   # annotate image with detections
   box_annotator = sv.BoxAnnotator()
