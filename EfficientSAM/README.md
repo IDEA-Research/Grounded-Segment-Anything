@@ -69,7 +69,7 @@ python EfficientSAM/grounded_fast_sam.py --model_path "./FastSAM-x.pt" --img_pat
 ```bash
 cd Grounded-Segment-Anything
 
-python EfficientSAM/grounded_mobile_sam.py
+python EfficientSAM/grounded_mobile_sam.py --MOBILE_SAM_CHECKPOINT_PATH "./EfficientSAM/mobile_sam.pt" --SOURCE_IMAGE_PATH "./assets/demo2.jpg" --CAPTION "the running dog"
 ```
 
 - And the result will be saved as `./gronded_mobile_sam_anontated_image.jpg` as:
