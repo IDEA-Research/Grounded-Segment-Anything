@@ -20,3 +20,4 @@ transformers
 yapf
 nltk
 fairscale
+litellm
