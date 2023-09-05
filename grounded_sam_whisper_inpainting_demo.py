@@ -5,6 +5,7 @@ from warnings import warn
 import numpy as np
 import torch
 from PIL import Image, ImageDraw, ImageFont
+import litellm
 
 # Grounding DINO
 import GroundingDINO.groundingdino.datasets.transforms as T
@@ -144,7 +145,7 @@ def filter_prompts_with_chatgpt(caption, max_tokens=100, model="gpt-3.5-turbo"):
                        f'Given caption: {caption}.'
         }
     ]
-    response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
+    response = litellm.completion(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
     reply = response['choices'][0]['message']['content']
     try:
         det_prompt, inpaint_prompt = reply.split('\n')[0].split(':')[-1].strip(), reply.split('\n')[1].split(':')[-1].strip()
