@@ -5,6 +5,7 @@ from scipy import ndimage
 
 import gradio as gr
 import argparse
+import litellm
 
 import numpy as np
 import torch
@@ -73,7 +74,7 @@ def generate_tags(caption, split=',', max_tokens=100, model="gpt-3.5-turbo", ope
                        f'Caption: {caption}.'
         }
     ]
-    response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
+    response = litellm.completion(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
     reply = response['choices'][0]['message']['content']
     # sometimes return with "noun: xxx, xxx, xxx"
     tags = reply.split(':')[-1].strip()

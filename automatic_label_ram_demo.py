@@ -6,6 +6,7 @@ import json
 import torch
 import torchvision
 from PIL import Image
+import litellm
 
 # Grounding DINO
 import GroundingDINO.groundingdino.datasets.transforms as T
@@ -67,7 +68,7 @@ def check_tags_chinese(tags_chinese, pred_phrases, max_tokens=100, model="gpt-3.
                            'Only give the revised tags_chinese: '
             }
         ]
-        response = openai.ChatCompletion.create(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
+        response = litellm.completion(model=model, messages=prompt, temperature=0.6, max_tokens=max_tokens)
         reply = response['choices'][0]['message']['content']
         # sometimes return with "tags_chinese: xxx, xxx, xxx"
         tags_chinese = reply.split(':')[-1].strip()
