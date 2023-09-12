@@ -16,7 +16,7 @@ from GroundingDINO.groundingdino.util.utils import clean_state_dict, get_phrases
 
 # segment anything
 from segment_anything import (
-    build_sam,
+    sam_model_registry,
     build_sam_hq,
     SamPredictor
 )
@@ -140,6 +140,9 @@ if __name__ == "__main__":
         "--grounded_checkpoint", type=str, required=True, help="path to checkpoint file"
     )
     parser.add_argument(
+        "--sam_version", type=str, default="vit_h", required=False, help="SAM ViT version: vit_b / vit_l / vit_h"
+    )
+    parser.add_argument(
         "--sam_checkpoint", type=str, required=False, help="path to sam checkpoint file"
     )
     parser.add_argument(
@@ -163,6 +166,7 @@ if __name__ == "__main__":
     # cfg
     config_file = args.config  # change the path of the model config file
     grounded_checkpoint = args.grounded_checkpoint  # change the path of the model
+    sam_version = args.sam_version
     sam_checkpoint = args.sam_checkpoint
     sam_hq_checkpoint = args.sam_hq_checkpoint
     use_sam_hq = args.use_sam_hq
@@ -192,7 +196,7 @@ if __name__ == "__main__":
     if use_sam_hq:
         predictor = SamPredictor(build_sam_hq(checkpoint=sam_hq_checkpoint).to(device))
     else:
-        predictor = SamPredictor(build_sam(checkpoint=sam_checkpoint).to(device))
+        predictor = SamPredictor(sam_model_registry[sam_version](checkpoint=sam_checkpoint).to(device))
     image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     predictor.set_image(image)
