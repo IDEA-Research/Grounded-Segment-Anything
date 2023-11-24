@@ -25,10 +25,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Recognize Anything Model & Tag2Text
-import sys
-sys.path.append('Tag2Text')
-from Tag2Text.models import tag2text
-from Tag2Text import inference_ram
+from ram.models import ram
+from ram import inference_ram
 import torchvision.transforms as TS
 
 # ChatGPT or nltk is required when using tags_chineses
@@ -245,7 +243,7 @@ if __name__ == "__main__":
                 ])
     
     # load model
-    ram_model = tag2text.ram(pretrained=ram_checkpoint,
+    ram_model = ram(pretrained=ram_checkpoint,
                                         image_size=384,
                                         vit='swin_l')
     # threshold for tagging
@@ -257,7 +255,7 @@ if __name__ == "__main__":
                     (384, 384))
     raw_image  = transform(raw_image).unsqueeze(0).to(device)
 
-    res = inference_ram.inference(raw_image , ram_model)
+    res = inference_ram(raw_image , ram_model)
 
     # Currently ", " is better for detecting single tags
     # while ". " is a little worse in some case
