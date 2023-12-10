@@ -62,7 +62,7 @@ The **core idea** behind this project is to **combine the strengths of different
     - [LaMa: Resolution-robust Large Mask Inpainting with Fourier Convolutions](./playground/LaMa/)
     - [RePaint: Inpainting using Denoising Diffusion Probabilistic Models](./playground/RePaint/)
     - [ImageBind with SAM: Segment with Different Modalities](./playground/ImageBind_SAM/)
-  - [Efficient SAM Series for faster labelling](./EfficientSAM/)
+  - [Efficient SAM Series for Faster Annotation](./EfficientSAM/)
     - [Grounded-FastSAM Demo](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/main/EfficientSAM#run-grounded-fastsam-demo)
     - [Grounded-MobileSAM Demo](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/main/EfficientSAM#run-grounded-mobilesam-demo)
     - [Grounded-Light-HQSAM Demo](https://github.com/IDEA-Research/Grounded-Segment-Anything/tree/main/EfficientSAM#run-grounded-light-hqsam-demo)
