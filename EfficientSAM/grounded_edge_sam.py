@@ -19,7 +19,7 @@ GROUNDING_DINO_CHECKPOINT_PATH = "./groundingdino_swint_ogc.pth"
 grounding_dino_model = Model(model_config_path=GROUNDING_DINO_CONFIG_PATH, model_checkpoint_path=GROUNDING_DINO_CHECKPOINT_PATH)
 
 # Building MobileSAM predictor
-EdgeSAM_CHECKPOINT_PATH = "./EfficientSAM/weights/edge_sam.pth"
+EdgeSAM_CHECKPOINT_PATH = "./EfficientSAM/edge_sam_3x.pth"
 edge_sam = build_edge_sam(checkpoint=EdgeSAM_CHECKPOINT_PATH)
 edge_sam.to(device=DEVICE)
 

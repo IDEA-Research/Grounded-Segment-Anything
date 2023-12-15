@@ -19,6 +19,7 @@ We're going to combine [Grounding-DINO](https://github.com/IDEA-Research/Groundi
 
 - Install [Fast-SAM](https://github.com/CASIA-IVA-Lab/FastSAM#installation)
 
+- Note that we may use the sam image as the demo image in order to compare the inference results of different efficient-sam variants.
 
 ### Efficient SAMs
 Here's the list of Efficient SAM variants:
