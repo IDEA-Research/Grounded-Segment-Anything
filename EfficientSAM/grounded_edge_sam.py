@@ -104,4 +104,4 @@ annotated_image = mask_annotator.annotate(scene=image.copy(), detections=detecti
 annotated_image = box_annotator.annotate(scene=annotated_image, detections=detections, labels=labels)
 
 # save the annotated grounded-sam image
-cv2.imwrite("EfficientSAM/LightHQSAM/grounded_edge_sam_annotated_image.jpg", annotated_image)
+cv2.imwrite("EfficientSAM/grounded_edge_sam_annotated_image.jpg", annotated_image)

@@ -12,6 +12,7 @@ We're going to combine [Grounding-DINO](https://github.com/IDEA-Research/Groundi
 - [Run Grounded-MobileSAM Demo](#run-grounded-mobilesam-demo)
 - [Run Grounded-LightHQSAM Demo](#run-grounded-light-hqsam-demo)
 - [Run Grounded-EfficientSAM Demo](#run-grounded-efficient-sam-demo)
+- [Run Grounded-EdgeSAM Demo]()
 
 
 ### Installation
@@ -81,7 +82,7 @@ python EfficientSAM/grounded_mobile_sam.py --MOBILE_SAM_CHECKPOINT_PATH "./Effic
 
 | Input | Text | Output |
 |:---:|:---:|:---:|
-|![](/assets/demo2.jpg) | "The running dog" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/mobile_sam/grounded_mobile_sam_annotated_image.jpg?raw=true) |
+|![](/assets/demo2.jpg) | "the running dog" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/mobile_sam/grounded_mobile_sam_annotated_image.jpg?raw=true) |
 
 </div>
 
@@ -104,7 +105,7 @@ python EfficientSAM/grounded_light_hqsam.py
 
 | Input | Text | Output |
 |:---:|:---:|:---:|
-|![](/EfficientSAM/LightHQSAM/example_light_hqsam.png) | "Bench" | ![](/EfficientSAM/LightHQSAM/grounded_light_hqsam_annotated_image.jpg) |
+|![](/EfficientSAM/LightHQSAM/example_light_hqsam.png) | "bench" | ![](/EfficientSAM/LightHQSAM/grounded_light_hqsam_annotated_image.jpg) |
 
 </div>
 
@@ -127,6 +128,36 @@ python EfficientSAM/grounded_efficient_sam.py
 
 | Input | Text | Output |
 |:---:|:---:|:---:|
-|![](/EfficientSAM/LightHQSAM/example_light_hqsam.png) | "Bench" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/efficient_sam/grounded_efficient_sam_annotated_image.jpg?raw=true) |
+|![](/EfficientSAM/LightHQSAM/example_light_hqsam.png) | "bench" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/efficient_sam/grounded_efficient_sam_annotated_image.jpg?raw=true) |
 
 </div>
+
+
+### Run Grounded-Edge-SAM Demo
+
+- Download the pretrained [Edge-SAM](https://github.com/chongzhou96/EdgeSAM) checkpoint follow the [official instruction](https://github.com/chongzhou96/EdgeSAM?tab=readme-ov-file#usage-) as:
+
+```bash
+cd Grounded-Segment-Anything
+wget -P EfficientSAM/ https://huggingface.co/spaces/chongzhou/EdgeSAM/resolve/main/weights/edge_sam.pth
+wget -P EfficientSAM/ https://huggingface.co/spaces/chongzhou/EdgeSAM/resolve/main/weights/edge_sam_3x.pth
+```
+
+- Run the demo with the following script:
+
+```bash
+cd Grounded-Segment-Anything
+
+python EfficientSAM/grounded_edge_sam.py
+```
+
+- And the result will be saved as `./gronded_edge_sam_anontated_image.jpg` as:
+
+<div style="text-align: center">
+
+| Input | Text | Output |
+|:---:|:---:|:---:|
+|![](/EfficientSAM/LightHQSAM/example_light_hqsam.png) | "bench" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/edge_sam/grounded_edge_sam_annotated_image.jpg?raw=true) |
+
+</div>
+
