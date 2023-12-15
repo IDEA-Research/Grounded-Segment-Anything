@@ -11,6 +11,7 @@ We're going to combine [Grounding-DINO](https://github.com/IDEA-Research/Groundi
 - [Run Grounded-FastSAM Demo](#run-grounded-fastsam-demo)
 - [Run Grounded-MobileSAM Demo](#run-grounded-mobilesam-demo)
 - [Run Grounded-LightHQSAM Demo](#run-grounded-light-hqsam-demo)
+- [Run Grounded-EfficientSAM Demo](#run-grounded-efficient-sam-demo)
 
 
 ### Installation
