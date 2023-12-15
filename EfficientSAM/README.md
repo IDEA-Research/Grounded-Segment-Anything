@@ -12,6 +12,7 @@ We're going to combine [Grounding-DINO](https://github.com/IDEA-Research/Groundi
 - [Run Grounded-MobileSAM Demo](#run-grounded-mobilesam-demo)
 - [Run Grounded-LightHQSAM Demo](#run-grounded-light-hqsam-demo)
 - [Run Grounded-EfficientSAM Demo](#run-grounded-efficient-sam-demo)
+- [Run Grounded-EdgeSAM Demo](#run-grounded-edge-sam-demo)
 
 
 ### Installation
@@ -20,6 +21,7 @@ We're going to combine [Grounding-DINO](https://github.com/IDEA-Research/Groundi
 
 - Install [Fast-SAM](https://github.com/CASIA-IVA-Lab/FastSAM#installation)
 
+- Note that we may use the sam image as the demo image in order to compare the inference results of different efficient-sam variants.
 
 ### Efficient SAMs
 Here's the list of Efficient SAM variants:
@@ -32,6 +34,7 @@ Here's the list of Efficient SAM variants:
 | [MobileSAM](https://arxiv.org/pdf/2306.14289.pdf) | ![](https://github.com/ChaoningZhang/MobileSAM/blob/master/assets/model_diagram.jpg?raw=true) | MobileSAM performs on par with the original SAM (at least visually) and keeps exactly the same pipeline as the original SAM except for a change on the image encoder. Specifically, we replace the original heavyweight ViT-H encoder (632M) with a much smaller Tiny-ViT (5M). On a single GPU, MobileSAM runs around 12ms per image: 8ms on the image encoder and 4ms on the mask decoder. | [[Github](https://github.com/ChaoningZhang/MobileSAM)] |
 | [Light-HQSAM](https://arxiv.org/pdf/2306.01567.pdf) | ![](https://github.com/SysCV/sam-hq/blob/main/figs/sam-hf-framework.png?raw=true) | Light HQ-SAM is based on the tiny vit image encoder provided by MobileSAM. We design a learnable High-Quality Output Token, which is injected into SAM's mask decoder and is responsible for predicting the high-quality mask. Instead of only applying it on mask-decoder features, we first fuse them with ViT features for improved mask details. Refer to [Light HQ-SAM vs. MobileSAM](https://github.com/SysCV/sam-hq#light-hq-sam-vs-mobilesam-on-coco) for more details. | [[Github](https://github.com/SysCV/sam-hq)] |
 | [Efficient-SAM](https://github.com/yformer/EfficientSAM) | ![](https://yformer.github.io/efficient-sam/EfficientSAM_files/overview.png) |Segment Anything Model (SAM) has emerged as a powerful tool for numerous vision applications. However, the huge computation cost of SAM model has limited its applications to wider real-world applications. To address this limitation, we propose EfficientSAMs, light-weight SAM models that exhibit decent performance with largely reduced complexity. Our idea is based on leveraging masked image pretraining, SAMI, which learns to reconstruct features from SAM image encoder for effective visual representation learning. Further, we take SAMI-pretrained light-weight image encoders and mask decoder to build EfficientSAMs, and finetune the models on SA-1B for segment anything task. Refer to [EfficientSAM arXiv](https://arxiv.org/pdf/2312.00863.pdf) for more details.| [[Github](https://github.com/yformer/EfficientSAM)] |
+| [Edge-SAM](https://github.com/chongzhou96/EdgeSAM) | ![](https://www.mmlab-ntu.com/project/edgesam/img/arch.png) | EdgeSAM involves distilling the original ViT-based SAM image encoder into a purely CNN-based architecture, better suited for edge devices. We carefully benchmark various distillation strategies and demonstrate that task-agnostic encoder distillation fails to capture the full knowledge embodied in SAM. Refer to [Edge-SAM arXiv](https://arxiv.org/abs/2312.06660) for more details. | [[Github](https://github.com/chongzhou96/EdgeSAM)]
 
 </div>
 
@@ -80,7 +83,7 @@ python EfficientSAM/grounded_mobile_sam.py --MOBILE_SAM_CHECKPOINT_PATH "./Effic
 
 | Input | Text | Output |
 |:---:|:---:|:---:|
-|![](/assets/demo2.jpg) | "The running dog" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/mobile_sam/grounded_mobile_sam_annotated_image.jpg?raw=true) |
+|![](/assets/demo2.jpg) | "the running dog" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/mobile_sam/grounded_mobile_sam_annotated_image.jpg?raw=true) |
 
 </div>
 
@@ -103,7 +106,7 @@ python EfficientSAM/grounded_light_hqsam.py
 
 | Input | Text | Output |
 |:---:|:---:|:---:|
-|![](/EfficientSAM/LightHQSAM/example_light_hqsam.png) | "Bench" | ![](/EfficientSAM/LightHQSAM/grounded_light_hqsam_annotated_image.jpg) |
+|![](/EfficientSAM/LightHQSAM/example_light_hqsam.png) | "bench" | ![](/EfficientSAM/LightHQSAM/grounded_light_hqsam_annotated_image.jpg) |
 
 </div>
 
@@ -126,6 +129,36 @@ python EfficientSAM/grounded_efficient_sam.py
 
 | Input | Text | Output |
 |:---:|:---:|:---:|
-|![](/EfficientSAM/LightHQSAM/example_light_hqsam.png) | "Bench" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/efficient_sam/grounded_efficient_sam_annotated_image.jpg?raw=true) |
+|![](/EfficientSAM/LightHQSAM/example_light_hqsam.png) | "bench" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/efficient_sam/grounded_efficient_sam_annotated_image.jpg?raw=true) |
 
 </div>
+
+
+### Run Grounded-Edge-SAM Demo
+
+- Download the pretrained [Edge-SAM](https://github.com/chongzhou96/EdgeSAM) checkpoint follow the [official instruction](https://github.com/chongzhou96/EdgeSAM?tab=readme-ov-file#usage-) as:
+
+```bash
+cd Grounded-Segment-Anything
+wget -P EfficientSAM/ https://huggingface.co/spaces/chongzhou/EdgeSAM/resolve/main/weights/edge_sam.pth
+wget -P EfficientSAM/ https://huggingface.co/spaces/chongzhou/EdgeSAM/resolve/main/weights/edge_sam_3x.pth
+```
+
+- Run the demo with the following script:
+
+```bash
+cd Grounded-Segment-Anything
+
+python EfficientSAM/grounded_edge_sam.py
+```
+
+- And the result will be saved as `./gronded_edge_sam_anontated_image.jpg` as:
+
+<div style="text-align: center">
+
+| Input | Text | Output |
+|:---:|:---:|:---:|
+|![](/EfficientSAM/LightHQSAM/example_light_hqsam.png) | "bench" | ![](https://github.com/IDEA-Research/detrex-storage/blob/main/assets/grounded_sam/edge_sam/grounded_edge_sam_annotated_image.jpg?raw=true) |
+
+</div>
+

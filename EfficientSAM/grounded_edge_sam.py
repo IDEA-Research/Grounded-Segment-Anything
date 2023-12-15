@@ -7,7 +7,7 @@ import torchvision
 
 from groundingdino.util.inference import Model
 from segment_anything import SamPredictor
-from LightHQSAM.setup_light_hqsam import setup_model
+from EdgeSAM.setup_edge_sam import build_edge_sam
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -19,13 +19,11 @@ GROUNDING_DINO_CHECKPOINT_PATH = "./groundingdino_swint_ogc.pth"
 grounding_dino_model = Model(model_config_path=GROUNDING_DINO_CONFIG_PATH, model_checkpoint_path=GROUNDING_DINO_CHECKPOINT_PATH)
 
 # Building MobileSAM predictor
-HQSAM_CHECKPOINT_PATH = "./EfficientSAM/sam_hq_vit_tiny.pth"
-checkpoint = torch.load(HQSAM_CHECKPOINT_PATH)
-light_hqsam = setup_model()
-light_hqsam.load_state_dict(checkpoint, strict=True)
-light_hqsam.to(device=DEVICE)
+EdgeSAM_CHECKPOINT_PATH = "./EfficientSAM/edge_sam_3x.pth"
+edge_sam = build_edge_sam(checkpoint=EdgeSAM_CHECKPOINT_PATH)
+edge_sam.to(device=DEVICE)
 
-sam_predictor = SamPredictor(light_hqsam)
+sam_predictor = SamPredictor(edge_sam)
 
 
 # Predict classes and hyper-param for GroundingDINO
@@ -106,4 +104,4 @@ annotated_image = mask_annotator.annotate(scene=image.copy(), detections=detecti
 annotated_image = box_annotator.annotate(scene=annotated_image, detections=detections, labels=labels)
 
 # save the annotated grounded-sam image
-cv2.imwrite("EfficientSAM/LightHQSAM/grounded_light_hqsam_annotated_image.jpg", annotated_image)
+cv2.imwrite("EfficientSAM/grounded_edge_sam_annotated_image.jpg", annotated_image)
