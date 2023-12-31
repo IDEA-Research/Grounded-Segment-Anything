@@ -43,7 +43,7 @@ detections = grounding_dino_model.predict_with_classes(
     image=image,
     classes=CLASSES,
     box_threshold=BOX_THRESHOLD,
-    text_threshold=BOX_THRESHOLD
+    text_threshold=TEXT_THRESHOLD
 )
 
 # annotate image with detections
