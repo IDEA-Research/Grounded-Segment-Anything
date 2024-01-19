@@ -1,18 +1,22 @@
 import argparse
 import os
-import copy
+import sys
 
 import numpy as np
 import json
 import torch
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
+
+sys.path.append(os.path.join(os.getcwd(), "GroundingDINO"))
+sys.path.append(os.path.join(os.getcwd(), "segment_anything"))
+
 
 # Grounding DINO
 import GroundingDINO.groundingdino.datasets.transforms as T
 from GroundingDINO.groundingdino.models import build_model
-from GroundingDINO.groundingdino.util import box_ops
 from GroundingDINO.groundingdino.util.slconfig import SLConfig
 from GroundingDINO.groundingdino.util.utils import clean_state_dict, get_phrases_from_posmap
+
 
 # segment anything
 from segment_anything import (
