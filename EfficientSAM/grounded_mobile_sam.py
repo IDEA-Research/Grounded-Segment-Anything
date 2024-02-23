@@ -82,7 +82,7 @@ def main(args):
   box_annotator = sv.BoxAnnotator()
   labels = [
       f"{CLASSES[class_id]} {confidence:0.2f}" 
-      for _, _, confidence, class_id, _ 
+      for _, _, confidence, class_id, _, _ 
       in detections]
   annotated_frame = box_annotator.annotate(scene=image.copy(), detections=detections, labels=labels)
 
@@ -133,7 +133,7 @@ def main(args):
   mask_annotator = sv.MaskAnnotator()
   labels = [
       f"{CLASSES[class_id]} {confidence:0.2f}" 
-      for _, _, confidence, class_id, _ 
+      for _, _, confidence, class_id, _, _ 
       in detections]
   annotated_image = mask_annotator.annotate(scene=image.copy(), detections=detections)
   annotated_image = box_annotator.annotate(scene=annotated_image, detections=detections, labels=labels)
