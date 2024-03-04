@@ -12,6 +12,8 @@ TEXT_TRESHOLD = 0.25
 
 image_source, image = load_image(IMAGE_PATH)
 model = load_model(CONFIG_PATH, CHECKPOINT_PATH)
+image = image.half()
+model = model.half()
 
 boxes, logits, phrases = predict(
     model=model,

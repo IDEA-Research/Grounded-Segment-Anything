@@ -113,6 +113,7 @@ def gen_encoder_output_proposals(
     # output_memory = output_memory.masked_fill(memory_padding_mask.unsqueeze(-1), float('inf'))
     # output_memory = output_memory.masked_fill(~output_proposals_valid, float('inf'))
 
+    output_proposals = output_proposals.to(output_memory.dtype)
     return output_memory, output_proposals
 
 
@@ -227,6 +228,7 @@ def gen_sineembed_for_position(pos_tensor):
         pos = torch.cat((pos_y, pos_x, pos_w, pos_h), dim=2)
     else:
         raise ValueError("Unknown pos_tensor shape(-1):{}".format(pos_tensor.size(-1)))
+    pos = pos.to(pos_tensor.dtype)
     return pos
 
 
@@ -262,7 +264,7 @@ class ContrastiveEmbed(nn.Module):
         res.masked_fill_(~text_token_mask[:, None, :], float("-inf"))
 
         # padding to max_text_len
-        new_res = torch.full((*res.shape[:-1], self.max_text_len), float("-inf"), device=res.device)
+        new_res = torch.full((*res.shape[:-1], self.max_text_len), float("-inf"), device=res.device, dtype=res.dtype)
         new_res[..., : res.shape[-1]] = res
 
         return new_res
