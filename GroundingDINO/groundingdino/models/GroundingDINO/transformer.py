@@ -247,7 +247,7 @@ class Transformer(nn.Module):
         level_start_index = torch.cat(
             (spatial_shapes.new_zeros((1,)), spatial_shapes.prod(1).cumsum(0)[:-1])
         )
-        valid_ratios = torch.stack([self.get_valid_ratio(m) for m in masks], 1)
+        valid_ratios = torch.stack([self.get_valid_ratio(m) for m in masks], 1).to(src.dtype)
 
         # two stage
         enc_topk_proposals = enc_refpoint_embed = None
@@ -540,6 +540,7 @@ class TransformerEncoder(nn.Module):
                 pos_text = get_sine_pos_embed(
                     position_ids[..., None], num_pos_feats=256, exchange_xy=False
                 )
+            pos_text = pos_text.to(src.dtype)
 
         # main process
         for layer_id, layer in enumerate(self.layers):
