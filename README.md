@@ -181,7 +181,7 @@ python -m pip install -e segment_anything
 Install Grounding DINO:
 
 ```bash
-python -m pip install -e GroundingDINO
+pip install --no-build-isolation -e GroundingDINO
 ```
 
 
