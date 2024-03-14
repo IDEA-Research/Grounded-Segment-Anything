@@ -1,3 +1,4 @@
+# %%
 import cv2
 import numpy as np
 import supervision as sv
@@ -12,11 +13,11 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # GroundingDINO config and checkpoint
 GROUNDING_DINO_CONFIG_PATH = "GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
-GROUNDING_DINO_CHECKPOINT_PATH = "./groundingdino_swint_ogc.pth"
+GROUNDING_DINO_CHECKPOINT_PATH = "/mnt/hanoverdev/models/BiomedSEEM/groundingdino/groundingdino_swint_ogc.pth"
 
 # Segment-Anything checkpoint
-SAM_ENCODER_VERSION = "vit_h"
-SAM_CHECKPOINT_PATH = "./sam_vit_h_4b8939.pth"
+SAM_ENCODER_VERSION = "vit_b"
+SAM_CHECKPOINT_PATH = "/mnt/hanoverdev/models/BiomedSEEM/medsam/medsam_vit_b.pth"
 
 # Building GroundingDINO inference model
 grounding_dino_model = Model(model_config_path=GROUNDING_DINO_CONFIG_PATH, model_checkpoint_path=GROUNDING_DINO_CHECKPOINT_PATH)
@@ -26,10 +27,10 @@ sam = sam_model_registry[SAM_ENCODER_VERSION](checkpoint=SAM_CHECKPOINT_PATH)
 sam.to(device=DEVICE)
 sam_predictor = SamPredictor(sam)
 
-
+# %%
 # Predict classes and hyper-param for GroundingDINO
-SOURCE_IMAGE_PATH = "./assets/demo2.jpg"
-CLASSES = ["The running dog"]
+SOURCE_IMAGE_PATH = '/mnt/hanoverdev/data/BiomedSeg/amos22/CT/test/amos_0333_112_CT_abdomen.png'
+CLASSES = ['aorta in abdominal computed tomography']
 BOX_THRESHOLD = 0.25
 TEXT_THRESHOLD = 0.25
 NMS_THRESHOLD = 0.8
@@ -45,18 +46,18 @@ detections = grounding_dino_model.predict_with_classes(
     box_threshold=BOX_THRESHOLD,
     text_threshold=TEXT_THRESHOLD
 )
-
+# %%
 # annotate image with detections
 box_annotator = sv.BoxAnnotator()
 labels = [
     f"{CLASSES[class_id]} {confidence:0.2f}" 
-    for _, _, confidence, class_id, _ 
+    for _, _, confidence, class_id, _ , _
     in detections]
 annotated_frame = box_annotator.annotate(scene=image.copy(), detections=detections, labels=labels)
 
 # save the annotated grounding dino image
 cv2.imwrite("groundingdino_annotated_image.jpg", annotated_frame)
-
+# %%
 
 # NMS post process
 print(f"Before NMS: {len(detections.xyxy)} boxes")
@@ -98,10 +99,14 @@ box_annotator = sv.BoxAnnotator()
 mask_annotator = sv.MaskAnnotator()
 labels = [
     f"{CLASSES[class_id]} {confidence:0.2f}" 
-    for _, _, confidence, class_id, _ 
+    for _, _, confidence, class_id, _, _
     in detections]
 annotated_image = mask_annotator.annotate(scene=image.copy(), detections=detections)
 annotated_image = box_annotator.annotate(scene=annotated_image, detections=detections, labels=labels)
 
 # save the annotated grounded-sam image
 cv2.imwrite("grounded_sam_annotated_image.jpg", annotated_image)
+
+# %%
+# inference on grounding-dino + medsam
+# save grounding-dino bbox and medsam mask

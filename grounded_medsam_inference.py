@@ -43,7 +43,9 @@ GROUNDING_DINO_CHECKPOINT_PATH = "/mnt/hanoverdev/models/BiomedSEEM/groundingdin
 
 # Segment-Anything checkpoint
 SAM_ENCODER_VERSION = "vit_b"
-SAM_CHECKPOINT_PATH = "/mnt/hanoverdev/models/BiomedSEEM/medsam/medsam_vit_b.pth"
+# SAM_CHECKPOINT_PATH = "/mnt/hanoverdev/models/BiomedSEEM/medsam/medsam_vit_b.pth"
+SAM_CHECKPOINT_PATH = "/mnt/hanoverdev/models/BiomedSEEM/sam/sam_vit_b_01ec64.pth"
+sam_model_name = "medsam" if 'medsam' in SAM_CHECKPOINT_PATH else os.path.basename(SAM_CHECKPOINT_PATH)
 
 # Building GroundingDINO inference model
 grounding_dino_model = Model(model_config_path=GROUNDING_DINO_CONFIG_PATH, model_checkpoint_path=GROUNDING_DINO_CHECKPOINT_PATH, device=DEVICE0)
@@ -58,26 +60,36 @@ BOX_THRESHOLD = 0.25
 TEXT_THRESHOLD = 0.25
 NMS_THRESHOLD = 0.8
 
-task_dir = "/mnt/hanoverdev/data/BiomedSeg/amos22/CT"
-def inference(task_dir, sam_predictor, grounding_dino_model):
-    test_json = os.path.join(task_dir, "test.json")
+def setup(task_dir, is_illegal=False):
+    test_json = os.path.join(task_dir, "test_illegal.json") if is_illegal else os.path.join(task_dir, "test.json")
     test_image_dir = os.path.join(task_dir, "test")
     test_mask_dir = os.path.join(task_dir, "test_mask")
-    output_dir = os.path.join(task_dir, "test_groundingdino_medsam")
+    output_dir = os.path.join(task_dir, f"test_groundingdino_{sam_model_name}")
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    groundedsam_output_dir = os.path.join(output_dir, "anno_groundingdino_medsam")
+    groundedsam_output_dir = os.path.join(output_dir, f"anno_groundingdino_{sam_model_name}")
     grounding_dino_output_dir = os.path.join(output_dir, "anno_groundingdino")
-    mask_output_dir = os.path.join(output_dir, "mask_groundingdino_medsam")
+    mask_output_dir = os.path.join(output_dir, f"mask_groundingdino_{sam_model_name}")
     if not os.path.exists(grounding_dino_output_dir):
         os.makedirs(grounding_dino_output_dir) 
     if not os.path.exists(groundedsam_output_dir):
         os.makedirs(groundedsam_output_dir)
     if not os.path.exists(mask_output_dir):
         os.makedirs(mask_output_dir)
+    return test_json, test_image_dir, test_mask_dir, output_dir, groundedsam_output_dir, grounding_dino_output_dir, mask_output_dir
+
+def inference(task_dir, sam_predictor, grounding_dino_model, run_grounding_dino_sam=True, save_mask=True, is_illegal=False):
+    test_json, test_image_dir, test_mask_dir, output_dir, groundedsam_output_dir, grounding_dino_output_dir, mask_output_dir = setup(task_dir, is_illegal=is_illegal)
     # load test json
-    with open(test_json, "r") as f:
-        test_data = json.load(f)
+    try:
+        with open(test_json, "r") as f:
+            test_data = json.load(f)
+    except:
+        # todo: hack, json loading issue
+        print(f"Error loading {test_json}")
+        with open(test_json.replace("test.json", "test copy.json"), "r") as f:
+            test_data = json.load(f)
+
     annotations = test_data["annotations"]
     # iterate over the test data
     bbox_grounding_dino_json = []
@@ -126,51 +138,74 @@ def inference(task_dir, sam_predictor, grounding_dino_model):
         # cv2.imwrite(grounding_dino_output_image_path.replace(".png", "_best.png"), annotated_frame)
         # save the best box
         bbox_grounding_dino_json.append({
-            "file_name": os.path.basename(mask_path),
+            "file_name": os.path.basename(image_path),
             "mask_file": os.path.basename(mask_path),
             "bbox_gold": gold_box,
-            "bbox_pred": list(detections.xyxy[0]),
-            "sentences": line["sentences"]
+            "bbox_pred": np.array(list(detections.xyxy[0])).tolist(),
+            "sentences": line["sentences"],
+            "class_id": int(detections.class_id[0]),
+            "confidence": float(detections.confidence[0]) # convert to float
         })
-        # medsam segmentation
+       
+        if run_grounding_dino_sam:
         # convert detections to masks
-        detections.mask = segment(
-            sam_predictor=sam_predictor,
-            image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB),
-            xyxy=detections.xyxy
-        )
-        # annotate image with detections
-        mask_annotator = sv.MaskAnnotator()
+            detections.mask = segment(
+                sam_predictor=sam_predictor,
+                image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB),
+                xyxy=detections.xyxy
+            )
+            if save_mask:
+            # annotate image with detections
+                mask_annotator = sv.MaskAnnotator()
 
-        mask_output_path = os.path.join(mask_output_dir, os.path.basename(mask_path))
-        # save mask of black and white
-        mask_image = np.zeros_like(image)
-        mask_image[detections.mask[0]] = 255
-        cv2.imwrite(mask_output_path, mask_image)
-        #
-        # annotated_image = mask_annotator.annotate(scene=image.copy(), detections=detections)
-        # annotated_image = box_annotator.annotate(scene=annotated_image, detections=detections, labels=labels)
-        # groundedsam_output_image_path = os.path.join(groundedsam_output_dir, os.path.basename(mask_path))
-        # cv2.imwrite(groundedsam_output_image_path, annotated_image)
-        # convert mask to binary and calculate dice
-        mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
-        mask = mask > 0
-        dice = dice_binary(detections.mask[0], mask)
-        dice_scores.append({'image': os.path.basename(mask_path), 'dice': dice})
+                mask_output_path = os.path.join(mask_output_dir, os.path.basename(mask_path))
+                # save mask of black and white
+                mask_image = np.zeros_like(image)
+                mask_image[detections.mask[0]] = 255
+                cv2.imwrite(mask_output_path, mask_image)
+            #
+            # annotated_image = mask_annotator.annotate(scene=image.copy(), detections=detections)
+            # annotated_image = box_annotator.annotate(scene=annotated_image, detections=detections, labels=labels)
+            # groundedsam_output_image_path = os.path.join(groundedsam_output_dir, os.path.basename(mask_path))
+            # cv2.imwrite(groundedsam_output_image_path, annotated_image)
+            
+            # convert mask to binary and calculate dice
+            gold_mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
+            gold_mask = gold_mask > 0
+            dice = dice_binary(detections.mask[0], gold_mask)
+            dice_scores.append({'image': os.path.basename(mask_path), 'dice': dice})
 
     # save dice_scores to csv
-    df = pd.DataFrame(dice_scores)
-    df.to_csv(os.path.join(output_dir, "test_groundingdino_medsam_dice.csv"), index=False)
-    # save bbox_grounding_dino_json to json
-    # with open(os.path.join(output_dir, "test_groundingdino_medsam_bbox.json"), "w") as f:
-    #     json.dump(bbox_grounding_dino_json, f)
+    if run_grounding_dino_sam:
+        df = pd.DataFrame(dice_scores)
+        df.to_csv(os.path.join(output_dir, "test_groundingdino_medsam_dice.csv"), index=False)
+  
+    # save box as csv
+    df = pd.DataFrame(bbox_grounding_dino_json)
+    output_file_name = "test_groundingdino_medsam_bbox_illegal.csv" if is_illegal else "test_groundingdino_medsam_bbox.csv"
+    df.to_csv(os.path.join(output_dir, output_file_name), index=False)
 # %%
 if __name__ == "__main__":
     base_dir = "/mnt/hanoverdev/data/BiomedSeg"
-    # tasks = ['ACDC', 'AbdomenCT-1K', 'BreastCancerCellSegmentation', 'BreastUS', 'CAMUS', 'CDD-CESM', 'COVID-QU-Ex', 'CXR_Masks_and_Labels', 'FH-PS-AOP', 'G1020', 'GlaS', 'ISIC', 'LGG', 'LIDC-IDRI', 'MMs', 'NeoPolyp', 'OCT-CME', 'PROMISE12', 'PolypGen', 'QaTa-COV19', 'REFUGE', 'UWaterlooSkinCancer', 'kits23', 'siim-acr-pneumothorax', 'MSD/Task03_Liver', 'MSD/Task06_Lung', 'MSD/Task09_Spleen', 'MSD/Task04_Hippocampus', 'MSD/Task07_Pancreas', 'MSD/Task10_Colon', 'MSD/Task02_Heart', 'MSD/Task05_Prostate', 'MSD/Task08_HepaticVessel', 'Radiography/COVID', 'Radiography/Lung_Opacity', 'Radiography/Normal', 'Radiography/Viral_Pneumonia', 'amos22/CT', 'amos22/MRI', 'PanNuke']
-    tasks = ['Radiography/Normal', 'Radiography/Viral_Pneumonia', 'amos22/CT', 'amos22/MRI', 'PanNuke']
+    tasks = ['ACDC', 'AbdomenCT-1K', 'BreastCancerCellSegmentation', 'BreastUS', 'CAMUS', 'CDD-CESM', 'COVID-QU-Ex', 'CXR_Masks_and_Labels', 'FH-PS-AOP', 'G1020', 'GlaS', 'ISIC', 'LGG', 'LIDC-IDRI', 'MMs', 'NeoPolyp', 'OCT-CME', 'PROMISE12', 'PolypGen', 'QaTa-COV19', 'REFUGE', 'UWaterlooSkinCancer', 'kits23', 'siim-acr-pneumothorax', 'MSD/Task03_Liver', 'MSD/Task06_Lung', 'MSD/Task09_Spleen', 'MSD/Task04_Hippocampus', 'MSD/Task07_Pancreas', 'MSD/Task10_Colon', 'MSD/Task02_Heart', 'MSD/Task05_Prostate', 'MSD/Task08_HepaticVessel', 'Radiography/COVID', 'Radiography/Lung_Opacity', 'Radiography/Normal', 'Radiography/Viral_Pneumonia', 'amos22/CT', 'amos22/MRI', 'PanNuke', 'BTCV-Cervix', 'COVID-19_CT', 'MSD/Task01_BrainTumour']
+    # tasks = ['PanNuke']
     print("Loading...")
     for task in tasks:
         task_dir = os.path.join(base_dir, task)
         print(f"Processing {task}")
-        inference(task_dir, sam_predictor, grounding_dino_model)
+        inference(task_dir, sam_predictor, grounding_dino_model, save_mask=True)
+        
+    # illega text experiment
+    # base_dir = "/mnt/hanoverdev/data/BiomedSeg"
+    # tasks_illegal = []
+    # task_legal = ['ACDC', 'Radiography/Normal', 'kits23', 'BreastUS', 'GlaS', 'ISIC','REFUGE']
+    # print('processing illegal cases')
+    # for task in tasks_illegal:
+    #     task_dir = os.path.join(base_dir, task)
+    #     print(f"Processing {task}")
+    #     inference(task_dir, sam_predictor, grounding_dino_model, run_grounding_dino_sam=False, save_mask=False, is_illegal=True)
+    # print('processing legal cases')
+    # for task in task_legal:
+    #     task_dir = os.path.join(base_dir, task)
+    #     print(f"Processing {task}")
+    #     inference(task_dir, sam_predictor, grounding_dino_model, run_grounding_dino_sam=False, save_mask=False, is_illegal=False)
