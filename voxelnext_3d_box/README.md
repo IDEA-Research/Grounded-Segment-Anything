@@ -1,6 +1,6 @@
 # 3D-Box via Segment Anything
 
-We extend [Segment Anything](https://github.com/facebookresearch/segment-anything) to 3D perception by combining it with [VoxelNeXt](https://github.com/dvlab-research/VoxelNeXt). Note that this project is still in progress. We are improving it and dveloping more examples. Any issue or pull request is welcome!
+We extend [Segment Anything](https://github.com/facebookresearch/segment-anything) to 3D perception by combining it with [VoxelNeXt](https://github.com/dvlab-research/VoxelNeXt). Note that this project is still in progress. We are improving it and developing more examples. Any issue or pull request is welcome!
 
 <p align="center"> <img src="images/sam-voxelnext.png" width="100%"> </p>
 
