@@ -23,7 +23,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Tag2Text
-from ram.models import tag2text_caption
+from ram.models import tag2text
 from ram import inference_tag2text
 import torchvision.transforms as TS
 
@@ -273,7 +273,7 @@ if __name__ == "__main__":
 
     specified_tags='None'
     # load model
-    tag2text_model = tag2text_caption(pretrained=tag2text_checkpoint,
+    tag2text_model = tag2text(pretrained=tag2text_checkpoint,
                                         image_size=384,
                                         vit='swin_b',
                                         delete_tag_index=delete_tag_index)
