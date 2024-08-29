@@ -316,9 +316,13 @@ We provide two versions of Grounded-SAM demo here:
 - [grounded_sam_simple_demo.py](./grounded_sam_simple_demo.py) our updated more elegant version for Grounded-SAM.
 
 **Step 2: Running original grounded-sam demo**
+```bash
+# depends on your device 
+export CUDA_VISIBLE_DEVICES=0
+```
 
 ```python
-export CUDA_VISIBLE_DEVICES=0
+
 python grounded_sam_demo.py \
   --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
   --grounded_checkpoint groundingdino_swint_ogc.pth \
@@ -393,6 +397,25 @@ The annotated results will be saved as `./groundingdino_annotated_image.jpg` and
 | `Horse. Clouds. Grasses. Sky. Hill` | ![](./assets/demo7.jpg) | ![](assets/groundingdino_annotated_image.jpg) | ![](assets/grounded_sam_annotated_image.jpg) |
 
 </div>
+
+**Step 5: Running the Sam model with multi-gpu**
+```bash
+export CUDA_VISIBLE_DEVICES=0,1
+```
+```python
+
+python grounded_sam_multi_gpu_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --input_path assets/car \
+  --output_dir "outputs" \
+  --box_threshold 0.3 \
+  --text_threshold 0.25 \
+  --text_prompt "car" \
+  --device "cuda"
+```
+You will see that the model is loaded once per GPU ![](assets/multi-gpu.png) 
 
 ### :skier: Grounded-SAM with Inpainting: Detect, Segment and Generate Everything with Text Prompt
 
