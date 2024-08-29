@@ -135,7 +135,7 @@ def show_mask(mask, ax, random_color=False):
     else:
         color = np.array([30/255, 144/255, 255/255, 0.6])
     h, w = mask.shape[-2:]
-    print("mask.shape:", mask.shape)
+    # print("mask.shape:", mask.shape)
     mask_image = mask.reshape(h, w, 1) * color.reshape(1, 1, -1)
     ax.imshow(mask_image)
 
