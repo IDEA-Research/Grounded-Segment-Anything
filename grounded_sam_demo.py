@@ -44,9 +44,10 @@ def load_image(image_path):
     return image_pil, image
 
 
-def load_model(model_config_path, model_checkpoint_path, device):
+def load_model(model_config_path, model_checkpoint_path, bert_base_uncased_path, device):
     args = SLConfig.fromfile(model_config_path)
     args.device = device
+    args.bert_base_uncased_path = bert_base_uncased_path
     model = build_model(args)
     checkpoint = torch.load(model_checkpoint_path, map_location="cpu")
     load_res = model.load_state_dict(clean_state_dict(checkpoint["model"]), strict=False)
@@ -165,6 +166,7 @@ if __name__ == "__main__":
     parser.add_argument("--text_threshold", type=float, default=0.25, help="text threshold")
 
     parser.add_argument("--device", type=str, default="cpu", help="running on cpu only!, default=False")
+    parser.add_argument("--bert_base_uncased_path", type=str, required=False, help="bert_base_uncased model path, default=False")
     args = parser.parse_args()
 
     # cfg
@@ -180,13 +182,14 @@ if __name__ == "__main__":
     box_threshold = args.box_threshold
     text_threshold = args.text_threshold
     device = args.device
+    bert_base_uncased_path = args.bert_base_uncased_path
 
     # make dir
     os.makedirs(output_dir, exist_ok=True)
     # load image
     image_pil, image = load_image(image_path)
     # load model
-    model = load_model(config_file, grounded_checkpoint, device=device)
+    model = load_model(config_file, grounded_checkpoint, bert_base_uncased_path, device=device)
 
     # visualize raw image
     image_pil.save(os.path.join(output_dir, "raw_image.jpg"))
