@@ -11,7 +11,7 @@ pycocotools
 PyYAML
 requests
 setuptools
-supervision
+supervision==0.21.0
 termcolor
 timm
 torch

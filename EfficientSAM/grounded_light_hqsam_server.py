@@ -31,9 +31,6 @@ light_hqsam.to(device=DEVICE)
 sam_predictor = SamPredictor(light_hqsam)
 
 
-grounding_dino_model.model.eval()
-sam_predictor.model.eval()
-
 # Predict classes and hyper-param for GroundingDINO
 SOURCE_IMAGE_PATH = os.path.join(BASE_PATH,"./EfficientSAM/LightHQSAM/example_light_hqsam.png")
 CLASSES = ["bench"]
@@ -62,7 +59,7 @@ labels = [
 annotated_frame = box_annotator.annotate(scene=image.copy(), detections=detections, labels=labels)
 
 # save the annotated grounding dino image
-cv2.imwrite("./dino_annotated_image.jpg", annotated_frame)
+cv2.imwrite("EfficientSAM/LightHQSAM/groundingdino_annotated_image.jpg", annotated_frame)
 
 
 # NMS post process
@@ -112,4 +109,4 @@ annotated_image = mask_annotator.annotate(scene=image.copy(), detections=detecti
 annotated_image = box_annotator.annotate(scene=annotated_image, detections=detections, labels=labels)
 
 # save the annotated grounded-sam image
-cv2.imwrite("./sam_annotated_image.jpg", annotated_image)
+cv2.imwrite("EfficientSAM/LightHQSAM/grounded_light_hqsam_annotated_image.jpg", annotated_image)
