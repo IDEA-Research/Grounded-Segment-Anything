@@ -149,7 +149,7 @@ def filter_prompts_with_chatgpt(caption, max_tokens=100, model="gpt-3.5-turbo"):
     reply = response['choices'][0]['message']['content']
     try:
         det_prompt, inpaint_prompt = reply.split('\n')[0].split(':')[-1].strip(), reply.split('\n')[1].split(':')[-1].strip()
-    except:
+    except Exception:
         warn(f"Failed to extract tags from caption") # use caption as det_prompt, inpaint_prompt
         det_prompt, inpaint_prompt = caption, caption
     return det_prompt, inpaint_prompt

@@ -5,7 +5,7 @@ import numpy as np
 tv = None
 try:
     import cumm.tensorview as tv
-except:
+except Exception:
     pass
 
 
@@ -20,11 +20,11 @@ class VoxelGeneratorWrapper():
         try:
             from spconv.utils import VoxelGeneratorV2 as VoxelGenerator
             self.spconv_ver = 1
-        except:
+        except Exception:
             try:
                 from spconv.utils import VoxelGenerator
                 self.spconv_ver = 1
-            except:
+            except Exception:
                 from spconv.utils import Point2VoxelCPU3d as VoxelGenerator
                 self.spconv_ver = 2
 
