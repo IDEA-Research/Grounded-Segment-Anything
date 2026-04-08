@@ -26,7 +26,7 @@ class BertModelWarper(nn.Module):
 
         self.get_extended_attention_mask = bert_model.get_extended_attention_mask
         self.invert_attention_mask = bert_model.invert_attention_mask
-        self.get_head_mask = bert_model.get_head_mask
+        # self.get_head_mask = bert_model.get_head_mask
 
     def forward(
         self,
