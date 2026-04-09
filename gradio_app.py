@@ -1,9 +1,15 @@
 import argparse
 import gc
+import inspect
 import os
 import random
+import re
+import sys
+import threading
 import traceback
+import uuid
 import warnings
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
 from contextlib import nullcontext
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -11,10 +17,16 @@ import gradio as gr
 import numpy as np
 import torch
 import torchvision
+from deep_translator import GoogleTranslator
+from deep_translator.exceptions import RequestError as DeepTranslatorRequestError
+from deep_translator.exceptions import TooManyRequests, TranslationNotFound
 from diffusers import StableDiffusionInpaintPipeline
 from PIL import Image, ImageDraw, ImageFont
 from scipy import ndimage
-from segment_anything.segment_anything import SamAutomaticMaskGenerator, SamPredictor, build_sam
+try:
+    from segment_anything import SamAutomaticMaskGenerator, SamPredictor, build_sam
+except ImportError:
+    from segment_anything.segment_anything import SamAutomaticMaskGenerator, SamPredictor, build_sam
 from transformers import (
     AutoModelForZeroShotObjectDetection,
     AutoProcessor,
@@ -58,6 +70,13 @@ SD_DTYPE = torch.float16
 MAX_INPAINT_SIZE = 512
 DEFAULT_INPAINT_STEPS = 24
 MAX_GRADIO_CONCURRENCY = 1
+TRANSLATION_TIMEOUT_SECONDS = 6.0
+ZH_TEXT_PATTERN = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
+GRADIO_BLOCKS_ACCEPTS_CSS = "css" in inspect.signature(gr.Blocks).parameters
+GRADIO_LAUNCH_ACCEPTS_CSS = "css" in inspect.signature(gr.Blocks.launch).parameters
+GRADIO_IMAGE_ACCEPTS_SOURCE = "source" in inspect.signature(gr.Image).parameters
+GRADIO_IMAGE_ACCEPTS_TOOL = "tool" in inspect.signature(gr.Image).parameters
+GRADIO_QUEUE_ACCEPTS_CONCURRENCY_COUNT = "concurrency_count" in inspect.signature(gr.Blocks.queue).parameters
 
 if torch.cuda.is_available():
     torch.backends.cuda.matmul.allow_tf32 = True
@@ -140,6 +159,12 @@ APP_CSS = """
     border-radius: 18px;
     overflow: hidden;
 }
+#stop-btn {
+    min-height: 52px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 16px;
+}
 """
 
 MODEL_STATE: Dict[str, Any] = {
@@ -151,27 +176,16 @@ MODEL_STATE: Dict[str, Any] = {
     "blip_model": None,
     "inpaint_pipeline": None,
 }
-
-COMMON_ZH_PROMPT_MAP = {
-    "熊": "bear",
-    "小熊": "teddy bear",
-    "杯子": "cup",
-    "马克杯": "mug",
-    "包": "bag",
-    "鞋": "shoe",
-    "帽子": "hat",
-    "椅子": "chair",
-    "沙发": "sofa",
-    "桌子": "table",
-    "瓶子": "bottle",
-}
-
+CANCEL_FLAGS: Dict[str, bool] = {}
+CANCEL_FLAGS_LOCK = threading.Lock()
 
 def ensure_cuda_available() -> None:
     if DEVICE != "cuda" or not torch.cuda.is_available():
         raise RuntimeError(
             "当前策略要求 GPU 运行，但本环境未检测到可用 CUDA。"
-            "请先在 Python 3.10.13 环境中安装 Nightly cu128 版 PyTorch，并运行 scripts/check_blackwell_cuda.py。"
+            "请改用 Python 3.10 的 GPU 环境启动，例如 "
+            "`\\.venv310-gpu\\Scripts\\python.exe gradio_app.py`，"
+            "并先运行 `scripts/check_blackwell_cuda.py` 完成 CUDA 自检。"
         )
 
 
@@ -188,6 +202,52 @@ def cleanup_cuda_memory() -> None:
         torch.cuda.ipc_collect()
 
 
+def validate_runtime_environment() -> None:
+    if sys.version_info[:2] != (3, 10):
+        raise RuntimeError(
+            "当前启动环境不是 Python 3.10。"
+            f"检测到的是 Python {sys.version_info.major}.{sys.version_info.minor}，"
+            "而这套 Grounded-SAM GPU 依赖与当前项目自检通过的环境是 Python 3.10。"
+            "请改用 `\\.venv310-gpu\\Scripts\\python.exe gradio_app.py` 启动。"
+        )
+    ensure_cuda_available()
+
+
+class CancelledByUser(Exception):
+    pass
+
+
+class PromptTranslationError(RuntimeError):
+    pass
+
+
+class PromptTranslationTimeoutError(PromptTranslationError):
+    pass
+
+
+def set_cancel_flag(session_id: str, value: bool) -> None:
+    if not session_id:
+        return
+    with CANCEL_FLAGS_LOCK:
+        CANCEL_FLAGS[session_id] = value
+
+
+def clear_cancel_flag(session_id: str) -> None:
+    if not session_id:
+        return
+    with CANCEL_FLAGS_LOCK:
+        CANCEL_FLAGS.pop(session_id, None)
+
+
+def check_cancelled(session_id: str) -> None:
+    if not session_id:
+        return
+    with CANCEL_FLAGS_LOCK:
+        cancelled = CANCEL_FLAGS.get(session_id, False)
+    if cancelled:
+        raise CancelledByUser("用户已取消本次操作。")
+
+
 def normalize_caption(caption: str) -> str:
     normalized = caption.lower().strip()
     if normalized and not normalized.endswith("."):
@@ -195,23 +255,55 @@ def normalize_caption(caption: str) -> str:
     return normalized
 
 
-def contains_cjk(text: str) -> bool:
-    return any("\u4e00" <= char <= "\u9fff" for char in text)
+def contains_chinese(text: str) -> bool:
+    return bool(ZH_TEXT_PATTERN.search(text))
+
+
+def translate_text_with_google(text: str) -> str:
+    translator = GoogleTranslator(source="auto", target="en")
+    translated = translator.translate(text)
+    if not translated:
+        raise PromptTranslationError("翻译服务暂时不可用，请稍后重试或直接输入英文。")
+    return translated.strip()
+
+
+def translate_prompt_if_needed(prompt: str, field_label: str) -> Tuple[str, Optional[str]]:
+    raw_prompt = prompt.strip()
+    if not raw_prompt:
+        return raw_prompt, None
+
+    if not contains_chinese(raw_prompt):
+        return raw_prompt, None
+
+    try:
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(translate_text_with_google, raw_prompt)
+            translated_prompt = future.result(timeout=TRANSLATION_TIMEOUT_SECONDS)
+    except FutureTimeoutError as exc:
+        raise PromptTranslationTimeoutError("翻译服务超时，请直接输入英文。") from exc
+    except (DeepTranslatorRequestError, TranslationNotFound, TooManyRequests) as exc:
+        raise PromptTranslationError("翻译服务暂时不可用，请稍后重试或直接输入英文。") from exc
+    except PromptTranslationError:
+        raise
+    except Exception as exc:
+        raise PromptTranslationError("翻译服务暂时不可用，请稍后重试或直接输入英文。") from exc
+
+    if not translated_prompt:
+        raise PromptTranslationError("翻译服务暂时不可用，请稍后重试或直接输入英文。")
+
+    note = f"{field_label}识别到中文输入，已自动转译为：[{translated_prompt}]"
+    return translated_prompt, note
 
 
 def prepare_detection_prompt(prompt: str, task_type: str) -> Tuple[str, Optional[str]]:
     raw_prompt = prompt.strip()
     if task_type == "automatic" or not raw_prompt:
         return raw_prompt, None
+    return translate_prompt_if_needed(raw_prompt, "目标检测提示词")
 
-    translated = COMMON_ZH_PROMPT_MAP.get(raw_prompt)
-    if translated:
-        return translated, f"检测提示词已从中文 `{raw_prompt}` 轻量映射到英文 `{translated}`，以提升 GroundingDINO 命中率。"
 
-    if contains_cjk(raw_prompt):
-        return raw_prompt, "检测模型对英文提示词更稳定；当前继续使用中文提示词，如命中率偏低建议改用英文关键词。"
-
-    return raw_prompt, None
+def prepare_inpaint_prompt(prompt: str) -> Tuple[str, Optional[str]]:
+    return translate_prompt_if_needed(prompt, "背景复原提示词")
 
 
 def move_tensor_batch_to_device(batch: Dict[str, Any], device: str, dtype: Optional[torch.dtype] = None) -> Dict[str, Any]:
@@ -302,6 +394,7 @@ def build_status_markdown(
     task_type: str,
     backend_name: str,
     prompt_used: str,
+    inpaint_prompt_used: Optional[str] = None,
     labels: Optional[List[str]] = None,
     note: Optional[str] = None,
     vram_mb: Optional[float] = None,
@@ -314,6 +407,8 @@ def build_status_markdown(
     ]
     if prompt_used:
         lines.append(f"- 生效提示词: `{prompt_used}`")
+    if inpaint_prompt_used:
+        lines.append(f"- 背景复原提示词: `{inpaint_prompt_used}`")
     if labels:
         lines.append(f"- 检测结果: `{', '.join(labels[:8])}`")
     if vram_mb is not None:
@@ -334,10 +429,39 @@ def build_error_markdown(message: str, detail: Optional[str] = None) -> str:
     return "\n".join(lines)
 
 
+def build_idle_markdown() -> str:
+    return "### 待命中\n- 当前没有正在执行的任务。\n- 你可以继续修改模式、提示词或图片后重新提交。"
+
+
+def build_cancelled_markdown() -> str:
+    return "### 操作已取消\n- 当前任务已停止等待，可立即切换模式或修改提示词后重新提交。"
+
+
 def parse_image_editor_input(input_image: Any) -> Tuple[Image.Image, Optional[Image.Image]]:
+    def to_pil_image(value: Any) -> Optional[Image.Image]:
+        if value is None:
+            return None
+        if isinstance(value, Image.Image):
+            return value
+        return Image.fromarray(np.array(value))
+
     if isinstance(input_image, dict):
-        image = input_image.get("image")
-        mask = input_image.get("mask")
+        if "image" in input_image or "mask" in input_image:
+            image = input_image.get("image")
+            mask = input_image.get("mask")
+        else:
+            background = to_pil_image(input_image.get("background"))
+            composite = to_pil_image(input_image.get("composite"))
+            layers = [to_pil_image(layer) for layer in input_image.get("layers", []) if layer is not None]
+            image = background or composite
+            mask = None
+            if layers:
+                mask = Image.new("L", layers[0].size, color=0)
+                mask_np = np.zeros((layers[0].size[1], layers[0].size[0]), dtype=np.uint8)
+                for layer in layers:
+                    alpha = np.array(layer.convert("RGBA").getchannel("A"), dtype=np.uint8)
+                    mask_np = np.maximum(mask_np, alpha)
+                mask = Image.fromarray(mask_np, mode="L")
     else:
         image = input_image
         mask = None
@@ -345,12 +469,44 @@ def parse_image_editor_input(input_image: Any) -> Tuple[Image.Image, Optional[Im
     if image is None:
         raise ValueError("请先上传一张待处理图片。")
 
-    if not isinstance(image, Image.Image):
-        image = Image.fromarray(np.array(image))
-    if mask is not None and not isinstance(mask, Image.Image):
-        mask = Image.fromarray(np.array(mask))
+    image = to_pil_image(image)
+    mask = to_pil_image(mask)
 
     return image.convert("RGB"), mask
+
+
+def build_input_image_component() -> gr.components.Component:
+    common_kwargs = {
+        "type": "pil",
+        "value": "assets/demo1.jpg",
+        "label": "上传商品图片（支持直接在图上涂抹）",
+    }
+
+    if GRADIO_IMAGE_ACCEPTS_TOOL:
+        image_kwargs = dict(common_kwargs)
+        image_kwargs["tool"] = "sketch"
+        if GRADIO_IMAGE_ACCEPTS_SOURCE:
+            image_kwargs["source"] = "upload"
+        else:
+            image_kwargs["sources"] = "upload"
+        return gr.Image(**image_kwargs)
+
+    if hasattr(gr, "ImageEditor"):
+        return gr.ImageEditor(
+            **common_kwargs,
+            sources="upload",
+            brush=gr.Brush(colors=["#ffffff"], color_mode="fixed"),
+            eraser=gr.Eraser(),
+            transforms=(),
+            layers=True,
+        )
+
+    image_kwargs = dict(common_kwargs)
+    if GRADIO_IMAGE_ACCEPTS_SOURCE:
+        image_kwargs["source"] = "upload"
+    else:
+        image_kwargs["sources"] = "upload"
+    return gr.Image(**image_kwargs)
 
 
 def current_peak_vram_mb() -> Optional[float]:
@@ -540,11 +696,6 @@ def ensure_sam_components() -> Tuple[Any, SamPredictor, SamAutomaticMaskGenerato
 
     sam_model = build_sam(checkpoint=SAM_CHECKPOINT)
     sam_model.to(device=DEVICE)
-    if DEVICE == "cuda":
-        try:
-            sam_model.half()
-        except Exception:
-            warnings.warn("SAM 半精度转换失败，将继续使用默认精度。")
 
     predictor = SamPredictor(sam_model)
     automask_generator = SamAutomaticMaskGenerator(sam_model)
@@ -768,6 +919,7 @@ def run_inpainting_task(
     masks: torch.Tensor,
     inpaint_prompt: str,
     inpaint_mode: str,
+    session_id: str,
 ) -> Tuple[Image.Image, Image.Image]:
     if not inpaint_prompt.strip():
         raise ValueError("背景复原模式需要填写“背景复原提示词”。")
@@ -788,12 +940,17 @@ def run_inpainting_task(
     resized_image = image_pil.resize((MAX_INPAINT_SIZE, MAX_INPAINT_SIZE))
     resized_mask = mask_pil.resize((MAX_INPAINT_SIZE, MAX_INPAINT_SIZE), resample=Image.NEAREST)
 
+    def cancel_callback(_pipeline, _step_index, _timestep, callback_kwargs):
+        check_cancelled(session_id)
+        return callback_kwargs
+
     with torch.inference_mode():
         output = pipeline(
             prompt=inpaint_prompt,
             image=resized_image,
             mask_image=resized_mask,
             num_inference_steps=DEFAULT_INPAINT_STEPS,
+            callback_on_step_end=cancel_callback,
         ).images[0]
 
     cleanup_cuda_memory()
@@ -810,19 +967,24 @@ def run_grounded_sam(
     iou_threshold: float,
     inpaint_mode: str,
     scribble_mode: str,
+    session_id: str,
 ) -> Tuple[Image.Image, Optional[Image.Image], str]:
     del scribble_mode
     ensure_cuda_available()
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     torch.cuda.reset_peak_memory_stats()
-    image_pil, scribble = parse_image_editor_input(input_image)
-    image_np = np.array(image_pil)
-    prompt_note = None
+    set_cancel_flag(session_id, False)
+    prompt_notes: List[str] = []
 
     try:
+        image_pil, scribble = parse_image_editor_input(input_image)
+        image_np = np.array(image_pil)
+        check_cancelled(session_id)
         if task_type == "automask":
             _, _, automask_generator = ensure_primary_models_on_gpu()
+            check_cancelled(session_id)
             result_image, mask_preview = run_automask_task(image_pil, automask_generator)
+            check_cancelled(session_id)
             status = build_status_markdown(
                 task_type,
                 "sam-automask",
@@ -834,7 +996,9 @@ def run_grounded_sam(
 
         if task_type == "scribble":
             _, predictor, _ = ensure_primary_models_on_gpu()
+            check_cancelled(session_id)
             result_image, mask_preview = run_scribble_task(image_pil, scribble, predictor)
+            check_cancelled(session_id)
             status = build_status_markdown(
                 task_type,
                 "sam-scribble",
@@ -846,13 +1010,22 @@ def run_grounded_sam(
 
         backend, predictor, _ = ensure_primary_models_on_gpu()
         prompt_used = text_prompt.strip()
+        inpaint_prompt_used = inpaint_prompt.strip()
         if task_type == "automatic":
             prompt_used = generate_caption(image_pil)
         else:
             prompt_used, prompt_note = prepare_detection_prompt(prompt_used, task_type)
+            if prompt_note:
+                prompt_notes.append(prompt_note)
         if not prompt_used:
             raise ValueError("请填写“商品目标描述”，或者切换到 automatic 自动识别模式。")
 
+        if task_type == "inpainting":
+            inpaint_prompt_used, inpaint_prompt_note = prepare_inpaint_prompt(inpaint_prompt_used)
+            if inpaint_prompt_note:
+                prompt_notes.append(inpaint_prompt_note)
+
+        check_cancelled(session_id)
         boxes_filt, scores, raw_labels, backend_name, backend_note = run_grounding_detection(
             backend,
             image_pil,
@@ -860,6 +1033,7 @@ def run_grounded_sam(
             box_threshold,
             text_threshold,
         )
+        check_cancelled(session_id)
 
         normalized_boxes = backend_name == "groundingdino-local"
         boxes_filt = rescale_boxes_to_image(boxes_filt, image_pil.size, normalized=normalized_boxes)
@@ -868,7 +1042,7 @@ def run_grounded_sam(
                 task_type,
                 backend_name,
                 prompt_used,
-                note="；".join(part for part in [backend_note, prompt_note, "当前阈值下未检测到目标。"] if part),
+                note="；".join(part for part in [backend_note, *prompt_notes, "当前阈值下未检测到目标。"] if part),
                 vram_mb=current_peak_vram_mb(),
             )
             return image_pil, None, status
@@ -891,12 +1065,14 @@ def run_grounded_sam(
                 backend_name,
                 prompt_used,
                 labels=formatted_labels,
-                note="；".join(part for part in [backend_note, prompt_note] if part),
+                note="；".join(part for part in [backend_note, *prompt_notes] if part),
                 vram_mb=current_peak_vram_mb(),
             )
             return annotated, None, status
 
+        check_cancelled(session_id)
         masks = predict_masks_from_boxes(predictor, image_np, boxes_filt)
+        check_cancelled(session_id)
         if task_type in {"seg", "automatic"}:
             result_image, mask_preview = render_segmentation_result(
                 image_pil,
@@ -910,7 +1086,7 @@ def run_grounded_sam(
                 backend_name,
                 prompt_used,
                 labels=formatted_labels,
-                note="；".join(part for part in [backend_note, prompt_note] if part),
+                note="；".join(part for part in [backend_note, *prompt_notes] if part),
                 vram_mb=current_peak_vram_mb(),
             )
             return result_image, mask_preview, status
@@ -919,23 +1095,31 @@ def run_grounded_sam(
             result_image, mask_preview = run_inpainting_task(
                 image_pil=image_pil,
                 masks=masks,
-                inpaint_prompt=inpaint_prompt,
+                inpaint_prompt=inpaint_prompt_used,
                 inpaint_mode=inpaint_mode,
+                session_id=session_id,
             )
+            check_cancelled(session_id)
             status = build_status_markdown(
                 task_type,
                 backend_name,
                 prompt_used,
+                inpaint_prompt_used=inpaint_prompt_used,
                 labels=formatted_labels,
-                note="；".join(part for part in [backend_note, prompt_note, "Stable Diffusion 已开启 CPU offload 与 attention slicing。"] if part),
+                note="；".join(part for part in [backend_note, *prompt_notes, "Stable Diffusion 已开启 CPU offload 与 attention slicing。"] if part),
                 vram_mb=current_peak_vram_mb(),
             )
             return result_image, mask_preview, status
 
         raise ValueError(f"不支持的任务模式: {task_type}")
+    except CancelledByUser:
+        cleanup_cuda_memory()
+        return None, None, build_cancelled_markdown()
     except Exception:
         cleanup_cuda_memory()
         raise
+    finally:
+        clear_cancel_flag(session_id)
 
 
 def run_grounded_sam_ui(
@@ -948,6 +1132,7 @@ def run_grounded_sam_ui(
     iou_threshold: float,
     inpaint_mode: str,
     scribble_mode: str,
+    session_id: str,
 ) -> Tuple[Optional[Image.Image], Optional[Image.Image], str]:
     try:
         return run_grounded_sam(
@@ -960,7 +1145,22 @@ def run_grounded_sam_ui(
             iou_threshold=iou_threshold,
             inpaint_mode=inpaint_mode,
             scribble_mode=scribble_mode,
+            session_id=session_id,
         )
+    except PromptTranslationTimeoutError as exc:
+        fallback_image = None
+        try:
+            fallback_image, _ = parse_image_editor_input(input_image)
+        except Exception:
+            fallback_image = None
+        return fallback_image, None, build_error_markdown(message=str(exc))
+    except PromptTranslationError as exc:
+        fallback_image = None
+        try:
+            fallback_image, _ = parse_image_editor_input(input_image)
+        except Exception:
+            fallback_image = None
+        return fallback_image, None, build_error_markdown(message=str(exc))
     except Exception as exc:
         traceback.print_exc()
         fallback_image = None
@@ -973,6 +1173,11 @@ def run_grounded_sam_ui(
             message=message,
             detail="错误已透传到界面状态区，同时完整 traceback 已写入终端日志。",
         )
+
+
+def cancel_current_run(session_id: str) -> Tuple[None, None, str]:
+    set_cancel_flag(session_id, True)
+    return None, None, build_cancelled_markdown()
 
 
 def build_mode_hint(task_type: str) -> str:
@@ -988,7 +1193,10 @@ def build_mode_hint(task_type: str) -> str:
 
 
 def build_app() -> gr.Blocks:
-    block = gr.Blocks(css=APP_CSS, title="基于多模态大模型的特定目标提取与背景复原")
+    block_kwargs = {"title": "基于多模态大模型的特定目标提取与背景复原"}
+    if GRADIO_BLOCKS_ACCEPTS_CSS:
+        block_kwargs["css"] = APP_CSS
+    block = gr.Blocks(**block_kwargs)
 
     with block:
         gr.HTML(
@@ -1006,6 +1214,7 @@ def build_app() -> gr.Blocks:
 
         with gr.Row(equal_height=False):
             with gr.Column(scale=1, min_width=380):
+                session_id_state = gr.State(value=lambda: str(uuid.uuid4()))
                 gr.HTML(
                     """
                     <div class="panel-card">
@@ -1016,13 +1225,7 @@ def build_app() -> gr.Blocks:
                     </div>
                     """
                 )
-                input_image = gr.Image(
-                    source="upload",
-                    type="pil",
-                    value="assets/demo1.jpg",
-                    tool="sketch",
-                    label="上传商品图片（支持直接在图上涂抹）",
-                )
+                input_image = build_input_image_component()
                 task_type = gr.Dropdown(
                     choices=[
                         ("目标提取（分割）", "seg"),
@@ -1047,7 +1250,9 @@ def build_app() -> gr.Blocks:
                     placeholder="例如：高质感大理石台面，柔和棚拍光线，适合电商主图",
                     lines=2,
                 )
-                run_button = gr.Button("一键处理", elem_id="run-btn", variant="primary")
+                with gr.Row():
+                    run_button = gr.Button("一键处理", elem_id="run-btn", variant="primary")
+                    stop_button = gr.Button("停止处理", elem_id="stop-btn", variant="stop")
 
                 with gr.Accordion("高级参数", open=False):
                     box_threshold = gr.Slider(
@@ -1106,16 +1311,12 @@ def build_app() -> gr.Blocks:
                     height=300,
                 )
                 status_box = gr.Markdown(
-                    value=(
-                        "### 运行状态\n"
-                        "- 设备策略: `cuda / torch.float16`\n"
-                        "- 建议先运行 `python scripts/check_blackwell_cuda.py` 通过 Nightly GPU 冒烟测试。"
-                    ),
+                    value=build_idle_markdown(),
                     elem_classes="status-card",
                 )
 
         task_type.change(fn=build_mode_hint, inputs=task_type, outputs=mode_hint)
-        run_button.click(
+        run_event = run_button.click(
             fn=run_grounded_sam_ui,
             inputs=[
                 input_image,
@@ -1127,11 +1328,21 @@ def build_app() -> gr.Blocks:
                 iou_threshold,
                 inpaint_mode,
                 scribble_mode,
+                session_id_state,
             ],
             outputs=[result_image, mask_image, status_box],
         )
+        stop_button.click(
+            fn=cancel_current_run,
+            inputs=[session_id_state],
+            outputs=[result_image, mask_image, status_box],
+            cancels=[run_event],
+            queue=False,
+        )
 
-    return block.queue(concurrency_count=MAX_GRADIO_CONCURRENCY, max_size=4)
+    if GRADIO_QUEUE_ACCEPTS_CONCURRENCY_COUNT:
+        return block.queue(concurrency_count=MAX_GRADIO_CONCURRENCY, max_size=4)
+    return block.queue(default_concurrency_limit=MAX_GRADIO_CONCURRENCY, max_size=4)
 
 
 if __name__ == "__main__":
@@ -1141,6 +1352,7 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=7589, help="服务端口")
     args = parser.parse_args()
 
+    validate_runtime_environment()
     print(args)
     print(f"Python device target: {DEVICE}")
     print(f"Main dtype: {MAIN_DTYPE}")
@@ -1149,9 +1361,12 @@ if __name__ == "__main__":
     print(f"Inpaint model: {INPAINT_MODEL_ID}")
 
     app = build_app()
-    app.launch(
-        server_name="127.0.0.1",
-        server_port=args.port,
-        debug=args.debug,
-        share=args.share,
-    )
+    launch_kwargs = {
+        "server_name": "127.0.0.1",
+        "server_port": args.port,
+        "debug": args.debug,
+        "share": args.share,
+    }
+    if GRADIO_LAUNCH_ACCEPTS_CSS and not GRADIO_BLOCKS_ACCEPTS_CSS:
+        launch_kwargs["css"] = APP_CSS
+    app.launch(**launch_kwargs)
