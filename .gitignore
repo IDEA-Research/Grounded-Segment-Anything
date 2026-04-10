@@ -104,6 +104,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+.venv*/
 env/
 venv/
 ENV/
@@ -130,6 +131,23 @@ dmypy.json
 
 # checkpoint
 *.pth
+*.pt
+*.ckpt
+*.bin
+*.safetensors
+*.onnx
+*.pb
+*.weights
+*.msgpack
 outputs/
 
 .idea/
+gradio_app.stdout.log
+gradio_app.stderr.log
+hf_cache/
+.hf-cache/
+*.tmp
+tmp/
+temp/
+cache/
+.server-processes.json
