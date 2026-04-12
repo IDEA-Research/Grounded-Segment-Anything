@@ -28,6 +28,7 @@ from torch.nn.init import constant_, xavier_uniform_
 try:
     from groundingdino import _C
 except:
+    _C = None
     warnings.warn("Failed to load custom C++ ops. Running on CPU mode Only!")
 
 
@@ -50,6 +51,21 @@ class MultiScaleDeformableAttnFunction(Function):
         im2col_step,
     ):
         ctx.im2col_step = im2col_step
+        if _C is None:
+            ctx.save_for_backward(
+                value,
+                value_spatial_shapes,
+                value_level_start_index,
+                sampling_locations,
+                attention_weights,
+            )
+            return multi_scale_deformable_attn_pytorch(
+                value,
+                value_spatial_shapes,
+                sampling_locations,
+                attention_weights,
+            )
+
         output = _C.ms_deform_attn_forward(
             value,
             value_spatial_shapes,
@@ -70,6 +86,9 @@ class MultiScaleDeformableAttnFunction(Function):
     @staticmethod
     @once_differentiable
     def backward(ctx, grad_output):
+        if _C is None:
+            raise RuntimeError("Backward is not supported when GroundingDINO custom C++ ops are unavailable")
+
         (
             value,
             value_spatial_shapes,

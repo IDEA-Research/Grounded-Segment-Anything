@@ -32,11 +32,11 @@ at::Tensor ms_deform_attn_cuda_forward(
     AT_ASSERTM(sampling_loc.is_contiguous(), "sampling_loc tensor has to be contiguous");
     AT_ASSERTM(attn_weight.is_contiguous(), "attn_weight tensor has to be contiguous");
 
-    AT_ASSERTM(value.type().is_cuda(), "value must be a CUDA tensor");
-    AT_ASSERTM(spatial_shapes.type().is_cuda(), "spatial_shapes must be a CUDA tensor");
-    AT_ASSERTM(level_start_index.type().is_cuda(), "level_start_index must be a CUDA tensor");
-    AT_ASSERTM(sampling_loc.type().is_cuda(), "sampling_loc must be a CUDA tensor");
-    AT_ASSERTM(attn_weight.type().is_cuda(), "attn_weight must be a CUDA tensor");
+    AT_ASSERTM(value.is_cuda(), "value must be a CUDA tensor");
+    AT_ASSERTM(spatial_shapes.is_cuda(), "spatial_shapes must be a CUDA tensor");
+    AT_ASSERTM(level_start_index.is_cuda(), "level_start_index must be a CUDA tensor");
+    AT_ASSERTM(sampling_loc.is_cuda(), "sampling_loc must be a CUDA tensor");
+    AT_ASSERTM(attn_weight.is_cuda(), "attn_weight must be a CUDA tensor");
 
     const int batch = value.size(0);
     const int spatial_size = value.size(1);
@@ -62,7 +62,7 @@ at::Tensor ms_deform_attn_cuda_forward(
     for (int n = 0; n < batch/im2col_step_; ++n)
     {
         auto columns = output_n.select(0, n);
-        AT_DISPATCH_FLOATING_TYPES(value.type(), "ms_deform_attn_forward_cuda", ([&] {
+        AT_DISPATCH_FLOATING_TYPES(value.scalar_type(), "ms_deform_attn_forward_cuda", ([&] {
             ms_deformable_im2col_cuda(at::cuda::getCurrentCUDAStream(),
                 value.data<scalar_t>() + n * im2col_step_ * per_value_size,
                 spatial_shapes.data<int64_t>(),
@@ -98,12 +98,12 @@ std::vector<at::Tensor> ms_deform_attn_cuda_backward(
     AT_ASSERTM(attn_weight.is_contiguous(), "attn_weight tensor has to be contiguous");
     AT_ASSERTM(grad_output.is_contiguous(), "grad_output tensor has to be contiguous");
 
-    AT_ASSERTM(value.type().is_cuda(), "value must be a CUDA tensor");
-    AT_ASSERTM(spatial_shapes.type().is_cuda(), "spatial_shapes must be a CUDA tensor");
-    AT_ASSERTM(level_start_index.type().is_cuda(), "level_start_index must be a CUDA tensor");
-    AT_ASSERTM(sampling_loc.type().is_cuda(), "sampling_loc must be a CUDA tensor");
-    AT_ASSERTM(attn_weight.type().is_cuda(), "attn_weight must be a CUDA tensor");
-    AT_ASSERTM(grad_output.type().is_cuda(), "grad_output must be a CUDA tensor");
+    AT_ASSERTM(value.is_cuda(), "value must be a CUDA tensor");
+    AT_ASSERTM(spatial_shapes.is_cuda(), "spatial_shapes must be a CUDA tensor");
+    AT_ASSERTM(level_start_index.is_cuda(), "level_start_index must be a CUDA tensor");
+    AT_ASSERTM(sampling_loc.is_cuda(), "sampling_loc must be a CUDA tensor");
+    AT_ASSERTM(attn_weight.is_cuda(), "attn_weight must be a CUDA tensor");
+    AT_ASSERTM(grad_output.is_cuda(), "grad_output must be a CUDA tensor");
 
     const int batch = value.size(0);
     const int spatial_size = value.size(1);
@@ -132,7 +132,7 @@ std::vector<at::Tensor> ms_deform_attn_cuda_backward(
     for (int n = 0; n < batch/im2col_step_; ++n)
     {
         auto grad_output_g = grad_output_n.select(0, n);
-        AT_DISPATCH_FLOATING_TYPES(value.type(), "ms_deform_attn_backward_cuda", ([&] {
+        AT_DISPATCH_FLOATING_TYPES(value.scalar_type(), "ms_deform_attn_backward_cuda", ([&] {
             ms_deformable_col2im_cuda(at::cuda::getCurrentCUDAStream(),
                                     grad_output_g.data<scalar_t>(),
                                     value.data<scalar_t>() + n * im2col_step_ * per_value_size,
